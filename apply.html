@@ -35,14 +35,14 @@
     line-height: 1.5;
   }
 
+  body.modal-open { overflow: hidden; }
+
   a { color: inherit; text-decoration: none; }
   button, input, select { font: inherit; color: inherit; }
   button { cursor: pointer; border: 0; background: none; }
 
-  /* 背景 */
-  .bg {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-  }
+  /* ============ 背景 ============ */
+  .bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
   .bg::before {
     content: ""; position: absolute; inset: -2px;
     background-image:
@@ -75,85 +75,144 @@
     50% { transform: translate3d(30px, 40px, 0) scale(1.08); }
   }
 
-  /* 头部 */
-  .topbar {
-    position: sticky; top: 0; z-index: 40;
-    background: rgba(5, 8, 12, 0.82);
+  /* ============ 弹框 ============ */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    display: grid; place-items: center;
+    padding: 20px;
+    background: rgba(5, 8, 12, 0.74);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(26, 53, 64, 0.5);
+    animation: overlayIn 0.4s ease both;
   }
-  .topbar-inner {
-    max-width: 880px; margin: 0 auto; padding: 12px 20px;
-    display: flex; align-items: center; gap: 18px;
-  }
-  .brand {
-    display: flex; align-items: center; gap: 9px;
-    font-size: 14px; font-weight: 800; letter-spacing: 0.06em; flex-shrink: 0;
-  }
-  .brand-mark {
-    width: 26px; height: 26px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--cyan), var(--green));
-    display: grid; place-items: center;
-    color: #001018; font-size: 12px; font-weight: 900;
-    box-shadow: 0 0 18px rgba(0, 240, 255, 0.4);
-  }
-  .progress-track {
-    flex: 1; height: 4px; border-radius: 999px;
-    background: rgba(35, 69, 82, 0.7); overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%; border-radius: inherit; width: 16.67%;
-    background: linear-gradient(90deg, var(--cyan), var(--green));
-    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
-  }
-  .progress-label {
-    font-size: 11.5px; color: var(--muted); flex-shrink: 0;
-    font-variant-numeric: tabular-nums;
-  }
-  .progress-label strong { color: var(--text); font-weight: 600; }
+  @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
 
-  /* 主体 */
-  .main {
-    position: relative; z-index: 10;
-    max-width: 560px; margin: 0 auto;
-    padding: 48px 20px 80px;
+  .modal-overlay.closing { animation: overlayOut 0.38s ease both; }
+  @keyframes overlayOut { to { opacity: 0; } }
+
+  .modal-box {
+    position: relative;
+    width: 100%; max-width: 430px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    border-radius: 26px;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 240, 255, 0.14), transparent 70%),
+      linear-gradient(165deg, #0e2733 0%, #061019 60%, #0a1e28 100%);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    box-shadow:
+      0 40px 100px -30px rgba(0, 0, 0, 0.9),
+      0 0 80px -20px rgba(0, 240, 255, 0.35);
+    animation: boxIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
+  @keyframes boxIn {
+    from { opacity: 0; transform: scale(0.92) translateY(24px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-overlay.closing .modal-box { animation: boxOut 0.38s ease both; }
+  @keyframes boxOut { to { opacity: 0; transform: scale(0.95) translateY(12px); } }
 
-  .step { display: none; }
-  .step.active { display: block; animation: stepIn 0.55s cubic-bezier(0.22, 1, 0.36, 1); }
-
-  @keyframes stepIn {
-    from { opacity: 0; transform: translateY(22px); }
-    to { opacity: 1; transform: translateY(0); }
+  .modal-sheen {
+    position: absolute; top: 0; left: -60%;
+    width: 55%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(0, 240, 255, 0.11), transparent);
+    transform: skewX(-18deg);
+    animation: modalSheen 4.2s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes modalSheen {
+    0%, 55% { left: -60%; }
+    88%, 100% { left: 135%; }
   }
 
-  .eyebrow {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 11px; margin-bottom: 16px;
-    border: 1px solid var(--border-2); border-radius: 999px;
-    background: rgba(0, 240, 255, 0.08);
-    color: var(--cyan-soft);
-    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-    font-variant-numeric: tabular-nums;
-  }
-  .eyebrow .dot {
-    width: 5px; height: 5px; border-radius: 50%; background: var(--green);
-    box-shadow: 0 0 8px var(--green);
-  }
+  .modal-inner { position: relative; padding: 32px 28px 26px; text-align: center; }
 
-  h2 {
-    font-size: clamp(24px, 4vw, 32px);
-    font-weight: 800; letter-spacing: -0.028em; line-height: 1.18;
+  .modal-card-stage { perspective: 1200px; display: grid; place-items: center; margin-bottom: 26px; }
+  .modal-card {
+    position: relative;
+    width: 240px; aspect-ratio: 1.6 / 1;
+    border-radius: 16px; padding: 16px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    background:
+      radial-gradient(circle at 82% 12%, rgba(0, 240, 255, 0.3), transparent 46%),
+      radial-gradient(circle at 12% 88%, rgba(43, 214, 123, 0.24), transparent 50%),
+      linear-gradient(148deg, #0d2733 0%, #061019 55%, #0a1e28 100%);
+    border: 1px solid rgba(0, 240, 255, 0.32);
+    box-shadow:
+      0 24px 60px -20px rgba(0, 0, 0, 0.9),
+      0 0 0 1px rgba(0, 240, 255, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.09);
+    transform: rotateY(-12deg) rotateX(8deg);
+    animation: mcFloat 5s ease-in-out infinite;
+    overflow: hidden;
+  }
+  @keyframes mcFloat {
+    0%, 100% { transform: rotateY(-12deg) rotateX(8deg) translateY(0); }
+    50% { transform: rotateY(-8deg) rotateX(5deg) translateY(-9px); }
+  }
+  .modal-card::before {
+    content: ""; position: absolute; top: 0; left: -80%; width: 55%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.14), transparent);
+    transform: skewX(-20deg);
+    animation: cardSheen 5s ease-in-out infinite;
+  }
+  @keyframes cardSheen {
+    0%, 55% { left: -80%; }
+    88%, 100% { left: 150%; }
+  }
+  .mc-top { display: flex; align-items: flex-start; justify-content: space-between; position: relative; z-index: 2; }
+  .mc-brand { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; color: var(--cyan-soft); }
+  .mc-chip {
+    width: 26px; height: 20px; border-radius: 5px;
+    background: linear-gradient(135deg, #d8b878, #a8873f 55%, #e5cd94);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+  }
+  .mc-mid { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; }
+  .mc-label { font-size: 7.5px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(160, 190, 205, 0.75); }
+  .mc-balance { margin-top: 2px; font-size: 15px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
+  .mc-apy { text-align: right; }
+  .mc-apy .val { font-size: 12px; font-weight: 800; color: var(--green); font-variant-numeric: tabular-nums; }
+  .mc-apy .lbl { font-size: 7px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(160, 190, 205, 0.7); }
+  .mc-bottom { position: relative; z-index: 2; display: flex; align-items: flex-end; justify-content: space-between; }
+  .mc-num { font-size: 9.5px; letter-spacing: 0.16em; color: rgba(210, 230, 240, 0.85); font-variant-numeric: tabular-nums; }
+  .mc-net { display: flex; }
+  .mc-net span { width: 16px; height: 16px; border-radius: 50%; opacity: 0.92; }
+  .mc-net span:first-child { background: #eb001b; margin-right: -6px; }
+  .mc-net span:last-child { background: #f79e1b; mix-blend-mode: screen; }
+
+  .modal-title {
+    font-size: clamp(22px, 4vw, 26px);
+    font-weight: 800; letter-spacing: -0.028em; line-height: 1.2;
+    background: linear-gradient(100deg, #fff 0%, #6ff8ff 55%, #2bd67b 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
     margin-bottom: 10px;
   }
-  .desc {
-    font-size: 14px; line-height: 1.7; color: var(--text-2);
-    margin-bottom: 28px;
+  .modal-desc { font-size: 13.5px; line-height: 1.7; color: var(--text-2); margin-bottom: 22px; }
+
+  .modal-list {
+    list-style: none; display: grid; gap: 9px;
+    margin-bottom: 24px; text-align: left;
+  }
+  .modal-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 11px 14px;
+    border: 1px solid var(--border); border-radius: 11px;
+    background: rgba(10, 30, 40, 0.5);
+    font-size: 12.5px; line-height: 1.5; color: var(--text-2);
+  }
+  .modal-list li strong { color: var(--text); font-weight: 700; }
+  .modal-list .tick {
+    flex-shrink: 0; width: 17px; height: 17px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: rgba(43, 214, 123, 0.14); border: 1px solid rgba(43, 214, 123, 0.42);
+    color: var(--green); font-size: 9px; font-weight: 900;
+    margin-top: 1px;
   }
 
-  /* 按钮 */
+  .modal-cta { width: 100%; margin-bottom: 14px; }
+  .modal-foot { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+  /* ============ 按钮 ============ */
   .btn-main {
     position: relative;
     display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -198,9 +257,107 @@
   }
   .btn-ghost:hover { background: var(--surface); color: var(--text); border-color: var(--border-2); }
 
+  /* ============ 顶栏 ============ */
+  .topbar {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(5, 8, 12, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(26, 53, 64, 0.5);
+  }
+  .topbar-inner {
+    max-width: 880px; margin: 0 auto; padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 14px; font-weight: 800; letter-spacing: 0.06em; flex-shrink: 0;
+  }
+  .brand-mark {
+    width: 26px; height: 26px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--cyan), var(--green));
+    display: grid; place-items: center;
+    color: #001018; font-size: 12px; font-weight: 900;
+    box-shadow: 0 0 18px rgba(0, 240, 255, 0.4);
+  }
+  .progress-track {
+    flex: 1; height: 4px; border-radius: 999px;
+    background: rgba(35, 69, 82, 0.7); overflow: hidden;
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%; border-radius: inherit; width: 20%;
+    background: linear-gradient(90deg, var(--cyan), var(--green));
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+    position: relative;
+  }
+  .progress-fill::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    animation: progressSheen 2.4s ease-in-out infinite;
+  }
+  @keyframes progressSheen {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .progress-label {
+    font-size: 11.5px; color: var(--muted); flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .progress-label strong { color: var(--text); font-weight: 600; }
+
+  /* ============ 返回按钮 ============ */
+  .back-row {
+    max-width: 560px; margin: 0 auto; padding: 16px 20px 0;
+    display: none;
+  }
+  .back-row.show { display: block; }
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: rgba(10, 30, 40, 0.5);
+    color: var(--text-2); font-size: 12.5px; font-weight: 600;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .back-btn:hover { background: var(--surface); color: var(--text); border-color: var(--border-2); }
+  .back-btn svg { width: 14px; height: 14px; }
+
+  /* ============ 主体 ============ */
+  .main { position: relative; z-index: 10; max-width: 560px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  .step { display: none; }
+  .step.active { display: block; animation: stepIn 0.55s cubic-bezier(0.22, 1, 0.36, 1); }
+
+  @keyframes stepIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 11px; margin-bottom: 16px;
+    border: 1px solid var(--border-2); border-radius: 999px;
+    background: rgba(0, 240, 255, 0.08);
+    color: var(--cyan-soft);
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+  }
+  .eyebrow .dot {
+    width: 5px; height: 5px; border-radius: 50%; background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+  }
+
+  h2 {
+    font-size: clamp(24px, 4vw, 32px);
+    font-weight: 800; letter-spacing: -0.028em; line-height: 1.18;
+    margin-bottom: 10px;
+  }
+  .desc { font-size: 14px; line-height: 1.7; color: var(--text-2); margin-bottom: 28px; }
+
   /* 表单 */
   .form { display: grid; gap: 12px; }
-
   .input-wrap { position: relative; }
   .input {
     width: 100%; padding: 14px 16px;
@@ -227,15 +384,10 @@
   }
   select.input option { background: #0a1e28; color: var(--text); }
 
-  .err-msg {
-    display: none; font-size: 12px; color: var(--red); margin-top: 6px; padding-left: 4px;
-  }
+  .err-msg { display: none; font-size: 12px; color: var(--red); margin-top: 6px; padding-left: 4px; }
   .err-msg.show { display: block; }
 
-  /* 社交登录 */
-  .social {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px;
-  }
+  .social { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
   .btn-social {
     display: flex; align-items: center; justify-content: center; gap: 8px;
     padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
@@ -250,9 +402,7 @@
     display: flex; align-items: center; gap: 12px;
     margin: 18px 0 22px; color: var(--muted); font-size: 12px;
   }
-  .divider::before, .divider::after {
-    content: ""; flex: 1; height: 1px; background: var(--border);
-  }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
 
   .trust-row {
     display: flex; flex-wrap: wrap; gap: 8px 16px;
@@ -286,8 +436,7 @@
   .partner-panel.active { display: block; animation: stepIn 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
 
   .marquee {
-    position: relative; overflow: hidden;
-    padding: 18px 0;
+    position: relative; overflow: hidden; padding: 18px 0;
     mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   }
@@ -295,10 +444,7 @@
     display: flex; gap: 12px; width: max-content;
     animation: scroll 28s linear infinite;
   }
-  .marquee.reverse .marquee-track {
-    animation-direction: reverse;
-    animation-duration: 32s;
-  }
+  .marquee.reverse .marquee-track { animation-direction: reverse; animation-duration: 32s; }
   @keyframes scroll {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
@@ -321,10 +467,7 @@
     color: var(--cyan-soft);
   }
 
-  .stat-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
-    margin-top: 22px;
-  }
+  .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 22px; }
   .stat-box {
     padding: 16px;
     border: 1px solid var(--border); border-radius: var(--radius-sm);
@@ -384,9 +527,27 @@
     transform: skewX(-20deg);
     animation: cardSheen 5.5s ease-in-out infinite;
   }
-  @keyframes cardSheen {
-    0%, 55% { left: -80%; }
-    88%, 100% { left: 150%; }
+
+  /* 生成时的扫描线 */
+  .vcard .scanline {
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    box-shadow: 0 0 20px var(--cyan);
+    opacity: 0;
+    z-index: 5;
+    pointer-events: none;
+  }
+  .vcard.scanning .scanline {
+    opacity: 1;
+    animation: scanMove 1.4s ease-in-out infinite;
+  }
+  @keyframes scanMove {
+    0% { top: 8%; opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { top: 92%; opacity: 0; }
   }
 
   .vc-top { display: flex; align-items: flex-start; justify-content: space-between; position: relative; z-index: 2; }
@@ -424,11 +585,10 @@
   .vc-circle.a { background: #eb001b; margin-right: -8px; }
   .vc-circle.b { background: #f79e1b; mix-blend-mode: screen; }
 
-  /* 卡号逐位显示 */
   .digit-hidden { opacity: 0; transition: opacity 0.3s ease; }
   .digit-shown { opacity: 1; }
 
-  /* 安全说明列表 */
+  /* 安全说明 */
   .sec-list { display: grid; gap: 10px; margin-bottom: 24px; }
   .sec-item {
     display: flex; align-items: flex-start; gap: 10px;
@@ -441,8 +601,7 @@
     flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%;
     display: grid; place-items: center;
     background: rgba(43, 214, 123, 0.14); border: 1px solid rgba(43, 214, 123, 0.4);
-    color: var(--green); font-size: 10px; font-weight: 900;
-    margin-top: 1px;
+    color: var(--green); font-size: 10px; font-weight: 900; margin-top: 1px;
   }
 
   /* 倒计时 */
@@ -507,7 +666,7 @@
   }
   .compliance-note strong { color: var(--text-2); font-weight: 600; }
 
-  /* 卡片信息展示 */
+  /* 卡片信息 */
   .info-card {
     border: 1px solid var(--border); border-radius: var(--radius);
     background: rgba(10, 30, 40, 0.6);
@@ -543,47 +702,6 @@
     text-decoration: underline; text-underline-offset: 2px;
   }
 
-  /* 验证码 */
-  .code-inputs {
-    display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;
-    margin-bottom: 18px;
-  }
-  .code-input {
-    width: 100%; aspect-ratio: 1; min-height: 48px;
-    border: 1px solid var(--border); border-radius: 11px;
-    background: rgba(10, 30, 40, 0.6);
-    color: var(--text); font-size: 20px; font-weight: 700;
-    text-align: center; font-variant-numeric: tabular-nums;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    -webkit-appearance: none; appearance: none;
-  }
-  .code-input:focus {
-    outline: none; border-color: var(--cyan);
-    box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.12);
-  }
-  .code-input.filled { border-color: var(--border-2); background: rgba(0, 240, 255, 0.06); }
-
-  .email-display {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 13px 16px; margin-bottom: 16px;
-    border: 1px solid var(--border); border-radius: 11px;
-    background: rgba(10, 30, 40, 0.5);
-    font-size: 13px;
-  }
-  .email-display .addr { color: var(--text); font-weight: 600; }
-  .email-display .change {
-    font-size: 11.5px; color: var(--cyan-soft);
-    text-decoration: underline; text-underline-offset: 2px;
-  }
-
-  .resend {
-    display: block; margin: 16px auto 0;
-    font-size: 12px; color: var(--muted); text-align: center;
-    background: none; padding: 6px 12px;
-  }
-  .resend:disabled { opacity: 0.6; cursor: not-allowed; }
-  .resend:not(:disabled) { color: var(--cyan-soft); }
-
   /* 完成态 */
   .done-wrap { text-align: center; padding: 24px 0; }
   .done-icon {
@@ -599,9 +717,7 @@
     50% { box-shadow: 0 0 0 18px rgba(43, 214, 123, 0); }
   }
 
-  .benefits {
-    display: grid; gap: 10px; margin: 26px 0 24px; text-align: left;
-  }
+  .benefits { display: grid; gap: 10px; margin: 26px 0 24px; text-align: left; }
   .benefit {
     display: flex; align-items: center; gap: 10px;
     padding: 13px 16px;
@@ -617,15 +733,27 @@
     color: var(--cyan-soft); font-size: 12px;
   }
 
+  .done-email {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-bottom: 20px; padding: 12px 16px;
+    border: 1px solid var(--border); border-radius: 11px;
+    background: rgba(10, 30, 40, 0.5);
+    font-size: 12.5px; color: var(--text-2);
+  }
+  .done-email .addr { color: var(--cyan-soft); font-weight: 600; }
+
+  .done-actions { display: grid; gap: 10px; }
+
   /* 响应式 */
   @media (max-width: 480px) {
-    .main { padding: 32px 16px 64px; }
+    .main { padding: 24px 16px 64px; }
     .topbar-inner { padding: 10px 16px; gap: 12px; }
     .brand span:last-child { display: none; }
-    .code-inputs { gap: 6px; }
-    .code-input { font-size: 17px; min-height: 44px; }
     .stat-grid { grid-template-columns: 1fr; }
     .social { grid-template-columns: 1fr; }
+    .modal-inner { padding: 26px 20px 22px; }
+    .modal-card { width: 200px; }
+    .back-row { padding: 12px 16px 0; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -634,11 +762,11 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.001ms !important;
     }
-    .step.active { animation: none; }
+    .step.active, .modal-overlay, .modal-box { animation: none; }
   }
 </style>
 </head>
-<body>
+<body class="modal-open">
 
 <div class="bg" aria-hidden="true">
   <div class="orb orb-1"></div>
@@ -646,6 +774,54 @@
   <div class="orb orb-3"></div>
 </div>
 
+<!-- ============ 进入时的弹框 ============ -->
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box">
+    <div class="modal-sheen" aria-hidden="true"></div>
+    <div class="modal-inner">
+      <div class="modal-card-stage">
+        <div class="modal-card">
+          <div class="mc-top">
+            <span class="mc-brand">NEXA</span>
+            <span class="mc-chip"></span>
+          </div>
+          <div class="mc-mid">
+            <div>
+              <div class="mc-label">Available · USDC</div>
+              <div class="mc-balance">8,420.50</div>
+            </div>
+            <div class="mc-apy">
+              <div class="val">+4.2%</div>
+              <div class="lbl">APY</div>
+            </div>
+          </div>
+          <div class="mc-bottom">
+            <span class="mc-num">•••• •••• •••• 4821</span>
+            <span class="mc-net"><span></span><span></span></span>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="modal-title" id="modalTitle">领取你的 NEXA Visa 虚拟卡</h2>
+      <p class="modal-desc">30 秒完成，开卡免费。这不是一张普通的卡——它让你的稳定币在消费前持续生息。</p>
+
+      <ul class="modal-list">
+        <li><span class="tick">✓</span><span><strong>0 年费 · 0 开卡费</strong>，仅 0.90% 交易手续费</span></li>
+        <li><span class="tick">✓</span><span><strong>2% 消费返现</strong>，可选 BTC、黄金或 USDC 发放</span></li>
+        <li><span class="tick">✓</span><span><strong>消费前持续生息</strong>，年化 4% – 8%</span></li>
+      </ul>
+
+      <button class="btn-main modal-cta" type="button" onclick="closeModal()">
+        开始领取
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+
+      <p class="modal-foot">已服务 1.5 亿 Visa 商户 · $700M 用户保护基金</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 顶栏 ============ -->
 <header class="topbar">
   <div class="topbar-inner">
     <a class="brand" href="index.html">
@@ -653,15 +829,23 @@
       <span>NEXA</span>
     </a>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-    <div class="progress-label"><strong id="stepNow">1</strong> / 6</div>
+    <div class="progress-label"><strong id="stepNow">1</strong> / 5</div>
   </div>
 </header>
+
+<!-- 返回按钮 -->
+<div class="back-row" id="backRow">
+  <button class="back-btn" type="button" onclick="backStep()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+    返回上一步
+  </button>
+</div>
 
 <main class="main">
 
   <!-- Step 1: 注册 -->
   <section class="step active" data-step="1">
-    <div class="eyebrow"><span class="dot"></span>Step 1 / 6</div>
+    <div class="eyebrow"><span class="dot"></span>Step 1 / 5</div>
     <h2>创建你的 NEXA 账户</h2>
     <p class="desc">注册后即可领取 Visa 虚拟卡。开卡免费、无需充值，首笔消费后才产生交易费。</p>
 
@@ -690,7 +874,7 @@
       <div class="input-wrap">
         <input type="text" class="input" id="ref" placeholder="邀请码（选填）" autocomplete="off" />
       </div>
-      <button type="submit" class="btn-main" id="signupBtn">
+      <button type="submit" class="btn-main">
         创建账户
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
@@ -705,7 +889,7 @@
 
   <!-- Step 2: 合作伙伴 -->
   <section class="step" data-step="2">
-    <div class="eyebrow"><span class="dot"></span>Step 2 / 6</div>
+    <div class="eyebrow"><span class="dot"></span>Step 2 / 5</div>
     <h2>你正在一个被验证过的网络里</h2>
     <p class="desc">NEXA 的清算、托管与发卡能力，由以下机构共同支撑。你的资金与卡片，不会孤立存在。</p>
 
@@ -716,49 +900,25 @@
     </div>
 
     <div class="partner-panel active" data-panel="crypto">
-      <div class="marquee">
-        <div class="marquee-track" id="cryptoRow1"></div>
-      </div>
-      <div class="marquee reverse">
-        <div class="marquee-track" id="cryptoRow2"></div>
-      </div>
+      <div class="marquee"><div class="marquee-track" id="cryptoRow1"></div></div>
+      <div class="marquee reverse"><div class="marquee-track" id="cryptoRow2"></div></div>
     </div>
 
     <div class="partner-panel" data-panel="bank">
-      <div class="marquee">
-        <div class="marquee-track" id="bankRow1"></div>
-      </div>
-      <div class="marquee reverse">
-        <div class="marquee-track" id="bankRow2"></div>
-      </div>
+      <div class="marquee"><div class="marquee-track" id="bankRow1"></div></div>
+      <div class="marquee reverse"><div class="marquee-track" id="bankRow2"></div></div>
     </div>
 
     <div class="partner-panel" data-panel="merchant">
-      <div class="marquee">
-        <div class="marquee-track" id="merchantRow1"></div>
-      </div>
-      <div class="marquee reverse">
-        <div class="marquee-track" id="merchantRow2"></div>
-      </div>
+      <div class="marquee"><div class="marquee-track" id="merchantRow1"></div></div>
+      <div class="marquee reverse"><div class="marquee-track" id="merchantRow2"></div></div>
     </div>
 
     <div class="stat-grid">
-      <div class="stat-box">
-        <div class="num">1.5 亿+</div>
-        <div class="lbl">Visa 全球受理商户</div>
-      </div>
-      <div class="stat-box">
-        <div class="num">$700M+</div>
-        <div class="lbl">用户保护基金</div>
-      </div>
-      <div class="stat-box">
-        <div class="num">130+</div>
-        <div class="lbl">支持的区块链网络</div>
-      </div>
-      <div class="stat-box">
-        <div class="num">50+</div>
-        <div class="lbl">可申请发卡的国家与地区</div>
-      </div>
+      <div class="stat-box"><div class="num">1.5 亿+</div><div class="lbl">Visa 全球受理商户</div></div>
+      <div class="stat-box"><div class="num">$700M+</div><div class="lbl">用户保护基金</div></div>
+      <div class="stat-box"><div class="num">130+</div><div class="lbl">支持的区块链网络</div></div>
+      <div class="stat-box"><div class="num">50+</div><div class="lbl">可申请发卡的国家与地区</div></div>
     </div>
 
     <button type="button" class="btn-main" style="margin-top:24px" onclick="goStep(3)">
@@ -769,13 +929,14 @@
 
   <!-- Step 3: 卡片生成 -->
   <section class="step" data-step="3">
-    <div class="eyebrow"><span class="dot"></span>Step 3 / 6</div>
+    <div class="eyebrow"><span class="dot"></span>Step 3 / 5</div>
     <h2>你的虚拟卡正在生成</h2>
     <p class="desc">卡片由 Visa 网络签发，激活后可在全球 1.5 亿商户使用，支持 Apple Pay 与 Google Pay。</p>
 
     <div class="card-stage">
       <div class="card-halo"></div>
       <div class="vcard masked" id="genCard">
+        <div class="scanline"></div>
         <div class="vc-top">
           <span class="vc-brand">NEXA</span>
           <span class="vc-chip"></span>
@@ -811,7 +972,7 @@
 
   <!-- Step 4: 排队审核 -->
   <section class="step" data-step="4">
-    <div class="eyebrow"><span class="dot"></span>Step 4 / 6</div>
+    <div class="eyebrow"><span class="dot"></span>Step 4 / 5</div>
     <h2>正在完成安全合规审核</h2>
     <p class="desc">你的卡片正在通过以下 4 项检查，通常需要 20 秒。请保持当前页面打开。</p>
 
@@ -845,7 +1006,7 @@
 
   <!-- Step 5: 卡片信息 + 身份绑定 -->
   <section class="step" data-step="5">
-    <div class="eyebrow"><span class="dot"></span>Step 5 / 6</div>
+    <div class="eyebrow"><span class="dot"></span>Step 5 / 5</div>
     <h2>你的卡片已通过审核</h2>
     <p class="desc">请核对卡号信息，并完成持卡人身份绑定。绑定后卡片即可正常消费。</p>
 
@@ -867,7 +1028,7 @@
           </div>
         </div>
         <div class="vc-bottom">
-          <span class="vc-number" id="finalCardNum">4821 6733 9021 4487</span>
+          <span class="vc-number">4821 6733 9021 4487</span>
           <span class="vc-network"><span class="vc-circle a"></span><span class="vc-circle b"></span></span>
         </div>
       </div>
@@ -876,14 +1037,11 @@
     <div class="info-card">
       <div class="info-row">
         <span class="k">卡号</span>
-        <span class="v mono" id="infoCardNum">4821 6733 9021 4487
+        <span class="v mono">4821 6733 9021 4487
           <button class="copy-btn" type="button" data-copy="4821673390214487" onclick="copyText(this)">复制</button>
         </span>
       </div>
-      <div class="info-row">
-        <span class="k">有效期</span>
-        <span class="v mono">09 / 29</span>
-      </div>
+      <div class="info-row"><span class="k">有效期</span><span class="v mono">09 / 29</span></div>
       <div class="info-row">
         <span class="k">CVV</span>
         <span class="v">
@@ -892,10 +1050,7 @@
           <button class="cvv-toggle" type="button" id="cvvToggle" onclick="toggleCvv()">显示</button>
         </span>
       </div>
-      <div class="info-row">
-        <span class="k">卡组织</span>
-        <span class="v">Visa · 虚拟卡</span>
-      </div>
+      <div class="info-row"><span class="k">卡组织</span><span class="v">Visa · 虚拟卡</span></div>
     </div>
 
     <form class="form" id="kycForm" novalidate>
@@ -943,38 +1098,16 @@
     </form>
   </section>
 
-  <!-- Step 6: 邮箱验证 -->
-  <section class="step" data-step="6">
-    <div class="eyebrow"><span class="dot"></span>Step 6 / 6</div>
-    <h2>验证你的邮箱</h2>
-    <p class="desc">我们已向你的注册邮箱发送 6 位验证码。输入后即可激活卡片。</p>
-
-    <div class="email-display">
-      <span class="addr" id="displayEmail">user@nexa.io</span>
-      <button class="change" type="button" onclick="goStep(1)">修改</button>
-    </div>
-
-    <div class="code-inputs" id="codeInputs">
-      <input class="code-input" type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" />
-      <input class="code-input" type="text" inputmode="numeric" maxlength="1" />
-      <input class="code-input" type="text" inputmode="numeric" maxlength="1" />
-      <input class="code-input" type="text" inputmode="numeric" maxlength="1" />
-      <input class="code-input" type="text" inputmode="numeric" maxlength="1" />
-      <input class="code-input" type="text" inputmode="numeric" maxlength="1" />
-    </div>
-
-    <div class="err-msg" id="codeErr" style="text-align:center;margin-bottom:14px">请输入完整的 6 位验证码</div>
-
-    <button type="button" class="btn-main" onclick="verifyCode()">验证并激活卡片</button>
-    <button type="button" class="resend" id="resendBtn" onclick="resendCode()" disabled>重新发送（60s）</button>
-  </section>
-
   <!-- 完成 -->
-  <section class="step" data-step="7">
+  <section class="step" data-step="6">
     <div class="done-wrap">
       <div class="done-icon">✓</div>
       <h2 style="margin-bottom:12px">卡片已激活</h2>
       <p class="desc" style="margin-bottom:0">你的 NEXA Visa 虚拟卡已经可以使用。绑定 Apple Pay 或 Google Pay 后，即可在全球商户消费。</p>
+
+      <div class="done-email">
+        卡片已绑定至 <span class="addr" id="doneEmail">user@nexa.io</span>
+      </div>
 
       <div class="benefits">
         <div class="benefit"><span class="b-mark">%</span><span><strong>2% 基础返现</strong> · 消费后以 BTC、黄金或 USDC 发放</span></div>
@@ -982,10 +1115,13 @@
         <div class="benefit"><span class="b-mark">◈</span><span><strong>实时生息</strong> · 消费前余额持续产生收益</span></div>
       </div>
 
-      <button type="button" class="btn-main" onclick="location.href='index.html'">
-        进入我的账户
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </button>
+      <div class="done-actions">
+        <button type="button" class="btn-main" onclick="location.href='index.html'">
+          进入我的账户
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <button type="button" class="btn-ghost" onclick="goStep(5)">返回查看卡片信息</button>
+      </div>
     </div>
   </section>
 
@@ -997,16 +1133,35 @@
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ---------- 步骤切换 ---------- */
-  const TOTAL_STEPS = 6;
+  /* ============ 弹框 ============ */
+  const overlay = document.getElementById("modalOverlay");
+
+  function closeModal() {
+    overlay.classList.add("closing");
+    setTimeout(() => {
+      overlay.style.display = "none";
+      document.body.classList.remove("modal-open");
+    }, 400);
+  }
+  window.closeModal = closeModal;
+
+  /* ============ 步骤切换 ============ */
+  const TOTAL_STEPS = 5;
   let currentStep = 1;
   let emailValue = "user@nexa.io";
+
+  function updateBackBtn(n) {
+    const backRow = document.getElementById("backRow");
+    // 只有 step 2 和 step 3 显示返回
+    backRow.classList.toggle("show", n === 2 || n === 3);
+  }
 
   function goStep(n) {
     document.querySelectorAll(".step").forEach((el) => {
       el.classList.toggle("active", Number(el.dataset.step) === n);
     });
     currentStep = n;
+    updateBackBtn(n);
 
     const fill = document.getElementById("progressFill");
     const label = document.getElementById("stepNow");
@@ -1022,10 +1177,14 @@
 
     if (n === 4) startAudit();
   }
-
   window.goStep = goStep;
 
-  /* ---------- Step 1: 注册校验 ---------- */
+  function backStep() {
+    if (currentStep > 1) goStep(currentStep - 1);
+  }
+  window.backStep = backStep;
+
+  /* ============ Step 1: 注册 ============ */
   const signupForm = document.getElementById("signupForm");
 
   function showErr(id, show) {
@@ -1052,46 +1211,35 @@
     if (!ok) return;
 
     emailValue = email.value.trim();
+    document.getElementById("doneEmail").textContent = emailValue;
     goStep(2);
   });
 
   function quickSignup(provider) {
     emailValue = "user@" + provider.toLowerCase() + ".com";
+    document.getElementById("doneEmail").textContent = emailValue;
     goStep(2);
   }
   window.quickSignup = quickSignup;
 
-  /* ---------- Step 2: 合作伙伴墙 ---------- */
+  /* ============ Step 2: 合作伙伴 ============ */
   const partners = {
-    crypto: [
-      "Bitget", "Binance", "Coinbase", "OKX", "Circle", "Tether",
-      "Solana", "Ethereum", "Chainlink", "Aave", "Uniswap", "Lido",
-      "Arbitrum", "Optimism", "Polygon", "Base"
-    ],
-    bank: [
-      "Visa", "Mastercard", "Stripe", "Lead Bank", "StraitsX",
-      "Silvergate", "Circle", "Fireblocks", "Chainalysis",
-      "Elliptic", "Sumsub", "Onfido"
-    ],
-    merchant: [
-      "Amazon", "Apple", "Starbucks", "Uber", "Netflix", "Shopify",
-      "Spotify", "Booking.com", "Airbnb", "Walmart", "Costco", "IKEA",
-      "Adidas", "Nike", "Deliveroo", "Grab"
-    ]
+    crypto: ["Bitget", "Binance", "Coinbase", "OKX", "Circle", "Tether", "Solana", "Ethereum", "Chainlink", "Aave", "Uniswap", "Lido", "Arbitrum", "Optimism", "Polygon", "Base"],
+    bank: ["Visa", "Mastercard", "Stripe", "Lead Bank", "StraitsX", "Silvergate", "Circle", "Fireblocks", "Chainalysis", "Elliptic", "Sumsub", "Onfido"],
+    merchant: ["Amazon", "Apple", "Starbucks", "Uber", "Netflix", "Shopify", "Spotify", "Booking.com", "Airbnb", "Walmart", "Costco", "IKEA", "Adidas", "Nike", "Deliveroo", "Grab"]
   };
 
   function makeLogo(name) {
     const el = document.createElement("div");
     el.className = "partner-logo";
-    el.innerHTML = `<span class="mark">${name.charAt(0)}</span><span>${name}</span>`;
+    el.innerHTML = '<span class="mark">' + name.charAt(0) + '</span><span>' + name + '</span>';
     return el;
   }
 
   function fillMarquee(id, list) {
     const track = document.getElementById(id);
     if (!track) return;
-    const doubled = list.concat(list);
-    doubled.forEach((name) => track.appendChild(makeLogo(name)));
+    list.concat(list).forEach((name) => track.appendChild(makeLogo(name)));
   }
 
   Object.keys(partners).forEach((key) => {
@@ -1106,12 +1254,12 @@
       document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
       document.querySelectorAll(".partner-panel").forEach((p) => p.classList.remove("active"));
       tab.classList.add("active");
-      const panel = document.querySelector(`.partner-panel[data-panel="${tab.dataset.tab}"]`);
+      const panel = document.querySelector('.partner-panel[data-panel="' + tab.dataset.tab + '"]');
       if (panel) panel.classList.add("active");
     });
   });
 
-  /* ---------- Step 3: 卡片生成 ---------- */
+  /* ============ Step 3: 卡片生成 ============ */
   const FINAL_NUMBER = "4821 6733 9021 4487";
   let generated = false;
 
@@ -1127,15 +1275,17 @@
     const numEl = document.getElementById("genNumber");
 
     card.classList.remove("masked");
-    card.classList.add("revealed");
+    card.classList.add("revealed", "scanning");
 
     const chars = FINAL_NUMBER.split("");
-    numEl.innerHTML = chars.map((c) => c === " " ? " " : `<span class="digit-hidden">${c}</span>`).join("");
+    numEl.innerHTML = chars.map((c) => c === " " ? " " : '<span class="digit-hidden">' + c + '</span>').join("");
 
     const digits = numEl.querySelectorAll(".digit-hidden");
     digits.forEach((d, i) => {
       setTimeout(() => d.classList.add("digit-shown"), 120 + i * 90);
     });
+
+    setTimeout(() => card.classList.remove("scanning"), 1900);
 
     setTimeout(() => {
       btn.textContent = "卡片已生成";
@@ -1144,7 +1294,7 @@
   }
   window.startGenerate = startGenerate;
 
-  /* ---------- Step 4: 20 秒合规排队 ---------- */
+  /* ============ Step 4: 20 秒合规排队 ============ */
   let auditTimer = null;
 
   function startAudit() {
@@ -1167,10 +1317,9 @@
       it.querySelector(".status").textContent = "";
     });
 
-    // 分段时间点：4s, 8s, 14s, 20s 完成
     const marks = [4, 8, 14, 20];
 
-    function tick() {
+    auditTimer = setInterval(function () {
       remaining -= 1;
       numEl.textContent = Math.max(remaining, 0);
       const progress = (TOTAL - remaining) / TOTAL;
@@ -1178,7 +1327,6 @@
 
       const elapsed = TOTAL - remaining;
 
-      // 激活 / 完成状态
       for (let i = 0; i < items.length; i++) {
         const startAt = i === 0 ? 0 : marks[i - 1];
         const doneAt = marks[i];
@@ -1199,17 +1347,12 @@
           it.classList.add("done");
           it.querySelector(".status").textContent = "✓";
         });
-        setTimeout(() => {
-          document.getElementById("infoCardNum").firstChild.textContent = FINAL_NUMBER + " ";
-          goStep(5);
-        }, 600);
+        setTimeout(() => goStep(5), 600);
       }
-    }
-
-    auditTimer = setInterval(tick, 1000);
+    }, 1000);
   }
 
-  /* ---------- Step 5: 卡片信息 + 身份绑定 ---------- */
+  /* ============ Step 5: 卡片信息 + 身份绑定 ============ */
   function copyText(btn) {
     const text = btn.dataset.copy || "";
     const done = () => {
@@ -1299,105 +1442,8 @@
 
     if (!ok) return;
 
-    document.getElementById("displayEmail").textContent = emailValue;
     goStep(6);
-    startResendCooldown();
   });
-
-  /* ---------- Step 6: 验证码 ---------- */
-  const codeInputs = Array.from(document.querySelectorAll("#codeInputs .code-input"));
-
-  codeInputs.forEach((input, idx) => {
-    input.addEventListener("input", (e) => {
-      const v = e.target.value.replace(/\D/g, "");
-      e.target.value = v.slice(0, 1);
-      e.target.classList.toggle("filled", !!e.target.value);
-      if (e.target.value && idx < codeInputs.length - 1) {
-        codeInputs[idx + 1].focus();
-      }
-      document.getElementById("codeErr").classList.remove("show");
-    });
-
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Backspace" && !e.target.value && idx > 0) {
-        codeInputs[idx - 1].focus();
-        codeInputs[idx - 1].value = "";
-        codeInputs[idx - 1].classList.remove("filled");
-      }
-    });
-
-    input.addEventListener("paste", (e) => {
-      const text = (e.clipboardData || window.clipboardData).getData("text").replace(/\D/g, "").slice(0, 6);
-      if (!text) return;
-      e.preventDefault();
-      text.split("").forEach((ch, i) => {
-        if (codeInputs[i]) {
-          codeInputs[i].value = ch;
-          codeInputs[i].classList.add("filled");
-        }
-      });
-      const next = codeInputs[Math.min(text.length, codeInputs.length - 1)];
-      if (next) next.focus();
-    });
-  });
-
-  function verifyCode() {
-    const code = codeInputs.map((i) => i.value).join("");
-    const err = document.getElementById("codeErr");
-
-    if (!/^\d{6}$/.test(code)) {
-      err.classList.add("show");
-      codeInputs.forEach((i) => {
-        if (!i.value) i.classList.add("err");
-      });
-      return;
-    }
-
-    codeInputs.forEach((i) => i.classList.remove("err"));
-    err.classList.remove("show");
-
-    goStep(7);
-  }
-  window.verifyCode = verifyCode;
-
-  let resendTimer = null;
-  function startResendCooldown() {
-    const btn = document.getElementById("resendBtn");
-    let left = 60;
-    btn.disabled = true;
-    btn.textContent = `重新发送（${left}s）`;
-
-    if (resendTimer) clearInterval(resendTimer);
-    resendTimer = setInterval(() => {
-      left -= 1;
-      if (left <= 0) {
-        clearInterval(resendTimer);
-        resendTimer = null;
-        btn.disabled = false;
-        btn.textContent = "重新发送验证码";
-      } else {
-        btn.textContent = `重新发送（${left}s）`;
-      }
-    }, 1000);
-  }
-
-  function resendCode() {
-    const btn = document.getElementById("resendBtn");
-    if (btn.disabled) return;
-    codeInputs.forEach((i) => {
-      i.value = "";
-      i.classList.remove("filled", "err");
-    });
-    codeInputs[0].focus();
-    startResendCooldown();
-  }
-  window.resendCode = resendCode;
-
-  /* ---------- 初始化：预填邮箱 ---------- */
-  setTimeout(() => {
-    const display = document.getElementById("displayEmail");
-    if (display) display.textContent = emailValue;
-  }, 0);
 
 })();
 </script>
