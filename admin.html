@@ -40,6 +40,7 @@
   .btn { padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 14px; }
   .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
   .btn-primary:hover { background: var(--primary-hover); }
+  .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; border-color: #93c5fd; }
   
   .card { background: var(--surface); border-radius: 10px; padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; }
   .form-group { margin-bottom: 15px; }
@@ -76,11 +77,13 @@
   .loading-overlay.show { display: flex; }
   .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 15px; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+  /* 轻量级全局提示 Toast */
+  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 6px; font-size: 14px; z-index: 9999; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 </style>
 </head>
 <body>
 
-<!-- 登录界面 -->
 <div id="login-screen">
   <div class="login-box">
     <h2>NEXA 管理后台</h2>
@@ -90,7 +93,6 @@
   </div>
 </div>
 
-<!-- 系统主体 -->
 <div class="sidebar" style="display:none;" id="sidebar">
   <div class="sidebar-logo">NEXA Admin</div>
   <div class="menu-item has-sub" onclick="toggleSubMenu(this)">多语言管理 <span>▼</span></div>
@@ -105,13 +107,12 @@
 
 <div class="main-content" style="display:none;" id="main-content">
   
-  <!-- 语言列表 Tab -->
   <div id="tab-lang-list">
     <div class="header">
       <h1>多语言管理</h1>
       <div style="display:flex; gap:10px;">
         <button class="btn" onclick="openBatchLangModal()">🌐 添加常用语言</button>
-        <button class="btn btn-primary" onclick="globalTranslate()">⚡ 一键全局翻译</button>
+        <button class="btn btn-primary" id="globalTransBtn" onclick="globalTranslate()">⚡ 一键全局翻译</button>
       </div>
     </div>
     
@@ -135,14 +136,11 @@
             <th>操作</th>
           </tr>
         </thead>
-        <tbody id="lang-tbody">
-          <!-- 动态渲染 -->
-        </tbody>
+        <tbody id="lang-tbody"></tbody>
       </table>
     </div>
   </div>
 
-  <!-- 字典列表 Tab -->
   <div id="tab-dict-list" style="display:none;">
     <div class="header">
       <h1>字典管理</h1>
@@ -154,7 +152,6 @@
     </div>
   </div>
 
-  <!-- API 配置 Tab -->
   <div id="tab-settings" style="display:none;">
     <div class="header"><h1>API 配置</h1></div>
     <div class="card">
@@ -174,7 +171,6 @@
 
 </div>
 
-<!-- 批量选择语言弹窗 -->
 <div class="modal-overlay" id="modal-batch-lang">
   <div class="modal">
     <div class="modal-header">
@@ -183,9 +179,7 @@
     </div>
     <div class="modal-body">
       <p style="font-size:14px; color:var(--text-light); margin-bottom:10px;">勾选需要添加的语言，添加后可单独点击一键翻译。</p>
-      <div class="lang-grid" id="common-lang-grid">
-        <!-- 动态渲染 -->
-      </div>
+      <div class="lang-grid" id="common-lang-grid"></div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('modal-batch-lang')">取消</button>
@@ -194,7 +188,6 @@
   </div>
 </div>
 
-<!-- 编辑/翻译弹窗 -->
 <div class="modal-overlay" id="modal-edit-json">
   <div class="modal">
     <div class="modal-header">
@@ -215,128 +208,28 @@
   </div>
 </div>
 
+<div class="toast" id="globalToast"></div>
+
 <script>
-/* =========================================
-   1. 基础数据与初始化 (全站完整文案)
-   ========================================= */
 const DEFAULT_DICT = {
   "nav": { "quota": "本期开卡名额还剩", "unit": "个" },
-  "hero": {
-    "badge": "Visa 虚拟卡 · 限时免年费",
-    "title1": "你的 USDC",
-    "title2": "本来就不该",
-    "title3": "躺着不动",
-    "title4": "。",
-    "desc1": "一张 Visa 卡，让稳定币在消费前",
-    "desc2": "继续生息",
-    "desc3": "，刷卡时自动清算，花完还有",
-    "desc4": "返现",
-    "desc5": "。不卖币，也能花。",
-    "cta": "领取虚拟卡 · 免年费",
-    "fineprint": "开卡免费，首笔消费后按 0.90% 收取交易费。无月费、无隐藏费用。",
-    "scroll": "Scroll"
-  },
-  "stats": {
-    "users": "全球用户", "fund": "用户保护基金",
-    "chains": "支持公链", "merchants": "全球受理商户"
-  },
-  "showcase": {
-    "eyebrow": "你拿到的那张卡",
-    "title": "一张会在你消费时，替你管理生息仓位的卡。",
-    "tag1": "生息收益", "tag1_sub": "今日", "tag2": "刷卡自动清算"
-  },
-  "wallet": {
-    "eyebrow": "不止是一张卡",
-    "title": "你得到的，是一个完整的链上钱包。",
-    "desc": "卡只是入口。背后是 130+ 公链、100 万+ 代币、500+ DEX 聚合的完整钱包能力，以及一个让余额持续生息的账户底座。",
-    "c1_title": "多链钱包", "c1_desc": "一个助记词管理 130+ 公链上的 100 万+ 代币。Ethereum、Solana、BNB Chain、Base、Arbitrum 原生支持，新链上线即接入。", "c1_tag1": "130+ 公链", "c1_tag2": "100 万+ 代币", "c1_tag3": "硬件级密钥",
-    "c2_title": "实时生息", "c2_desc": "稳定币和主流币的余额默认进入生息池，消费前每一秒都在产生收益。按日结算，随时可取，年化 4%–8%。", "c2_tag1": "年化 4%–8%", "c2_tag2": "按日结算", "c2_tag3": "随存随取",
-    "c3_title": "无 Gas 跨链", "c3_desc": "基于 EIP-7702 与聚合桥，一笔签名完成跨链，Gas 从输入代币里自动扣除。不再为每条链单独准备原生代币。", "c3_tag1": "1 步完成", "c3_tag2": "1 次签名", "c3_tag3": "40+ 链支持",
-    "c4_title": "智能兑换", "c4_desc": "聚合 500+ DEX 和做市商，多路径拆单寻找最优价格，滑点和 MEV 保护内置。10 万美元的大额单也能拆成最优路径。", "c4_tag1": "500+ DEX", "c4_tag2": "MEV 保护", "c4_tag3": "智能拆单"
-  },
-  "earn": {
-    "eyebrow": "钱在你睡觉时也在工作",
-    "title1": "每一秒，余额都在", "title2": "自动生息", "title3": "。",
-    "desc": "你不需要打开 App、不需要手动申购、不需要盯盘。余额进入账户的那一刻，生息就已经开始。",
-    "b1": "每秒计息", "b1_sub": "，收益每日自动结转到账户，复利滚动。",
-    "b2": "消费时自动赎回", "b2_sub": "，刷卡金额才离开生息池，其余部分继续产生收益。",
-    "b3": "无锁定期", "b3_sub": "，随时可取、可转、可花，收益不会被冻结。",
-    "cta": "开启自动生息",
-    "card1": "Auto Earnings", "card2": "当前年化收益率", "card2_sub": "Stablecoin APY · 每日复利",
-    "card3": "本月已结算", "card3_sub": "正在产生收益", "spark": "结算周期"
-  },
-  "transfer": {
-    "eyebrow": "极速转账", "title": "稳定币汇入本地银行，秒级到账。",
-    "desc": "不是“1–3 个工作日”。不是“扣除电汇费后到账”。你的 USDC 会在几秒内兑换成当地法币，直接汇入收款银行账户。",
-    "stat1": "平均到账时间", "stat2": "起始汇款费率", "stat3": "本地法币通道", "stat4": "全年无休结算"
-  },
-  "pain": {
-    "eyebrow": "为什么换一张卡", "title": "大多数加密卡，让你在刷卡时付出三种代价。", "desc": "持有稳定币的人不是不想花，而是每次花都像在做一次被迫的交易。",
-    "p1_t": "刷卡前，先卖一次币", "p1_d": "钱在链上，卡在链下。为了买一杯咖啡，你得先把它换成法币，再等它到账。",
-    "p2_t": "汇率由卡商决定，不由市场", "p2_d": "入金费率、兑换价差、跨境附加费，三笔成本叠在一起，你在付款前算不清。",
-    "p3_t": "钱在卡里，一分不生", "p3_d": "余额躺在账户里等待被花掉，这段时间它什么都不做，还要承担贬值。"
-  },
-  "flow": {
-    "eyebrow": "它怎么做到的", "title": "三步，钱在花出去之前一直在工作。", "desc": "不是把资产卖掉换一张卡，而是让资产在消费的最后一刻才离开生息状态。",
-    "s1_t": "低成本入金", "s1_d": "通过本地 P2P 通道，用本地法币直接买入 USDC 进入账户，跳过交易所提币的多次摩擦。", "s1_tag": "P2P 通道费 0",
-    "s2_t": "消费前持续生息", "s2_d": "余额进入生息账户，在清算发生前每一秒都在产生收益，按日结算，随取随用。", "s2_tag": "年化 4% – 8%",
-    "s3_t": "刷卡自动清算", "s3_d": "授权瞬间从生息账户赎回所需金额完成支付，清算后差额自动回到生息池，并发放返现。", "s3_tag": "单笔交易费 0.90%"
-  },
-  "fee": {
-    "eyebrow": "费用，写在明面上", "title1": "你会在开卡前", "title2": "就知道每一笔花多少。", "desc": "没有“低费率”这种说法，只有具体数字。",
-    "t1": "资金由持牌金融机构托管，支付清算账户与生息资产隔离。", "t2": "生息产品由持牌第三方发行，平台只做展示与路由，不触碰资产所有权。", "t3": "每笔授权与清算均可在账户内追溯到原始记录。",
-    "r1": "年费 / 开卡费 / 销卡费", "r2": "交易手续费", "r3": "非 USD 跨境交易附加费", "r4": "本地 P2P 入金通道费", "r5": "生息账户管理费", "r6": "消费返现", "r6_v": "按等级 2% – 12%"
-  },
-  "security": {
-    "eyebrow": "安全，是默认设置", "title": "你的资产安全，不需要你额外操心。", "desc": "从密钥生成到每一笔授权，安全防护贯穿全链路。不是让你“小心一点”，而是让风险从一开始就无处发生。",
-    "s1_t": "硬件级密钥", "s1_d": "私钥在设备的安全芯片内生成和保管，永远不会以明文形式出现在网络中。自托管意味着——只有你能动用你的资产。",
-    "s2_t": "用户保护基金", "s2_d": "由独立托管方保管的 $7 亿用户保护基金，链上地址公开可查。当极端事件发生时，用户的第一时间损失由基金覆盖。",
-    "s3_t": "实时风控 + 客服", "s3_d": "交易实时监控，异常地址自动拦截；钓鱼网站数据库持续更新。任何时区、任何时间，都能找到真人客服。"
-  },
+  "hero": { "badge": "Visa 虚拟卡 · 限时免年费", "title1": "你的 USDC", "title2": "本来就不该", "title3": "躺着不动", "title4": "。", "desc1": "一张 Visa 卡，让稳定币在消费前", "desc2": "继续生息", "desc3": "，刷卡时自动清算，花完还有", "desc4": "返现", "desc5": "。不卖币，也能花。", "cta": "领取虚拟卡 · 免年费", "fineprint": "开卡免费，首笔消费后按 0.90% 收取交易费。无月费、无隐藏费用。", "scroll": "Scroll" },
+  "stats": { "users": "全球用户", "fund": "用户保护基金", "chains": "支持公链", "merchants": "全球受理商户" },
+  "showcase": { "eyebrow": "你拿到的那张卡", "title": "一张会在你消费时，替你管理生息仓位的卡。", "tag1": "生息收益", "tag1_sub": "今日", "tag2": "刷卡自动清算" },
+  "wallet": { "eyebrow": "不止是一张卡", "title": "你得到的，是一个完整的链上钱包。", "desc": "卡只是入口。背后是 130+ 公链、100 万+ 代币、500+ DEX 聚合的完整钱包能力，以及一个让余额持续生息的账户底座。", "c1_title": "多链钱包", "c1_desc": "一个助记词管理 130+ 公链上的 100 万+ 代币。Ethereum、Solana、BNB Chain、Base、Arbitrum 原生支持，新链上线即接入。", "c1_tag1": "130+ 公链", "c1_tag2": "100 万+ 代币", "c1_tag3": "硬件级密钥", "c2_title": "实时生息", "c2_desc": "稳定币和主流币的余额默认进入生息池，消费前每一秒都在产生收益。按日结算，随时可取，年化 4%–8%。", "c2_tag1": "年化 4%–8%", "c2_tag2": "按日结算", "c2_tag3": "随存随取", "c3_title": "无 Gas 跨链", "c3_desc": "基于 EIP-7702 与聚合桥，一笔签名完成跨链，Gas 从输入代币里自动扣除。不再为每条链单独准备原生代币。", "c3_tag1": "1 步完成", "c3_tag2": "1 次签名", "c3_tag3": "40+ 链支持", "c4_title": "智能兑换", "c4_desc": "聚合 500+ DEX 和做市商，多路径拆单寻找最优价格，滑点和 MEV 保护内置。10 万美元的大额单也能拆成最优路径。", "c4_tag1": "500+ DEX", "c4_tag2": "MEV 保护", "c4_tag3": "智能拆单" },
+  "earn": { "eyebrow": "钱在你睡觉时也在工作", "title1": "每一秒，余额都在", "title2": "自动生息", "title3": "。", "desc": "你不需要打开 App、不需要手动申购、不需要盯盘。余额进入账户的那一刻，生息就已经开始。", "b1": "每秒计息", "b1_sub": "，收益每日自动结转到账户，复利滚动。", "b2": "消费时自动赎回", "b2_sub": "，刷卡金额才离开生息池，其余部分继续产生收益。", "b3": "无锁定期", "b3_sub": "，随时可取、可转、可花，收益不会被冻结。", "cta": "开启自动生息", "card1": "Auto Earnings", "card2": "当前年化收益率", "card2_sub": "Stablecoin APY · 每日复利", "card3": "本月已结算", "card3_sub": "正在产生收益", "spark": "结算周期" },
+  "transfer": { "eyebrow": "极速转账", "title": "稳定币汇入本地银行，秒级到账。", "desc": "不是“1–3 个工作日”。不是“扣除电汇费后到账”。你的 USDC 会在几秒内兑换成当地法币，直接汇入收款银行账户。", "stat1": "平均到账时间", "stat2": "起始汇款费率", "stat3": "本地法币通道", "stat4": "全年无休结算" },
+  "pain": { "eyebrow": "为什么换一张卡", "title": "大多数加密卡，让你在刷卡时付出三种代价。", "desc": "持有稳定币的人不是不想花，而是每次花都像在做一次被迫的交易。", "p1_t": "刷卡前，先卖一次币", "p1_d": "钱在链上，卡在链下。为了买一杯咖啡，你得先把它换成法币，再等它到账。", "p2_t": "汇率由卡商决定，不由市场", "p2_d": "入金费率、兑换价差、跨境附加费，三笔成本叠在一起，你在付款前算不清。", "p3_t": "钱在卡里，一分不生", "p3_d": "余额躺在账户里等待被花掉，这段时间它什么都不做，还要承担贬值。" },
+  "flow": { "eyebrow": "它怎么做到的", "title": "三步，钱在花出去之前一直在工作。", "desc": "不是把资产卖掉换一张卡，而是让资产在消费的最后一刻才离开生息状态。", "s1_t": "低成本入金", "s1_d": "通过本地 P2P 通道，用本地法币直接买入 USDC 进入账户，跳过交易所提币的多次摩擦。", "s1_tag": "P2P 通道费 0", "s2_t": "消费前持续生息", "s2_d": "余额进入生息账户，在清算发生前每一秒都在产生收益，按日结算，随取随用。", "s2_tag": "年化 4% – 8%", "s3_t": "刷卡自动清算", "s3_d": "授权瞬间从生息账户赎回所需金额完成支付，清算后差额自动回到生息池，并发放返现。", "s3_tag": "单笔交易费 0.90%" },
+  "fee": { "eyebrow": "费用，写在明面上", "title1": "你会在开卡前", "title2": "就知道每一笔花多少。", "desc": "没有“低费率”这种说法，只有具体数字。", "t1": "资金由持牌金融机构托管，支付清算账户与生息资产隔离。", "t2": "生息产品由持牌第三方发行，平台只做展示与路由，不触碰资产所有权。", "t3": "每笔授权与清算均可在账户内追溯到原始记录。", "r1": "年费 / 开卡费 / 销卡费", "r2": "交易手续费", "r3": "非 USD 跨境交易附加费", "r4": "本地 P2P 入金通道费", "r5": "生息账户管理费", "r6": "消费返现", "r6_v": "按等级 2% – 12%" },
+  "security": { "eyebrow": "安全，是默认设置", "title": "你的资产安全，不需要你额外操心。", "desc": "从密钥生成到每一笔授权，安全防护贯穿全链路。不是让你“小心一点”，而是让风险从一开始就无处发生。", "s1_t": "硬件级密钥", "s1_d": "私钥在设备的安全芯片内生成和保管，永远不会以明文形式出现在网络中。自托管意味着——只有你能动用你的资产。", "s2_t": "用户保护基金", "s2_d": "由独立托管方保管的 $7 亿用户保护基金，链上地址公开可查。当极端事件发生时，用户的第一时间损失由基金覆盖。", "s3_t": "实时风控 + 客服", "s3_d": "交易实时监控，异常地址自动拦截；钓鱼网站数据库持续更新。任何时区、任何时间，都能找到真人客服。" },
   "partners": { "title": "与全球顶尖的金融机构与加密生态同行" },
   "community": { "eyebrow": "100M+ 用户的选择", "title": "来自新加坡、曼谷、吉隆坡、圣保罗的声音。", "desc": "自由职业者、远程工作者、跨境卖家、长期持有者——他们选择 NEXA 的理由，都不太一样。" },
-  "quotes": {
-    "eyebrow": "已经有人在用", "title": "他们说清楚的，不是产品多好，而是省掉了什么。",
-    "q1": "“以前每刷一次卡，都要先在交易所卖一次币。现在余额放着不动，刷卡时它自己处理掉了。”", "q1_a": "自由职业者 · 新加坡",
-    "q2": "“最有用的是那笔待清算的授权。以前不知道钱为什么少了，现在能看到它什么时候回来。”", "q2_a": "远程工作者 · 曼谷",
-    "q3": "“入金没绕路，汇率也不是卡商说了算。这两件事加起来，才让我愿意换掉原来那张。”", "q3_a": "跨境卖家 · 吉隆坡"
-  },
-  "faq": {
-    "eyebrow": "还有疑问？", "title": "你可能会问的几个问题。",
-    "q1": "NEXA 和普通的加密卡有什么区别？", "a1": "普通加密卡要求你先卖出资产才能消费，NEXA 让你的余额在消费前持续生息，刷卡瞬间才从生息池赎回所需金额。其余部分继续产生收益，清算后差额自动回到生息池。",
-    "q2": "我的 USDC 放在 NEXA，安全吗？", "a2": "资金由持牌金融机构托管，支付清算账户与生息资产严格隔离。生息产品由持牌第三方发行，平台只做展示与路由，不触碰你的资产所有权。同时共享 $7 亿用户保护基金。",
-    "q3": "生息收益怎么算？会随时停止吗？", "a3": "生息按日结算，年化 4%–8%，收益自动复投。没有锁定期，随存随取。收益率会根据市场状况浮动，但不会因为单笔消费而中断——只有实际支付金额才离开生息池。",
-    "q4": "虚拟卡可以在哪些地方使用？", "a4": "NEXA 虚拟卡由 Visa 网络签发，全球 1.5 亿+ 受理商户可用。支持线上订阅、线下感应支付、Apple Pay、Google Pay，以及绑定支付宝、微信支付。",
-    "q5": "开卡需要多久？有年费吗？", "a5": "完成身份验证后，虚拟卡在 20 秒内生成并激活。年费 $0、开卡费 $0、销卡费 $0，仅在消费时收取 0.90% 交易手续费（非 USD 跨境交易另加 1%）。",
-    "q6": "如果卡片丢失或被盗刷怎么办？", "a6": "卡片可在 App 内一键冻结或注销，冻结后所有新交易立即停止，余额不受影响。每笔交易默认开启生物识别二次确认，非本人操作会自动拦截。若发生盗刷，24/7 客服可协助追溯和追回。"
-  },
+  "quotes": { "eyebrow": "已经有人在用", "title": "他们说清楚的，不是产品多好，而是省掉了什么。", "q1": "“以前每刷一次卡，都要先在交易所卖一次币。现在余额放着不动，刷卡时它自己处理掉了。”", "q1_a": "自由职业者 · 新加坡", "q2": "“最有用的是那笔待清算的授权。以前不知道钱为什么少了，现在能看到它什么时候回来。”", "q2_a": "远程工作者 · 曼谷", "q3": "“入金没绕路，汇率也不是卡商说了算。这两件事加起来，才让我愿意换掉原来那张。”", "q3_a": "跨境卖家 · 吉隆坡" },
+  "faq": { "eyebrow": "还有疑问？", "title": "你可能会问的几个问题。", "q1": "NEXA 和普通的加密卡有什么区别？", "a1": "普通加密卡要求你先卖出资产才能消费，NEXA 让你的余额在消费前持续生息，刷卡瞬间才从生息池赎回所需金额。其余部分继续产生收益，清算后差额自动回到生息池。", "q2": "我的 USDC 放在 NEXA，安全吗？", "a2": "资金由持牌金融机构托管，支付清算账户与生息资产严格隔离。生息产品由持牌第三方发行，平台只做展示与路由，不触碰你的资产所有权。同时共享 $7 亿用户保护基金。", "q3": "生息收益怎么算？会随时停止吗？", "a3": "生息按日结算，年化 4%–8%，收益自动复投。没有锁定期，随存随取。收益率会根据市场状况浮动，但不会因为单笔消费而中断——只有实际支付金额才离开生息池。", "q4": "虚拟卡可以在哪些地方使用？", "a4": "NEXA 虚拟卡由 Visa 网络签发，全球 1.5 亿+ 受理商户可用。支持线上订阅、线下感应支付、Apple Pay、Google Pay，以及绑定支付宝、微信支付。", "q5": "开卡需要多久？有年费吗？", "a5": "完成身份验证后，虚拟卡在 20 秒内生成并激活。年费 $0、开卡费 $0、销卡费 $0，仅在消费时收取 0.90% 交易手续费（非 USD 跨境交易另加 1%）。", "q6": "如果卡片丢失或被盗刷怎么办？", "a6": "卡片可在 App 内一键冻结或注销，冻结后所有新交易立即停止，余额不受影响。每笔交易默认开启生物识别二次确认，非本人操作会自动拦截。若发生盗刷，24/7 客服可协助追溯和追回。" },
   "final": { "title": "现在领卡，你的第一笔消费就开始生息。", "desc": "开卡免费，虚拟卡即时发放。首笔消费后才产生交易费用，随时可以停用。", "cta": "领取虚拟卡 · 免年费", "n1": "本期名额剩余", "n2": "个 · 无需充值即可提交申请" },
-  "footer": {
-    "copy": "© 2026 NEXA. All rights reserved.", "l1": "服务条款", "l2": "隐私政策", "l3": "风险披露", "l4": "牌照信息",
-    "disc": "风险提示：加密资产价格波动剧烈，生息产品的收益不构成任何形式的回报承诺。本服务仅在支持该服务的司法管辖区提供，具体可用性以申请时的地区判定为准。支付卡由合作持牌机构发行，NEXA 提供前端技术服务。请在充分了解相关风险后使用。"
-  },
-  "apply": {
-    "m_title": "领取你的 NEXA Visa 虚拟卡", "m_desc": "30 秒完成，开卡免费。这不是一张普通的卡——它让你的稳定币在消费前持续生息。",
-    "m_li1": "0 年费 · 0 开卡费", "m_li1_d": "，仅 0.90% 交易手续费", "m_li2": "2% 消费返现", "m_li2_d": "，可选 BTC、黄金或 USDC 发放", "m_li3": "消费前持续生息", "m_li3_d": "，年化 4% – 8%",
-    "m_cta": "开始领取", "m_foot": "已服务 1.5 亿 Visa 商户 · $700M 用户保护基金",
-    "s1_t": "创建你的 NEXA 账户", "s1_d": "注册后即可领取 Visa 虚拟卡。开卡免费、无需充值，首笔消费后才产生交易费。",
-    "s1_div": "或使用邮箱注册", "s1_email": "邮箱地址", "s1_email_e": "请输入有效的邮箱地址", "s1_pwd": "设置密码（至少 8 位，含字母与数字）", "s1_pwd_e": "密码至少 8 位，且需包含字母与数字", "s1_ref": "邀请码（选填）", "s1_btn": "创建账户",
-    "s1_t1": "密码 AES-256 加密", "s1_t2": "不存储明文密码", "s1_t3": "符合 KYC 与 AML 标准",
-    "s2_t": "你正在一个被验证过的网络里", "s2_d": "NEXA 的清算、托管与发卡能力，由以下机构共同支撑。你的资金与卡片，不会孤立存在。",
-    "s2_tab1": "币圈生态", "s2_tab2": "银行与支付", "s2_tab3": "全球商家", "s2_stat1": "Visa 全球受理商户", "s2_stat2": "用户保护基金", "s2_stat3": "支持的区块链网络", "s2_stat4": "可申请发卡的国家与地区", "s2_btn": "继续领取虚拟卡",
-    "s3_t": "你的虚拟卡正在生成", "s3_d": "卡片由 Visa 网络签发，激活后可在全球 1.5 亿商户使用，支持 Apple Pay 与 Google Pay。",
-    "s3_sec1": "卡号在生成时即用 AES-256 加密存储，平台无法读取明文", "s3_sec2": "CVV 为动态生成，每 24 小时自动刷新一次", "s3_sec3": "每笔交易需生物识别二次确认，盗刷可即时冻结", "s3_btn": "确认领取并生成卡片",
-    "s4_t": "正在完成安全合规审核", "s4_d": "你的卡片正在通过以下 4 项检查，通常需要 20 秒。请保持当前页面打开。",
-    "s4_c1": "身份信息核验", "s4_c2": "制裁名单与 PEP 筛查", "s4_c3": "反洗钱风险评估", "s4_c4": "Visa 发卡网络确认",
-    "s4_note": "你的资料通过 端到端加密通道 传输至持牌合作方。审核完成后，明文副本会在 24 小时内销毁，仅保留合规所需的加密摘要。整个过程不涉及人工读取。",
-    "s5_t": "你的卡片已通过审核", "s5_d": "请核对卡号信息，并完成持卡人身份绑定。绑定后卡片即可正常消费。",
-    "s5_card": "卡号", "s5_copy": "复制", "s5_exp": "有效期", "s5_cvv": "CVV", "s5_show": "显示", "s5_org": "卡组织", "s5_org_v": "Visa · 虚拟卡",
-    "s5_name": "持卡人姓名（与证件一致）", "s5_name_e": "请输入持卡人真实姓名", "s5_birth": "出生日期", "s5_birth_e": "请选择出生日期", "s5_country": "选择国家 / 地区", "s5_country_e": "请选择国家或地区",
-    "s5_idtype": "证件类型", "s5_idtype_e": "请选择证件类型", "s5_idnum": "证件号码", "s5_idnum_e": "请输入证件号码", "s5_btn": "完成身份绑定",
-    "s6_t": "卡片已激活", "s6_d": "你的 NEXA Visa 虚拟卡已经可以使用。绑定 Apple Pay 或 Google Pay 后，即可在全球商户消费。", "s6_email": "卡片已绑定至",
-    "s6_b1": "2% 基础返现", "s6_b1_d": " · 消费后以 BTC、黄金或 USDC 发放", "s6_b2": "0 年费、0 开卡费", "s6_b2_d": " · 仅收取 0.90% 交易手续费", "s6_b3": "实时生息", "s6_b3_d": " · 消费前余额持续产生收益",
-    "s6_btn1": "进入我的账户", "s6_btn2": "返回查看卡片信息"
-  }
+  "footer": { "copy": "© 2026 NEXA. All rights reserved.", "l1": "服务条款", "l2": "隐私政策", "l3": "风险披露", "l4": "牌照信息", "disc": "风险提示：加密资产价格波动剧烈，生息产品的收益不构成任何形式的回报承诺。本服务仅在支持该服务的司法管辖区提供，具体可用性以申请时的地区判定为准。支付卡由合作持牌机构发行，NEXA 提供前端技术服务。请在充分了解相关风险后使用。" },
+  "apply": { "m_title": "领取你的 NEXA Visa 虚拟卡", "m_desc": "30 秒完成，开卡免费。这不是一张普通的卡——它让你的稳定币在消费前持续生息。", "m_li1": "0 年费 · 0 开卡费", "m_li1_d": "，仅 0.90% 交易手续费", "m_li2": "2% 消费返现", "m_li2_d": "，可选 BTC、黄金或 USDC 发放", "m_li3": "消费前持续生息", "m_li3_d": "，年化 4% – 8%", "m_cta": "开始领取", "m_foot": "已服务 1.5 亿 Visa 商户 · $700M 用户保护基金", "s1_t": "创建你的 NEXA 账户", "s1_d": "注册后即可领取 Visa 虚拟卡。开卡免费、无需充值，首笔消费后才产生交易费。", "s1_div": "或使用邮箱注册", "s1_email": "邮箱地址", "s1_email_e": "请输入有效的邮箱地址", "s1_pwd": "设置密码（至少 8 位，含字母与数字）", "s1_pwd_e": "密码至少 8 位，且需包含字母与数字", "s1_ref": "邀请码（选填）", "s1_btn": "创建账户", "s1_t1": "密码 AES-256 加密", "s1_t2": "不存储明文密码", "s1_t3": "符合 KYC 与 AML 标准", "s2_t": "你正在一个被验证过的网络里", "s2_d": "NEXA 的清算、托管与发卡能力，由以下机构共同支撑。你的资金与卡片，不会孤立存在。", "s2_tab1": "币圈生态", "s2_tab2": "银行与支付", "s2_tab3": "全球商家", "s2_stat1": "Visa 全球受理商户", "s2_stat2": "用户保护基金", "s2_stat3": "支持的区块链网络", "s2_stat4": "可申请发卡的国家与地区", "s2_btn": "继续领取虚拟卡", "s3_t": "你的虚拟卡正在生成", "s3_d": "卡片由 Visa 网络签发，激活后可在全球 1.5 亿商户使用，支持 Apple Pay 与 Google Pay。", "s3_sec1": "卡号在生成时即用 AES-256 加密存储，平台无法读取明文", "s3_sec2": "CVV 为动态生成，每 24 小时自动刷新一次", "s3_sec3": "每笔交易需生物识别二次确认，盗刷可即时冻结", "s3_btn": "确认领取并生成卡片", "s4_t": "正在完成安全合规审核", "s4_d": "你的卡片正在通过以下 4 项检查，通常需要 20 秒。请保持当前页面打开。", "s4_c1": "身份信息核验", "s4_c2": "制裁名单与 PEP 筛查", "s4_c3": "反洗钱风险评估", "s4_c4": "Visa 发卡网络确认", "s4_note": "你的资料通过 端到端加密通道 传输至持牌合作方。审核完成后，明文副本会在 24 小时内销毁，仅保留合规所需的加密摘要。整个过程不涉及人工读取。", "s5_t": "你的卡片已通过审核", "s5_d": "请核对卡号信息，并完成持卡人身份绑定。绑定后卡片即可正常消费。", "s5_card": "卡号", "s5_copy": "复制", "s5_exp": "有效期", "s5_cvv": "CVV", "s5_show": "显示", "s5_org": "卡组织", "s5_org_v": "Visa · 虚拟卡", "s5_name": "持卡人姓名（与证件一致）", "s5_name_e": "请输入持卡人真实姓名", "s5_birth": "出生日期", "s5_birth_e": "请选择出生日期", "s5_country": "选择国家 / 地区", "s5_country_e": "请选择国家或地区", "s5_idtype": "证件类型", "s5_idtype_e": "请选择证件类型", "s5_idnum": "证件号码", "s5_idnum_e": "请输入证件号码", "s5_btn": "完成身份绑定", "s6_t": "卡片已激活", "s6_d": "你的 NEXA Visa 虚拟卡已经可以使用。绑定 Apple Pay 或 Google Pay 后，即可在全球商户消费。", "s6_email": "卡片已绑定至", "s6_b1": "2% 基础返现", "s6_b1_d": " · 消费后以 BTC、黄金或 USDC 发放", "s6_b2": "0 年费、0 开卡费", "s6_b2_d": " · 仅收取 0.90% 交易手续费", "s6_b3": "实时生息", "s6_b3_d": " · 消费前余额持续产生收益", "s6_btn1": "进入我的账户", "s6_btn2": "返回查看卡片信息" }
 };
 
 const COMMON_LANGS = [
@@ -348,12 +241,19 @@ const COMMON_LANGS = [
   { code: "id", name: "Bahasa Indonesia" }, { code: "ar", name: "العربية" }
 ];
 
-// 全局状态
 let currentLangs = [];
 let currentEditLangCode = "";
 let globalDict = {};
+let isGlobalTranslating = false;
 
-// API 请求封装
+// Toast 提示组件
+function showToast(msg) {
+  const toast = document.getElementById('globalToast');
+  toast.textContent = msg;
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 3000);
+}
+
 async function fetchData() {
     try {
         const res = await fetch('/api/data');
@@ -373,7 +273,6 @@ async function saveData() {
     renderLangTable();
 }
 
-// 登录与导航
 function doLogin() {
   const pwd = document.getElementById('login-pwd').value;
   const savedPwd = localStorage.getItem('nexa_admin_pwd') || 'admin888';
@@ -395,7 +294,6 @@ function logout() {
 }
 
 async function initData() {
-    // 回填 API Key 和密码
     document.getElementById('set-deepl-key').value = localStorage.getItem('nexa_deepl_key') || '';
 
     const data = await fetchData();
@@ -415,7 +313,6 @@ async function initData() {
     document.getElementById('global-dict-editor').value = JSON.stringify(globalDict, null, 2);
 }
 
-// 页面加载时检查登录状态
 window.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('nexa_admin_logged') === 'true') {
         document.getElementById('login-screen').style.display = 'none';
@@ -433,7 +330,6 @@ function switchTab(tabId) {
   event.target.classList.add('active');
 }
 
-// 表格渲染
 function renderLangTable() {
   const tbody = document.getElementById('lang-tbody');
   tbody.innerHTML = '';
@@ -442,7 +338,15 @@ function renderLangTable() {
   currentLangs.forEach((lang) => {
     const dictCount = lang.dict ? Object.keys(lang.dict).length : 0;
     const coverage = totalTexts > 0 ? Math.round((dictCount / totalTexts) * 100) : 0;
-    const statusHtml = coverage === 100 ? `<span style="color:var(--success)">已全部翻译</span>` : `<span style="color:var(--danger)">已翻译 ${coverage}%</span>`;
+    
+    let statusHtml = "";
+    if (lang.code === 'zh') {
+      statusHtml = `<span style="color:var(--success)">默认语言</span>`;
+    } else if (coverage >= 100) {
+      statusHtml = `<span style="color:var(--success)">已全部翻译</span>`;
+    } else {
+      statusHtml = `<span style="color:var(--danger)">已翻译 ${coverage}%</span>`;
+    }
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -452,14 +356,13 @@ function renderLangTable() {
       <td>${statusHtml}</td>
       <td class="actions">
         <span onclick="editLangJson('${lang.code}')">编辑字典</span>
-        <span onclick="translateLang('${lang.code}')">补齐翻译</span>
+        ${lang.code !== 'zh' ? `<span onclick="translateSingleLang('${lang.code}')">补齐翻译</span>` : ''}
       </td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-// 添加语言
 async function addSingleLang() {
   const code = document.getElementById('new-lang-code').value.trim();
   const name = document.getElementById('new-lang-name').value.trim();
@@ -491,7 +394,6 @@ async function confirmBatchLang() {
   closeModal('modal-batch-lang');
 }
 
-// 字典编辑与翻译
 function editLangJson(code) {
   const lang = currentLangs.find(l => l.code === code);
   currentEditLangCode = code;
@@ -532,13 +434,10 @@ function flattenValues(obj, result = []) {
   return result;
 }
 
-// 翻译逻辑
 async function fetchTranslation(text, targetLang) {
   if (!text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return text;
-  
   const deeplKey = localStorage.getItem('nexa_deepl_key');
   
-  // 如果用户配置了 DeepL Key，优先尝试
   if (deeplKey) {
     try {
       const res = await fetch(`https://api-free.deepl.com/v2/translate`, {
@@ -555,7 +454,6 @@ async function fetchTranslation(text, targetLang) {
     }
   }
 
-  // 默认免费 Google 翻译
   try {
     const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`);
     const data = await res.json();
@@ -563,7 +461,8 @@ async function fetchTranslation(text, targetLang) {
   } catch (e) { return text; }
 }
 
-async function translateLang(code) {
+// 单个语言点击补齐（带弹窗）
+async function translateSingleLang(code) {
   const lang = currentLangs.find(l => l.code === code);
   currentEditLangCode = code;
   
@@ -571,7 +470,6 @@ async function translateLang(code) {
   let translatedDict = lang.dict || {};
   const tLang = code.split('-')[0];
 
-  // 只提取出真正缺失的中文词条（过滤掉纯数字、符号、中文，以及已经存在非空翻译的）
   const missingTexts = textsToTranslate.filter(text => {
     if (!text || !text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return false;
     if (translatedDict[text] && translatedDict[text].trim() !== "") return false;
@@ -580,7 +478,7 @@ async function translateLang(code) {
 
   if (missingTexts.length === 0) {
     alert(`${lang.name} 已经是全量翻译状态，无需更新。`);
-    return; // 直接退出，不弹 loading
+    return; 
   }
 
   document.getElementById('edit-modal-title').innerText = `翻译中: ${lang.name} (${lang.code})`;
@@ -604,34 +502,74 @@ async function translateLang(code) {
   document.getElementById('edit-modal-title').innerText = `翻译完成: ${lang.name}`;
 }
 
+// 纯核心翻译（无 UI 操作）
+async function performTranslate(lang) {
+  const textsToTranslate = flattenValues(globalDict);
+  let translatedDict = lang.dict || {};
+  const tLang = lang.code.split('-')[0];
+
+  const missingTexts = textsToTranslate.filter(text => {
+    if (!text || !text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return false;
+    if (translatedDict[text] && translatedDict[text].trim() !== "") return false;
+    return true;
+  });
+
+  if (missingTexts.length === 0) return false; // 没有缺失，返回 false
+
+  for (let i = 0; i < missingTexts.length; i++) {
+    const text = missingTexts[i];
+    const translated = await fetchTranslation(text, tLang);
+    translatedDict[text] = translated;
+  }
+
+  lang.dict = translatedDict;
+  return true; // 进行了翻译，返回 true
+}
+
+// 全局一键翻译（静默执行，不弹窗，不包含中文）
 async function globalTranslate() {
-  if(!confirm('确定要自动补齐所有语言的缺失翻译吗？')) return;
-  let totalTranslated = 0;
-  for(let i=0; i<currentLangs.length; i++) {
-    const lang = currentLangs[i];
-    if(lang.code !== 'zh') {
-      // 先算算有没有缺失，没有就不弹窗
-      const totalTexts = flattenValues(globalDict);
-      const missing = totalTexts.filter(text => {
-        if (!text || !text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return false;
-        if (lang.dict && lang.dict[text] && lang.dict[text].trim() !== "") return false;
-        return true;
-      });
+  if (isGlobalTranslating) return;
+  
+  if(!confirm('确定要自动补齐所有语言的缺失翻译吗？（已全部翻译的语言会自动跳过）')) return;
+  
+  isGlobalTranslating = true;
+  const btn = document.getElementById('globalTransBtn');
+  const origText = btn.innerHTML;
+  btn.innerHTML = '⏳ 正在后台翻译...';
+  btn.disabled = true;
+
+  let translatedAny = false;
+  
+  try {
+    // 遍历所有语言（跳过 zh）
+    for (let i = 0; i < currentLangs.length; i++) {
+      const lang = currentLangs[i];
+      if (lang.code === 'zh') continue; // 过滤默认中文
+
+      showToast(`正在翻译: ${lang.name}...`);
+      const didTranslate = await performTranslate(lang);
       
-      if (missing.length > 0) {
-        await translateLang(lang.code);
-        totalTranslated++;
+      if (didTranslate) {
+        translatedAny = true;
+        await saveData(); // 每处理完一个语言保存一次
       }
     }
-  }
-  if (totalTranslated === 0) {
-    alert('所有语言都已翻译完毕，无需更新！');
-  } else {
-    alert('全站缺失翻译已自动补齐完毕！');
+
+    if (translatedAny) {
+      showToast('✅ 所有缺失语言已自动补齐翻译！');
+    } else {
+      showToast('✅ 所有语言均已全量翻译，无需更新！');
+    }
+  } catch (e) {
+    console.error(e);
+    alert('翻译过程中发生错误，请重试。');
+  } finally {
+    isGlobalTranslating = false;
+    btn.innerHTML = origText;
+    btn.disabled = false;
   }
 }
 
-// 系统配置
 function saveSettings() {
   const newPwd = document.getElementById('set-admin-pwd').value;
   const deeplKey = document.getElementById('set-deepl-key').value;
