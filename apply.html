@@ -769,6 +769,23 @@
 </head>
 <body class="modal-open">
 
+<!-- 多语言防闪烁遮罩层 -->
+<div id="i18n-loader" style="display: none; position: fixed; inset: 0; z-index: 99999; background: #05080c; place-items: center; transition: opacity 0.3s ease;">
+  <div style="width: 40px; height: 40px; border: 3px solid rgba(0, 240, 255, 0.2); border-top-color: #00f0ff; border-radius: 50%; animation: i18n-spin 1s linear infinite;"></div>
+</div>
+<style>
+  @keyframes i18n-spin { to { transform: rotate(360deg); } }
+</style>
+<script>
+  (function() {
+    var lang = localStorage.getItem('nexa_manual_lang');
+    if (lang && lang !== 'zh') {
+      var loader = document.getElementById('i18n-loader');
+      if (loader) loader.style.display = 'grid';
+    }
+  })();
+</script>
+
 <div class="bg" aria-hidden="true">
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
