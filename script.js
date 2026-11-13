@@ -4,7 +4,7 @@
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* =========================================
-     1. 原有交互：滚动导航、鼠标光斑、卡片跳动等
+     1. 页面原有交互（滚动、光斑、动画等）
      ========================================= */
   const topbar = document.getElementById("topbar");
   window.addEventListener("scroll", () => {
@@ -45,6 +45,7 @@
     revealEls.forEach((el) => io.observe(el));
   }
 
+  // 余额与收益动画
   const balanceEl = document.getElementById("ccBalance");
   if (balanceEl && !reduceMotion) {
     let base = 8420.5;
@@ -77,6 +78,7 @@
     }, 1000);
   }
 
+  // 动态渲染合作伙伴
   const partners = ["Visa", "Mastercard", "Circle", "Stripe", "Coinbase", "Bitget", "Binance", "OKX", "Tether", "Solana", "Ethereum", "Chainlink", "Aave", "Uniswap", "Fireblocks", "Chainalysis", "Elliptic", "Lead Bank"];
   const partnersTrack = document.getElementById("partnersTrack");
   if (partnersTrack) {
@@ -88,6 +90,7 @@
     });
   }
 
+  // 社区卡片渲染
   const communityCards = [
     { q: "刷卡前不用卖币，余额一直在生息。这是我等了三年的产品。", name: "Alex", tag: "自由设计师 · 新加坡", accent: "rgba(0, 240, 255, 0.2)" },
     { q: "以前每次收 USDT 都要先提到交易所，现在直接刷卡消费。", name: "Mia", tag: "远程工程师 · 曼谷", accent: "rgba(43, 214, 123, 0.2)" },
@@ -113,6 +116,7 @@
     communityCards.slice(half).concat(communityCards.slice(half)).forEach((item) => cRow2.appendChild(makeUCard(item)));
   }
 
+  // FAQ 手风琴
   document.querySelectorAll(".faq-q").forEach((btn) => {
     btn.addEventListener("click", () => {
       const item = btn.parentElement;
@@ -145,63 +149,68 @@
 
 
   /* =========================================
-     2. 全站翻译引擎 (核心)
+     2. 国际化 (i18n) 字典替换引擎
      ========================================= */
-  // 缓存机制：存储当前页面已翻译的文本字典
-  let translateCache = JSON.parse(localStorage.getItem('nexa_trans_cache') || '{}');
   
-  // 百度 / Google 免费翻译接口 (纯前端跨域调用)
-  async function fetchTranslate(text, targetLang) {
-    // 排除纯数字和符号
-    if (!text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return text; 
-    try {
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      return data[0].map(item => item[0]).join('');
-    } catch(e) {
-      console.warn("翻译请求失败:", text);
-      return text;
-    }
+  // 获取后台保存的语言配置
+  function getLangs() {
+    return JSON.parse(localStorage.getItem('nexa_langs') || '[]');
   }
 
-  // 递归遍历页面所有文字节点并替换
-  async function translateDOM(targetLang) {
+  // 动态渲染悬浮球菜单
+  function renderLangMenu() {
+    const dropdown = document.getElementById("langDropdown");
+    if (!dropdown) return;
+    
+    const langs = getLangs();
+    // 默认带有中文
+    let html = `<a href="#" onclick="changeLang('zh', event)">简体中文</a>`;
+    
+    langs.forEach(l => {
+      // 只有当后台配置了该语言，且字典不为空时才显示
+      if (l.code !== 'zh' && l.status !== false && l.dict && Object.keys(l.dict).length > 0) {
+        html += `<a href="#" onclick="changeLang('${l.code}', event)">${l.name}</a>`;
+      }
+    });
+    
+    dropdown.innerHTML = html;
+  }
+
+  // 核心逻辑：遍历 DOM 文本并根据字典替换
+  function applyTranslation(dict) {
+    if (!dict) return;
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     let node;
-    const nodesToTranslate = [];
-
     while (node = walker.nextNode()) {
       if (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE') continue;
+      
       const txt = node.nodeValue.trim();
-      // 只抓取包含中文的节点
-      if (txt && /[\u4e00-\u9fa5]/.test(txt)) {
-        nodesToTranslate.push({ node: node, text: txt });
+      // 如果字典里包含这段中文原文，直接替换
+      if (txt && dict[txt]) {
+        node.nodeValue = node.nodeValue.replace(txt, dict[txt]);
       }
     }
-
-    // 逐个翻译（避免并发过高被封IP，实际业务中可将文本拼装成数组批量请求）
-    for (let i = 0; i < nodesToTranslate.length; i++) {
-      const item = nodesToTranslate[i];
-      if (translateCache[item.text]) {
-        // 走缓存
-        item.node.nodeValue = item.node.nodeValue.replace(item.text, translateCache[item.text]);
-      } else {
-        // 真实请求
-        const translatedText = await fetchTranslate(item.text, targetLang);
-        if (translatedText !== item.text) {
-          translateCache[item.text] = translatedText;
-          item.node.nodeValue = item.node.nodeValue.replace(item.text, translatedText);
-        }
-      }
-    }
-    // 保存缓存
-    localStorage.setItem('nexa_trans_cache', JSON.stringify(translateCache));
   }
 
-  /* =========================================
-     3. 语言优先逻辑与切换器
-     ========================================= */
+  // 切换语言触发器
+  window.changeLang = function(lang, e) {
+    if (e) e.preventDefault();
+    document.getElementById("langDropdown").classList.remove("show");
+    localStorage.setItem('nexa_manual_lang', lang); // 记录用户选择
+    
+    if (lang === 'zh') {
+      location.reload(); // 切回中文直接刷新，恢复初始 HTML
+    } else {
+      const langs = getLangs();
+      const target = langs.find(l => l.code === lang);
+      if (target && target.dict) {
+        applyTranslation(target.dict);
+      } else {
+        console.warn("当前语言缺少字典数据，请去后台生成");
+      }
+    }
+  };
+
   window.toggleLangMenu = function(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -215,66 +224,44 @@
     }
   });
 
-  window.changeLang = function(lang, e) {
-    if (e) e.preventDefault();
-    document.getElementById("langDropdown").classList.remove("show");
-    localStorage.setItem('nexa_manual_lang', lang); // 记录手动选择
+  // 初始化入口：优先手动 > IP > 浏览器 > 英文
+  async function initI18n() {
+    renderLangMenu(); // 先渲染菜单
+
+    let lang = localStorage.getItem('nexa_manual_lang');
+    if (lang === 'zh') return; // 如果是中文不需要做任何处理
+
+    if (!lang) {
+      // IP 判断
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        const map = {'CN':'zh', 'TW':'zh-TW', 'HK':'zh-TW', 'US':'en', 'GB':'en', 'JP':'ja', 'KR':'ko', 'VN':'vi', 'DE':'de', 'FR':'fr', 'ES':'es', 'PT':'pt', 'IT':'it', 'RU':'ru', 'TR':'tr', 'TH':'th', 'ID':'id', 'NL':'nl', 'PL':'pl', 'SE':'sv'};
+        lang = map[data.country_code];
+      } catch(e) {}
+    }
     
-    if (lang === 'zh') {
-      // 如果切回中文，直接重载页面恢复原样
-      location.reload();
-    } else {
-      // 调用翻译引擎
-      translateDOM(lang);
-    }
-  };
-
-  // 初始化语言判断逻辑：手动 > IP > 浏览器 > 默认英文
-  async function initAutoLang() {
-    // 1. 检查手动设置
-    let manualLang = localStorage.getItem('nexa_manual_lang');
-    if (manualLang) {
-      if (manualLang !== 'zh') translateDOM(manualLang);
-      return;
+    // 浏览器降级
+    if (!lang) {
+      const navLang = (navigator.language || '').toLowerCase();
+      if (navLang.startsWith('zh')) lang = 'zh';
+      else if (navLang.startsWith('en')) lang = 'en';
+      else lang = navLang.split('-')[0];
     }
 
-    let detectedLang = '';
+    // 默认英文
+    if (!lang) lang = 'en';
 
-    // 2. 尝试 IP 定位 (调用公开 API)
-    try {
-      const ipRes = await fetch('https://ipapi.co/json/');
-      const ipData = await ipRes.json();
-      const countryMap = {
-        'CN': 'zh', 'TW': 'zh-TW', 'HK': 'zh-TW', 'US': 'en', 'GB': 'en', 
-        'JP': 'ja', 'KR': 'ko', 'VN': 'vi', 'DE': 'de', 'FR': 'fr', 
-        'ES': 'es', 'PT': 'pt', 'IT': 'it', 'RU': 'ru', 'TR': 'tr',
-        'TH': 'th', 'ID': 'id', 'NL': 'nl', 'PL': 'pl', 'SE': 'sv'
-      };
-      if (ipData.country_code && countryMap[ipData.country_code]) {
-        detectedLang = countryMap[ipData.country_code];
+    // 应用翻译
+    if (lang !== 'zh') {
+      const langs = getLangs();
+      const target = langs.find(l => l.code === lang || l.code.startsWith(lang));
+      if (target && target.dict) {
+        // 稍微延迟等待其他 DOM 渲染完毕
+        setTimeout(() => applyTranslation(target.dict), 300);
       }
-    } catch (e) {
-      console.log("IP 获取失败，降级使用浏览器语言");
-    }
-
-    // 3. 降级使用浏览器语言
-    if (!detectedLang) {
-      const navLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
-      if (navLang.startsWith('zh')) detectedLang = 'zh';
-      else if (navLang.startsWith('en')) detectedLang = 'en';
-      else if (navLang.startsWith('ja')) detectedLang = 'ja';
-      else if (navLang.startsWith('ko')) detectedLang = 'ko';
-      else if (navLang.startsWith('vi')) detectedLang = 'vi';
-      else detectedLang = 'en'; // 4. 默认英语
-    }
-
-    // 只要不是中文，就执行翻译
-    if (detectedLang && detectedLang !== 'zh') {
-      setTimeout(() => translateDOM(detectedLang), 800); // 延迟等待DOM渲染完
     }
   }
 
-  // 触发自动识别
-  initAutoLang();
-
+  initI18n();
 })();
