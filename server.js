@@ -24,7 +24,7 @@ app.post('/api/data', (req, res) => {
     res.json({ success: true });
 });
 
-// 新增：DeepL 翻译代理接口（解决前端 CORS 跨域问题，并自动识别免费/专业版）
+// 修改后的翻译代理接口：使用 Authorization Header 鉴权
 app.post('/api/translate', async (req, res) => {
     const { text, targetLang, deeplKey } = req.body;
     
@@ -33,7 +33,6 @@ app.post('/api/translate', async (req, res) => {
     }
 
     const cleanKey = deeplKey.trim();
-    // 免费版 API Key 通常以 :fx 结尾
     const isFreeApi = cleanKey.endsWith(':fx');
     const apiUrl = isFreeApi 
         ? 'https://api-free.deepl.com/v2/translate' 
@@ -42,9 +41,12 @@ app.post('/api/translate', async (req, res) => {
     try {
         const response = await fetch(apiUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: { 
+                'Content-Type': 'application/x-www-form-urlencoded',
+                // 关键修改：将 Key 放入 Authorization 头部
+                'Authorization': `DeepL-Auth-Key ${cleanKey}` 
+            },
             body: new URLSearchParams({ 
-                auth_key: cleanKey, 
                 text: text, 
                 target_lang: targetLang.toUpperCase() 
             })
@@ -56,7 +58,6 @@ app.post('/api/translate', async (req, res) => {
             res.json({ translatedText: data.translations[0].text });
         } else {
             console.error("DeepL API 报错:", data);
-            // 将 DeepL 官方的报错信息返回给前端
             const errMsg = data.message || (data.error && data.error.message) || '翻译失败，请检查 Key 是否正确或额度是否用尽';
             res.status(response.status).json({ error: errMsg });
         }
