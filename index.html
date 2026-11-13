@@ -8,14 +8,6 @@
 </head>
 <body>
 
-<!-- 悬浮语言切换器 -->
-<div class="lang-float-wrap">
-  <div class="lang-float-btn" onclick="toggleLangMenu(event)">🌏</div>
-  <div class="lang-float-dropdown" id="langDropdown">
-    <!-- 动态渲染 -->
-  </div>
-</div>
-
 <div class="bg-layer" aria-hidden="true">
   <div class="bg-grid"></div>
   <div class="bg-orb orb-1"></div>
@@ -24,12 +16,22 @@
 </div>
 <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
+<!-- 顶部导航栏 -->
 <header class="topbar" id="topbar">
   <div class="topbar-inner">
     <a class="logo" href="#">
       <span class="logo-mark">N</span>
       <span>NEXA</span>
     </a>
+    
+    <!-- 地球图标放这里 (Logo后面) -->
+    <div class="lang-switch-wrap">
+      <div class="lang-switch-btn" onclick="toggleLangMenu(event)">🌏</div>
+      <div class="lang-dropdown" id="langDropdown">
+        <!-- JS动态渲染 -->
+      </div>
+    </div>
+
     <div class="topbar-note">
       <span class="live-dot"></span>
       <span>本期开卡名额还剩 <strong id="quotaText" style="color:var(--text-2)">312</strong> 个</span>
