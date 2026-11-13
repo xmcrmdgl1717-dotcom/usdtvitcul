@@ -15,7 +15,7 @@
   }
 
   /* =========================================
-     1. 页面原有交互（滚动、光斑、动画等）
+     1. 页面原有交互
      ========================================= */
   const topbar = document.getElementById("topbar");
   const langSwitchWrap = document.querySelector(".lang-switch-wrap");
@@ -63,7 +63,7 @@
     revealEls.forEach((el) => io.observe(el));
   }
 
-  // 动态渲染 (仅限 index.html 的元素)
+  // 动态渲染
   const partners = ["Visa", "Mastercard", "Circle", "Stripe", "Coinbase", "Bitget", "Binance", "OKX", "Tether", "Solana", "Ethereum", "Chainlink", "Aave", "Uniswap", "Fireblocks", "Chainalysis", "Elliptic", "Lead Bank"];
   const partnersTrack = document.getElementById("partnersTrack");
   if (partnersTrack) {
@@ -128,9 +128,10 @@
   }
 
   /* =========================================
-     2. 国际化 (i18n)
+     2. 国际化 (i18n) - 全面增强版
      ========================================= */
   let currentLangs = [];
+  let activeDict = null;
 
   async function fetchLangsFromServer() {
     try {
@@ -149,7 +150,6 @@
     
     let html = `<a href="#" onclick="changeLang('zh', event)">简体中文</a>`;
     currentLangs.forEach(l => {
-      // status === false 说明被后台禁用了
       if (l.code !== 'zh' && l.status !== false && l.dict && Object.keys(l.dict).length > 0) {
         html += `<a href="#" onclick="changeLang('${l.code}', event)">${l.name}</a>`;
       }
@@ -157,45 +157,80 @@
     dropdown.innerHTML = html;
   }
 
+  // 核心翻译执行器
   function applyTranslation(dict) {
     if (!dict) {
       hideLoader();
       return;
     }
+    activeDict = dict;
 
+    // 1. 遍历所有文本节点（支持标签穿插）
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     let node;
     while (node = walker.nextNode()) {
       if (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE') continue;
-      const txt = node.nodeValue.trim();
+      const rawTxt = node.nodeValue;
+      const txt = rawTxt.trim();
       if (txt && dict[txt]) {
-        node.nodeValue = node.nodeValue.replace(txt, dict[txt]);
+        // 保持原有前后空格
+        node.nodeValue = rawTxt.replace(txt, dict[txt]);
       }
     }
 
+    // 2. 翻译 Placeholder
     document.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(el => {
       const t = el.getAttribute('placeholder');
       if (t && dict[t]) el.setAttribute('placeholder', dict[t]);
     });
 
+    // 3. 翻译 Select 选项
     document.querySelectorAll('option').forEach(el => {
       const t = el.textContent.trim();
       if (t && dict[t]) el.textContent = dict[t];
     });
 
+    // 4. 翻译 Title 属性
     document.querySelectorAll('[title]').forEach(el => {
       const t = el.getAttribute('title');
       if (t && dict[t]) el.setAttribute('title', dict[t]);
     });
 
+    // 5. 翻译网页 Title
     if (dict['领取虚拟卡'] && document.title.includes('领取虚拟卡')) {
       document.title = document.title.replace('领取虚拟卡', dict['领取虚拟卡']);
     } else if (dict['你的 USDC，不卖也能花'] && document.title.includes('你的 USDC')) {
        document.title = dict['你的 USDC，不卖也能花'];
     }
 
-    // 翻译结束，移除加载遮罩
+    // 6. 【特殊处理】浏览器原生的日期控件
+    document.querySelectorAll('input[type="date"]').forEach(el => {
+      if (!el.dataset.translated) {
+        el.dataset.translated = "true";
+        el.dataset.originalType = "date";
+        el.type = "text"; // 变为文本以支持自定义占位符
+        if (dict['年/月/日']) {
+          el.placeholder = dict['年/月/日'];
+        }
+        el.addEventListener('focus', function() {
+          this.type = 'date'; // 聚焦时变回日期选择器
+        });
+        el.addEventListener('blur', function() {
+          if (!this.value) {
+            this.type = 'text'; // 失去焦点且为空时变回文本
+          }
+        });
+      }
+    });
+
     hideLoader();
+  }
+
+  // 动态渲染内容后，触发二次翻译
+  function triggerRetranslate() {
+    if (activeDict) {
+      applyTranslation(activeDict);
+    }
   }
 
   window.changeLang = function(lang, e) {
@@ -229,19 +264,34 @@
     }
   });
 
+  // 初始化
   fetchLangsFromServer().then(() => {
     let lang = localStorage.getItem('nexa_manual_lang');
     if (lang && lang !== 'zh') {
       const target = currentLangs.find(l => l.code === lang);
       if (target && target.dict) {
-        // 延迟一点点确保 DOM 完全就绪
-        setTimeout(() => applyTranslation(target.dict), 50);
+        // 翻译页面主体
+        setTimeout(() => {
+          applyTranslation(target.dict);
+          
+          // 【特殊处理】：针对 apply.html 动态生成后的重翻译
+          if (window.startGenerate) {
+            const origGenerate = window.startGenerate;
+            window.startGenerate = function() {
+              origGenerate();
+              setTimeout(triggerRetranslate, 100);
+            };
+          }
+          
+          // 【特殊处理】：针对 index.html 社区卡片动态渲染后的重翻译
+          // 由于 script.js 同步执行完 innerHTML 才会往下走，这里直接延时触发一次兜底
+          setTimeout(triggerRetranslate, 300);
+          
+        }, 50);
       } else {
-        // 找不到该语言配置，或者该语言被后台关闭了，也要放出页面
         hideLoader();
       }
     } else {
-      // 本身是中文，不需要翻译，直接隐藏 loader (正常情况下它都没显示)
       hideLoader();
     }
   });
