@@ -38,70 +38,59 @@ body {
 a { color: inherit; text-decoration: none; }
 button { font: inherit; cursor: pointer; }
 
-/* ============ 新增：右侧悬浮语言切换球 ============ */
-.lang-float-wrap {
-  position: fixed;
-  right: 24px; 
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 9999;
+
+/* ============ 新增：头部导航语言切换器 ============ */
+.lang-switch-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-right: auto; /* 把后面的元素往右推 */
+  margin-left: 16px; /* 距离 Logo 的距离 */
+  z-index: 100;
 }
-.lang-float-btn {
-  width: 60px; height: 60px;
+.lang-switch-btn {
+  width: 34px; height: 34px;
   border-radius: 50%;
-  background: rgba(10, 30, 40, 0.75);
-  border: 1px solid rgba(0, 240, 255, 0.3);
-  box-shadow: 0 4px 24px rgba(0, 240, 255, 0.15);
+  background: rgba(10, 30, 40, 0.6);
+  border: 1px solid rgba(0, 240, 255, 0.25);
   display: flex; justify-content: center; align-items: center;
-  font-size: 32px;
+  font-size: 18px;
   cursor: pointer;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  animation: float-pulse 3s infinite alternate;
+  transition: all 0.3s;
 }
-.lang-float-btn:hover {
-  transform: scale(1.1);
+.lang-switch-btn:hover {
+  background: rgba(0, 240, 255, 0.15);
   border-color: var(--cyan);
-  box-shadow: 0 4px 32px rgba(0, 240, 255, 0.4);
-  background: rgba(14, 39, 51, 0.9);
+  transform: scale(1.05);
 }
-@keyframes float-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.2); }
-  100% { box-shadow: 0 0 0 12px rgba(0, 240, 255, 0); }
-}
-.lang-float-dropdown {
+.lang-dropdown {
   position: absolute;
-  right: 75px;
-  top: 50%;
-  transform: translateY(-50%) translateX(10px);
+  top: 45px;
+  left: 0;
   background: var(--surface-solid);
   border: 1px solid var(--border-2);
   border-radius: 12px;
   padding: 8px 0;
   display: none;
   flex-direction: column;
-  min-width: 140px;
+  min-width: 130px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  opacity: 0;
-  transition: all 0.3s ease;
 }
-.lang-float-dropdown.show {
-  display: flex;
-  opacity: 1;
-  transform: translateY(-50%) translateX(0);
+.lang-dropdown.show { display: flex; }
+.lang-dropdown a {
+  padding: 10px 16px; font-size: 13.5px; color: var(--text-2); white-space: nowrap;
+  transition: all 0.2s;
 }
-.lang-float-dropdown a {
-  padding: 10px 18px;
-  font-size: 14px;
-  color: var(--text-2);
-  white-space: nowrap;
-  transition: background 0.2s, color 0.2s;
-  text-align: right;
+.lang-dropdown a:hover {
+  background: rgba(0, 240, 255, 0.1); color: var(--cyan);
 }
-.lang-float-dropdown a:hover {
-  background: rgba(0, 240, 255, 0.1);
-  color: var(--cyan);
+
+/* 顶栏收缩时，地球跟着变小 */
+.topbar.scrolled .lang-switch-btn {
+  width: 28px; height: 28px; font-size: 15px;
+}
+.topbar.scrolled .lang-dropdown {
+  top: 36px;
 }
 
 /* ============ 背景层 ============ */
