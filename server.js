@@ -10,18 +10,15 @@ app.use(express.static(__dirname));
 
 const DATA_FILE = path.join(__dirname, 'data.json');
 
-// 初始化数据文件
 if (!fs.existsSync(DATA_FILE)) {
     fs.writeFileSync(DATA_FILE, JSON.stringify({ langs: [], globalDict: {} }, null, 2));
 }
 
-// 获取数据
 app.get('/api/data', (req, res) => {
     const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
     res.json(data);
 });
 
-// 保存数据
 app.post('/api/data', (req, res) => {
     fs.writeFileSync(DATA_FILE, JSON.stringify(req.body, null, 2));
     res.json({ success: true });
