@@ -34,7 +34,7 @@
   .main-content { flex: 1; overflow-y: auto; padding: 30px; }
   .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
   .header h1 { font-size: 22px; }
-  .btn { padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 14px; }
+  .btn { padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 14px; transition: 0.2s; }
   .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
   .btn-primary:hover { background: var(--primary-hover); }
   .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; border-color: #93c5fd; }
@@ -72,6 +72,7 @@
   .json-editor { width: 100%; height: 300px; font-family: monospace; padding: 10px; border: 1px solid var(--border); border-radius: 6px; resize: vertical; }
   .actions span { color: var(--primary); cursor: pointer; margin-right: 12px; font-size: 14px; }
   .actions span:hover { text-decoration: underline; }
+  .actions span.del-btn { color: var(--danger); }
   
   .loading-overlay { display: none; align-items: center; justify-content: center; flex-direction: column; }
   .loading-overlay.show { display: flex; }
@@ -79,6 +80,12 @@
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
   .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 6px; font-size: 14px; z-index: 9999; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+  /* 进度条样式 */
+  .progress-wrap { display: none; background: var(--surface); padding: 16px 24px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  .progress-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; font-weight: 600; }
+  .progress-track { width: 100%; height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden; }
+  .progress-fill { width: 0%; height: 100%; background: var(--primary); transition: width 0.3s ease; }
 </style>
 </head>
 <body>
@@ -112,6 +119,17 @@
       <div style="display:flex; gap:10px;">
         <button class="btn" onclick="openBatchLangModal()">🌐 添加常用语言</button>
         <button class="btn btn-primary" id="globalTransBtn" onclick="globalTranslate()">⚡ 一键全局翻译</button>
+      </div>
+    </div>
+
+    <!-- 翻译进度条 -->
+    <div class="progress-wrap" id="trans-progress-wrap">
+      <div class="progress-info">
+        <span id="trans-status-text">正在准备翻译...</span>
+        <span id="trans-percent">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="trans-progress-bar"></div>
       </div>
     </div>
     
@@ -149,7 +167,7 @@
       </div>
     </div>
     <div class="card">
-      <p style="color:var(--text-light); margin-bottom:15px; font-size:14px;">以下是前端页面的全量原始中文 JSON 字典结构。一键翻译时，会读取此结构进行逐句翻译。若翻译不完整，请点击右上角“恢复最新默认字典”并保存，然后再去一键翻译。</p>
+      <p style="color:var(--text-light); margin-bottom:15px; font-size:14px;">以下是前端页面的全量原始中文 JSON 字典结构。一键翻译时，会读取此结构进行逐句翻译。</p>
       <textarea id="global-dict-editor" class="json-editor"></textarea>
     </div>
   </div>
@@ -165,7 +183,7 @@
       <div class="form-group">
         <label>DeepL API Key (免费版或专业版)</label>
         <input type="password" id="set-deepl-key" placeholder="输入 DeepL API Key">
-        <p style="font-size:12px; color:var(--text-light); margin-top:5px;">必填项。若不配置，翻译功能将无法使用。</p>
+        <p style="font-size:12px; color:var(--text-light); margin-top:5px;">必填项。请确保填写正确，否则翻译将无法调用。</p>
       </div>
       <button class="btn btn-primary" onclick="saveSettings()">保存配置</button>
     </div>
@@ -213,7 +231,6 @@
 <div class="toast" id="globalToast"></div>
 
 <script>
-// 地毯式扫盲：补全了切分节点、下拉框、原生日期、动态评论、占位符等所有文案
 const DEFAULT_DICT = {
   "nav": { "quota": "本期开卡名额还剩", "unit": "个" },
   "hero": { "badge": "Visa 虚拟卡 · 限时免年费", "title1": "你的 USDC", "title2": "本来就不该", "title3": "躺着不动", "title4": "。", "desc1": "一张 Visa 卡，让稳定币在消费前", "desc2": "继续生息", "desc3": "，刷卡时自动清算，花完还有", "desc4": "返现", "desc5": "。不卖币，也能花。", "cta": "领取虚拟卡 · 免年费", "fineprint": "开卡免费，首笔消费后按 0.90% 收取交易费。无月费、无隐藏费用。", "scroll": "Scroll" },
@@ -350,7 +367,6 @@ async function initData() {
         currentLangs = data.langs;
         currentLangs.forEach(l => { if (l.status === undefined) l.status = true; });
         globalDict = data.globalDict || DEFAULT_DICT;
-        // 自动合并缺失的 ui 节点等
         if (!globalDict.ui) {
            globalDict = Object.assign({}, DEFAULT_DICT, globalDict);
         }
@@ -381,13 +397,18 @@ function renderLangTable() {
   const tbody = document.getElementById('lang-tbody');
   tbody.innerHTML = '';
   
-  // 去重计算，解决永远 94% 的问题
+  // 去重计算，解决永远无法 100% 的问题
   const uniqueTexts = [...new Set(flattenValues(globalDict))];
   const totalTexts = uniqueTexts.length;
 
   currentLangs.forEach((lang) => {
-    const dictCount = Object.keys(lang.dict || {}).filter(k => lang.dict[k] && lang.dict[k].trim() !== "").length;
-    const coverage = totalTexts > 0 ? Math.round((dictCount / totalTexts) * 100) : 0;
+    // 如果翻译结果为空，或与原文相同（说明没翻出来），则不算进度
+    const validDictCount = Object.keys(lang.dict || {}).filter(k => {
+        const val = lang.dict[k];
+        return val && val.trim() !== "" && val !== k;
+    }).length;
+    
+    const coverage = totalTexts > 0 ? Math.round((validDictCount / totalTexts) * 100) : 0;
     
     let statusHtml = "";
     if (lang.code === 'zh') {
@@ -415,11 +436,21 @@ function renderLangTable() {
       <td>${statusHtml}</td>
       <td class="actions">
         <span onclick="editLangJson('${lang.code}')">编辑字典</span>
-        ${lang.code !== 'zh' ? `<span onclick="translateSingleLang('${lang.code}')">补齐翻译</span>` : ''}
+        ${lang.code !== 'zh' ? `
+          <span onclick="translateSingleLang('${lang.code}')">补齐翻译</span>
+          <span onclick="deleteLang('${lang.code}')" class="del-btn">删除</span>
+        ` : ''}
       </td>
     `;
     tbody.appendChild(tr);
   });
+}
+
+async function deleteLang(code) {
+  if (!confirm(`确定要删除语言 [${code}] 及其所有翻译数据吗？此操作不可恢复。`)) return;
+  currentLangs = currentLangs.filter(l => l.code !== code);
+  await saveData();
+  showToast('✅ 语言已删除');
 }
 
 async function toggleLangStatus(code, isChecked) {
@@ -501,33 +532,53 @@ function flattenValues(obj, result = []) {
   return result;
 }
 
-// 只保留 DeepL API 翻译
+// 请求后端代理去调用 DeepL API
 async function fetchTranslation(text, targetLang) {
   if (!text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return text;
   const deeplKey = localStorage.getItem('nexa_deepl_key');
   
   if (!deeplKey) {
-    console.warn("请先在设置中配置 DeepL API Key");
-    return text;
+    throw new Error("请先在设置中配置 DeepL API Key");
   }
 
   try {
-    const res = await fetch(`https://api-free.deepl.com/v2/translate`, {
+    const res = await fetch('/api/translate', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ auth_key: deeplKey, text: text, target_lang: targetLang.toUpperCase() })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, targetLang, deeplKey })
     });
+    
     if (res.ok) {
       const data = await res.json();
-      return data.translations[0].text;
+      return data.translatedText;
+    } else {
+      const err = await res.text();
+      console.warn("翻译失败:", err);
     }
   } catch (e) {
-    console.warn("DeepL 请求失败", e);
+    console.warn("请求代理接口失败", e);
   }
   return text;
 }
 
-// 并发翻译，速度提升 10 倍
+function updateProgress(current, total) {
+  const wrap = document.getElementById('trans-progress-wrap');
+  const bar = document.getElementById('trans-progress-bar');
+  const percent = document.getElementById('trans-percent');
+  const status = document.getElementById('trans-status-text');
+
+  if (current === null) {
+    wrap.style.display = 'none';
+    return;
+  }
+
+  wrap.style.display = 'block';
+  const p = Math.round((current / total) * 100);
+  bar.style.width = p + '%';
+  percent.textContent = p + '%';
+  status.textContent = `正在请求 DeepL 翻译... (${current}/${total})`;
+}
+
 async function translateSingleLang(code) {
   const lang = currentLangs.find(l => l.code === code);
   currentEditLangCode = code;
@@ -538,7 +589,8 @@ async function translateSingleLang(code) {
 
   const missingTexts = textsToTranslate.filter(text => {
     if (!text || !text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return false;
-    if (translatedDict[text] && translatedDict[text].trim() !== "") return false;
+    const val = translatedDict[text];
+    if (val && val.trim() !== "" && val !== text) return false; // 只要有翻译且不是原文，就跳过
     return true;
   });
 
@@ -553,7 +605,9 @@ async function translateSingleLang(code) {
   const loading = document.getElementById('translate-loading');
   loading.classList.add('show');
 
-  const CONCURRENCY = 10;
+  const CONCURRENCY = 5;
+  let completed = 0;
+
   for (let i = 0; i < missingTexts.length; i += CONCURRENCY) {
     const chunk = missingTexts.slice(i, i + CONCURRENCY);
     document.getElementById('edit-json-textarea').value = `正在并发补齐缺失的文案 (${i+1}/${missingTexts.length})...\n\n当前批次翻译: \n${chunk.join('\n')}`;
@@ -581,13 +635,16 @@ async function performTranslate(lang) {
 
   const missingTexts = textsToTranslate.filter(text => {
     if (!text || !text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return false;
-    if (translatedDict[text] && translatedDict[text].trim() !== "") return false;
+    const val = translatedDict[text];
+    if (val && val.trim() !== "" && val !== text) return false;
     return true;
   });
 
   if (missingTexts.length === 0) return false;
 
-  const CONCURRENCY = 10;
+  const CONCURRENCY = 5;
+  let completed = 0;
+
   for (let i = 0; i < missingTexts.length; i += CONCURRENCY) {
     const chunk = missingTexts.slice(i, i + CONCURRENCY);
     const promises = chunk.map(async (text) => {
@@ -597,7 +654,9 @@ async function performTranslate(lang) {
     const results = await Promise.all(promises);
     results.forEach(r => {
       translatedDict[r.text] = r.translated;
+      completed++;
     });
+    updateProgress(completed, missingTexts.length);
   }
 
   lang.dict = translatedDict;
@@ -606,7 +665,13 @@ async function performTranslate(lang) {
 
 async function globalTranslate() {
   if (isGlobalTranslating) return;
-  if(!confirm('确定要自动补齐所有语言的缺失翻译吗？（需要先配置 DeepL API Key）')) return;
+  
+  const deeplKey = localStorage.getItem('nexa_deepl_key');
+  if (!deeplKey) {
+    return alert('请先在「API 配置」中填写并保存 DeepL API Key！');
+  }
+
+  if(!confirm('确定要自动补齐所有语言的缺失翻译吗？')) return;
   
   isGlobalTranslating = true;
   const btn = document.getElementById('globalTransBtn');
@@ -615,6 +680,7 @@ async function globalTranslate() {
   btn.disabled = true;
 
   let translatedAny = false;
+  updateProgress(0, 1); // 初始化显示
   
   try {
     for (let i = 0; i < currentLangs.length; i++) {
@@ -637,11 +703,12 @@ async function globalTranslate() {
     }
   } catch (e) {
     console.error(e);
-    alert('翻译过程中发生错误，请重试。');
+    alert('翻译过程中发生错误：' + e.message);
   } finally {
     isGlobalTranslating = false;
     btn.innerHTML = origText;
     btn.disabled = false;
+    updateProgress(null); // 隐藏进度条
   }
 }
 
