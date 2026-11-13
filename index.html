@@ -16,6 +16,12 @@
 </div>
 <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
+<!-- 悬浮球移到顶层，不再受 header 限制 -->
+<div class="lang-switch-wrap">
+  <div class="lang-switch-btn" onclick="toggleLangMenu(event)">🌏</div>
+  <div class="lang-dropdown" id="langDropdown"></div>
+</div>
+
 <header class="topbar" id="topbar">
   <div class="topbar-inner">
     <a class="logo" href="#">
@@ -23,11 +29,6 @@
       <span>NEXA</span>
     </a>
     
-    <div class="lang-switch-wrap">
-      <div class="lang-switch-btn" onclick="toggleLangMenu(event)">🌏</div>
-      <div class="lang-dropdown" id="langDropdown"></div>
-    </div>
-
     <div class="topbar-note">
       <span class="live-dot"></span>
       <span>本期开卡名额还剩 <strong id="quotaText" style="color:var(--text-2)">312</strong> 个</span>
