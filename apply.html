@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>NEXA — 领取虚拟卡</title>
+<link rel="stylesheet" href="style.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -774,6 +775,12 @@
   <div class="orb orb-3"></div>
 </div>
 
+<!-- 悬浮语言切换器 (复用 index 逻辑) -->
+<div class="lang-switch-wrap">
+  <div class="lang-switch-btn" onclick="toggleLangMenu(event)">🌏</div>
+  <div class="lang-dropdown" id="langDropdown"></div>
+</div>
+
 <!-- ============ 进入时的弹框 ============ -->
 <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-box">
@@ -1448,5 +1455,7 @@
 })();
 </script>
 
+<!-- 引入外部多语言 JS -->
+<script src="script.js"></script>
 </body>
 </html>
