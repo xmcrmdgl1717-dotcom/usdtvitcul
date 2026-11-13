@@ -54,8 +54,10 @@ async function fetchWithRetry(url, options = {}, retries = MAX_RETRIES) {
 
             clearTimeout(timeoutId);
 
+            // 如果是 5xx 错误，读取响应体并抛出异常以触发重试
             if (response.status >= 500) {
-                await response.body?.cancel();
+                const text = await response.text();
+                console.error(`[上游错误] 状态码 ${response.status}，响应片段: ${text.slice(0, 200)}`);
                 throw new Error(`上游返回状态码 ${response.status}`);
             }
 
@@ -134,14 +136,16 @@ app.get('/health', (req, res) => {
     res.status(200).send('OK');
 });
 
-// 设置 Keep-Alive 超时，避免负载均衡器因空闲连接超时导致 502
+// 设置 Keep-Alive 超时，兼容 Render 的负载均衡器
 process.env.KEEP_ALIVE_TIMEOUT = '120';
 process.env.HEADERS_TIMEOUT = '121';
 
 // 关键：从环境变量读取 PORT，并显式绑定到 0.0.0.0
 const PORT = process.env.PORT || 3000;
-const HOST = '0.0.0.0'; // Render 要求必须绑定到 0.0.0.0
+const HOST = '0.0.0.0';
 
 app.listen(PORT, HOST, () => {
     console.log(`✅ 后端服务器已启动，监听地址: ${HOST}:${PORT}`);
+    console.log(`✅ 前端访问: http://localhost:${PORT}/index.html`);
+    console.log(`✅ 后台管理: http://localhost:${PORT}/admin.html`);
 });
