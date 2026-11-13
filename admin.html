@@ -48,7 +48,6 @@
   th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
   th { background: #f8fafc; font-weight: 600; color: var(--text-light); }
   
-  /* Toggle 开关样式 */
   .switch { position: relative; display: inline-block; width: 44px; height: 24px; vertical-align: middle; }
   .switch input { opacity: 0; width: 0; height: 0; }
   .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 24px; }
@@ -147,7 +146,7 @@
       <button class="btn btn-primary" onclick="saveGlobalDict()">保存修改</button>
     </div>
     <div class="card">
-      <p style="color:var(--text-light); margin-bottom:15px; font-size:14px;">以下是前端页面的全量原始中文 JSON 字典结构。一键翻译时，会读取此结构进行逐句翻译。</p>
+      <p style="color:var(--text-light); margin-bottom:15px; font-size:14px;">以下是前端页面（Index + Apply）的全量原始中文 JSON 字典结构。一键翻译时，会读取此结构进行逐句翻译。</p>
       <textarea id="global-dict-editor" class="json-editor"></textarea>
     </div>
   </div>
@@ -211,6 +210,7 @@
 <div class="toast" id="globalToast"></div>
 
 <script>
+// 全量补全的字典，完美覆盖 index 和 apply
 const DEFAULT_DICT = {
   "nav": { "quota": "本期开卡名额还剩", "unit": "个" },
   "hero": { "badge": "Visa 虚拟卡 · 限时免年费", "title1": "你的 USDC", "title2": "本来就不该", "title3": "躺着不动", "title4": "。", "desc1": "一张 Visa 卡，让稳定币在消费前", "desc2": "继续生息", "desc3": "，刷卡时自动清算，花完还有", "desc4": "返现", "desc5": "。不卖币，也能花。", "cta": "领取虚拟卡 · 免年费", "fineprint": "开卡免费，首笔消费后按 0.90% 收取交易费。无月费、无隐藏费用。", "scroll": "Scroll" },
@@ -229,7 +229,31 @@ const DEFAULT_DICT = {
   "faq": { "eyebrow": "还有疑问？", "title": "你可能会问的几个问题。", "q1": "NEXA 和普通的加密卡有什么区别？", "a1": "普通加密卡要求你先卖出资产才能消费，NEXA 让你的余额在消费前持续生息，刷卡瞬间才从生息池赎回所需金额。其余部分继续产生收益，清算后差额自动回到生息池。", "q2": "我的 USDC 放在 NEXA，安全吗？", "a2": "资金由持牌金融机构托管，支付清算账户与生息资产严格隔离。生息产品由持牌第三方发行，平台只做展示与路由，不触碰你的资产所有权。同时共享 $7 亿用户保护基金。", "q3": "生息收益怎么算？会随时停止吗？", "a3": "生息按日结算，年化 4%–8%，收益自动复投。没有锁定期，随存随取。收益率会根据市场状况浮动，但不会因为单笔消费而中断——只有实际支付金额才离开生息池。", "q4": "虚拟卡可以在哪些地方使用？", "a4": "NEXA 虚拟卡由 Visa 网络签发，全球 1.5 亿+ 受理商户可用。支持线上订阅、线下感应支付、Apple Pay、Google Pay，以及绑定支付宝、微信支付。", "q5": "开卡需要多久？有年费吗？", "a5": "完成身份验证后，虚拟卡在 20 秒内生成并激活。年费 $0、开卡费 $0、销卡费 $0，仅在消费时收取 0.90% 交易手续费（非 USD 跨境交易另加 1%）。", "q6": "如果卡片丢失或被盗刷怎么办？", "a6": "卡片可在 App 内一键冻结或注销，冻结后所有新交易立即停止，余额不受影响。每笔交易默认开启生物识别二次确认，非本人操作会自动拦截。若发生盗刷，24/7 客服可协助追溯和追回。" },
   "final": { "title": "现在领卡，你的第一笔消费就开始生息。", "desc": "开卡免费，虚拟卡即时发放。首笔消费后才产生交易费用，随时可以停用。", "cta": "领取虚拟卡 · 免年费", "n1": "本期名额剩余", "n2": "个 · 无需充值即可提交申请" },
   "footer": { "copy": "© 2026 NEXA. All rights reserved.", "l1": "服务条款", "l2": "隐私政策", "l3": "风险披露", "l4": "牌照信息", "disc": "风险提示：加密资产价格波动剧烈，生息产品的收益不构成任何形式的回报承诺。本服务仅在支持该服务的司法管辖区提供，具体可用性以申请时的地区判定为准。支付卡由合作持牌机构发行，NEXA 提供前端技术服务。请在充分了解相关风险后使用。" },
-  "apply": { "m_title": "领取你的 NEXA Visa 虚拟卡", "m_desc": "30 秒完成，开卡免费。这不是一张普通的卡——它让你的稳定币在消费前持续生息。", "m_li1": "0 年费 · 0 开卡费", "m_li1_d": "，仅 0.90% 交易手续费", "m_li2": "2% 消费返现", "m_li2_d": "，可选 BTC、黄金或 USDC 发放", "m_li3": "消费前持续生息", "m_li3_d": "，年化 4% – 8%", "m_cta": "开始领取", "m_foot": "已服务 1.5 亿 Visa 商户 · $700M 用户保护基金", "s1_t": "创建你的 NEXA 账户", "s1_d": "注册后即可领取 Visa 虚拟卡。开卡免费、无需充值，首笔消费后才产生交易费。", "s1_div": "或使用邮箱注册", "s1_email": "邮箱地址", "s1_email_e": "请输入有效的邮箱地址", "s1_pwd": "设置密码（至少 8 位，含字母与数字）", "s1_pwd_e": "密码至少 8 位，且需包含字母与数字", "s1_ref": "邀请码（选填）", "s1_btn": "创建账户", "s1_t1": "密码 AES-256 加密", "s1_t2": "不存储明文密码", "s1_t3": "符合 KYC 与 AML 标准", "s2_t": "你正在一个被验证过的网络里", "s2_d": "NEXA 的清算、托管与发卡能力，由以下机构共同支撑。你的资金与卡片，不会孤立存在。", "s2_tab1": "币圈生态", "s2_tab2": "银行与支付", "s2_tab3": "全球商家", "s2_stat1": "Visa 全球受理商户", "s2_stat2": "用户保护基金", "s2_stat3": "支持的区块链网络", "s2_stat4": "可申请发卡的国家与地区", "s2_btn": "继续领取虚拟卡", "s3_t": "你的虚拟卡正在生成", "s3_d": "卡片由 Visa 网络签发，激活后可在全球 1.5 亿商户使用，支持 Apple Pay 与 Google Pay。", "s3_sec1": "卡号在生成时即用 AES-256 加密存储，平台无法读取明文", "s3_sec2": "CVV 为动态生成，每 24 小时自动刷新一次", "s3_sec3": "每笔交易需生物识别二次确认，盗刷可即时冻结", "s3_btn": "确认领取并生成卡片", "s4_t": "正在完成安全合规审核", "s4_d": "你的卡片正在通过以下 4 项检查，通常需要 20 秒。请保持当前页面打开。", "s4_c1": "身份信息核验", "s4_c2": "制裁名单与 PEP 筛查", "s4_c3": "反洗钱风险评估", "s4_c4": "Visa 发卡网络确认", "s4_note": "你的资料通过 端到端加密通道 传输至持牌合作方。审核完成后，明文副本会在 24 小时内销毁，仅保留合规所需的加密摘要。整个过程不涉及人工读取。", "s5_t": "你的卡片已通过审核", "s5_d": "请核对卡号信息，并完成持卡人身份绑定。绑定后卡片即可正常消费。", "s5_card": "卡号", "s5_copy": "复制", "s5_exp": "有效期", "s5_cvv": "CVV", "s5_show": "显示", "s5_org": "卡组织", "s5_org_v": "Visa · 虚拟卡", "s5_name": "持卡人姓名（与证件一致）", "s5_name_e": "请输入持卡人真实姓名", "s5_birth": "出生日期", "s5_birth_e": "请选择出生日期", "s5_country": "选择国家 / 地区", "s5_country_e": "请选择国家或地区", "s5_idtype": "证件类型", "s5_idtype_e": "请选择证件类型", "s5_idnum": "证件号码", "s5_idnum_e": "请输入证件号码", "s5_btn": "完成身份绑定", "s6_t": "卡片已激活", "s6_d": "你的 NEXA Visa 虚拟卡已经可以使用。绑定 Apple Pay 或 Google Pay 后，即可在全球商户消费。", "s6_email": "卡片已绑定至", "s6_b1": "2% 基础返现", "s6_b1_d": " · 消费后以 BTC、黄金或 USDC 发放", "s6_b2": "0 年费、0 开卡费", "s6_b2_d": " · 仅收取 0.90% 交易手续费", "s6_b3": "实时生息", "s6_b3_d": " · 消费前余额持续产生收益", "s6_btn1": "进入我的账户", "s6_btn2": "返回查看卡片信息" }
+  // 【核心补全】：Apply 页面所有文本、下拉框、按钮、占位符、状态提示
+  "apply": {
+    "m_title": "领取你的 NEXA Visa 虚拟卡", "m_desc": "30 秒完成，开卡免费。这不是一张普通的卡——它让你的稳定币在消费前持续生息。",
+    "m_li1": "0 年费 · 0 开卡费", "m_li1_d": "，仅 0.90% 交易手续费", "m_li2": "2% 消费返现", "m_li2_d": "，可选 BTC、黄金或 USDC 发放", "m_li3": "消费前持续生息", "m_li3_d": "，年化 4% – 8%",
+    "m_cta": "开始领取", "m_foot": "已服务 1.5 亿 Visa 商户 · $700M 用户保护基金",
+    "s1_t": "创建你的 NEXA 账户", "s1_d": "注册后即可领取 Visa 虚拟卡。开卡免费、无需充值，首笔消费后才产生交易费。",
+    "s1_div": "或使用邮箱注册", "s1_email": "邮箱地址", "s1_email_e": "请输入有效的邮箱地址", "s1_pwd": "设置密码（至少 8 位，含字母与数字）", "s1_pwd_e": "密码至少 8 位，且需包含字母与数字", "s1_ref": "邀请码（选填）", "s1_btn": "创建账户",
+    "s1_t1": "密码 AES-256 加密", "s1_t2": "不存储明文密码", "s1_t3": "符合 KYC 与 AML 标准",
+    "s2_t": "你正在一个被验证过的网络里", "s2_d": "NEXA 的清算、托管与发卡能力，由以下机构共同支撑。你的资金与卡片，不会孤立存在。",
+    "s2_tab1": "币圈生态", "s2_tab2": "银行与支付", "s2_tab3": "全球商家", "s2_stat1": "Visa 全球受理商户", "s2_stat2": "用户保护基金", "s2_stat3": "支持的区块链网络", "s2_stat4": "可申请发卡的国家与地区", "s2_btn": "继续领取虚拟卡",
+    "s3_t": "你的虚拟卡正在生成", "s3_d": "卡片由 Visa 网络签发，激活后可在全球 1.5 亿商户使用，支持 Apple Pay 与 Google Pay。",
+    "s3_sec1": "卡号在生成时即用 AES-256 加密存储，平台无法读取明文", "s3_sec2": "CVV 为动态生成，每 24 小时自动刷新一次", "s3_sec3": "每笔交易需生物识别二次确认，盗刷可即时冻结", "s3_btn": "确认领取并生成卡片", "s3_gen": "正在生成…", "s3_done": "卡片已生成",
+    "s4_t": "正在完成安全合规审核", "s4_d": "你的卡片正在通过以下 4 项检查，通常需要 20 秒。请保持当前页面打开。",
+    "s4_c1": "身份信息核验", "s4_c2": "制裁名单与 PEP 筛查", "s4_c3": "反洗钱风险评估", "s4_c4": "Visa 发卡网络确认",
+    "s4_note": "你的资料通过 端到端加密通道 传输至持牌合作方。审核完成后，明文副本会在 24 小时内销毁，仅保留合规所需的加密摘要。整个过程不涉及人工读取。",
+    "s5_t": "你的卡片已通过审核", "s5_d": "请核对卡号信息，并完成持卡人身份绑定。绑定后卡片即可正常消费。",
+    "s5_card": "卡号", "s5_copy": "复制", "s5_copied": "已复制", "s5_exp": "有效期", "s5_cvv": "CVV", "s5_show": "显示", "s5_hide": "隐藏", "s5_org": "卡组织", "s5_org_v": "Visa · 虚拟卡", "s5_avail": "Available · USDC",
+    "s5_name": "持卡人姓名（与证件一致）", "s5_name_e": "请输入持卡人真实姓名", "s5_birth": "出生日期", "s5_birth_e": "请选择出生日期", "s5_country": "选择国家 / 地区", "s5_country_e": "请选择国家或地区",
+    "cn": "中国大陆", "hk": "中国香港", "tw": "中国台湾", "sg": "新加坡", "my": "马来西亚", "th": "泰国", "vn": "越南", "jp": "日本", "kr": "韩国", "au": "澳大利亚", "uk": "英国", "other": "其他",
+    "s5_idtype": "证件类型", "s5_idtype_e": "请选择证件类型", "id_card": "身份证", "passport": "护照", "license": "驾驶证", "residence": "居留证",
+    "s5_idnum": "证件号码", "s5_idnum_e": "请输入证件号码", "s5_btn": "完成身份绑定",
+    "s6_t": "卡片已激活", "s6_d": "你的 NEXA Visa 虚拟卡已经可以使用。绑定 Apple Pay 或 Google Pay 后，即可在全球商户消费。", "s6_email": "卡片已绑定至",
+    "s6_b1": "2% 基础返现", "s6_b1_d": " · 消费后以 BTC、黄金或 USDC 发放", "s6_b2": "0 年费、0 开卡费", "s6_b2_d": " · 仅收取 0.90% 交易手续费", "s6_b3": "实时生息", "s6_b3_d": " · 消费前余额持续产生收益",
+    "s6_btn1": "进入我的账户", "s6_btn2": "返回查看卡片信息", "s6_back": "返回上一步"
+  }
 };
 
 const COMMON_LANGS = [
@@ -246,7 +270,6 @@ let currentEditLangCode = "";
 let globalDict = {};
 let isGlobalTranslating = false;
 
-// Toast 提示组件
 function showToast(msg) {
   const toast = document.getElementById('globalToast');
   toast.textContent = msg;
@@ -306,7 +329,6 @@ async function initData() {
         await saveData();
     } else {
         currentLangs = data.langs;
-        // 兼容老数据，如果没有 status 默认 true
         currentLangs.forEach(l => { if (l.status === undefined) l.status = true; });
         globalDict = data.globalDict || DEFAULT_DICT;
     }
@@ -350,7 +372,6 @@ function renderLangTable() {
       statusHtml = `<span style="color:var(--danger)">已翻译 ${coverage}%</span>`;
     }
 
-    // 构建开关 HTML
     const isChecked = lang.status !== false ? 'checked' : '';
     const isDisabled = lang.code === 'zh' ? 'disabled' : '';
     const switchHtml = `
@@ -375,7 +396,6 @@ function renderLangTable() {
   });
 }
 
-// 处理开关切换
 async function toggleLangStatus(code, isChecked) {
   const lang = currentLangs.find(l => l.code === code);
   if (lang) {
@@ -607,7 +627,7 @@ async function saveGlobalDict() {
   try {
     globalDict = JSON.parse(document.getElementById('global-dict-editor').value);
     await saveData();
-    alert('全局中文源字典已保存');
+    alert('全局中文源字典已保存，现在你可以点击“一键全局翻译”补齐新的词汇。');
   } catch(e) { alert('JSON 格式错误'); }
 }
 
