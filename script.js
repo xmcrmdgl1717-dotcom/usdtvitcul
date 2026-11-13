@@ -179,7 +179,6 @@
     }
   });
 
-  // 初始加载
   fetchLangsFromServer().then(() => {
     let lang = localStorage.getItem('nexa_manual_lang');
     if (lang && lang !== 'zh') {
