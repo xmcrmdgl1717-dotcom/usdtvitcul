@@ -1187,4 +1187,291 @@
     updateBackBtn(n);
 
     const fill = document.getElementById("progressFill");
-   
+    const label = document.getElementById("stepNow");
+    if (n <= TOTAL_STEPS) {
+      fill.style.width = (n / TOTAL_STEPS * 100) + "%";
+      label.textContent = n;
+    } else {
+      fill.style.width = "100%";
+      label.textContent = "✓";
+    }
+
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+
+    if (n === 4) startAudit();
+  }
+  window.goStep = goStep;
+
+  function backStep() {
+    if (currentStep > 1) goStep(currentStep - 1);
+  }
+  window.backStep = backStep;
+
+  /* ============ Step 1: 注册 ============ */
+  const signupForm = document.getElementById("signupForm");
+
+  function showErr(id, show) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle("show", show);
+  }
+
+  signupForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email");
+    const pwd = document.getElementById("pwd");
+    let ok = true;
+
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim());
+    email.classList.toggle("err", !emailValid);
+    showErr("emailErr", !emailValid);
+    if (!emailValid) ok = false;
+
+    const pwdValid = pwd.value.length >= 8 && /[a-zA-Z]/.test(pwd.value) && /\d/.test(pwd.value);
+    pwd.classList.toggle("err", !pwdValid);
+    showErr("pwdErr", !pwdValid);
+    if (!pwdValid) ok = false;
+
+    if (!ok) return;
+
+    emailValue = email.value.trim();
+    document.getElementById("doneEmail").textContent = emailValue;
+    goStep(2);
+  });
+
+  function quickSignup(provider) {
+    emailValue = "user@" + provider.toLowerCase() + ".com";
+    document.getElementById("doneEmail").textContent = emailValue;
+    goStep(2);
+  }
+  window.quickSignup = quickSignup;
+
+  /* ============ Step 2: 合作伙伴 ============ */
+  const partners = {
+    crypto: ["Bitget", "Binance", "Coinbase", "OKX", "Circle", "Tether", "Solana", "Ethereum", "Chainlink", "Aave", "Uniswap", "Lido", "Arbitrum", "Optimism", "Polygon", "Base"],
+    bank: ["Visa", "Mastercard", "Stripe", "Lead Bank", "StraitsX", "Silvergate", "Circle", "Fireblocks", "Chainalysis", "Elliptic", "Sumsub", "Onfido"],
+    merchant: ["Amazon", "Apple", "Starbucks", "Uber", "Netflix", "Shopify", "Spotify", "Booking.com", "Airbnb", "Walmart", "Costco", "IKEA", "Adidas", "Nike", "Deliveroo", "Grab"]
+  };
+
+  function makeLogo(name) {
+    const el = document.createElement("div");
+    el.className = "partner-logo";
+    el.innerHTML = '<span class="mark">' + name.charAt(0) + '</span><span>' + name + '</span>';
+    return el;
+  }
+
+  function fillMarquee(id, list) {
+    const track = document.getElementById(id);
+    if (!track) return;
+    list.concat(list).forEach((name) => track.appendChild(makeLogo(name)));
+  }
+
+  Object.keys(partners).forEach((key) => {
+    const list = partners[key];
+    const half = Math.ceil(list.length / 2);
+    fillMarquee(key + "Row1", list.slice(0, half));
+    fillMarquee(key + "Row2", list.slice(half));
+  });
+
+  document.querySelectorAll(".tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+      document.querySelectorAll(".partner-panel").forEach((p) => p.classList.remove("active"));
+      tab.classList.add("active");
+      const panel = document.querySelector('.partner-panel[data-panel="' + tab.dataset.tab + '"]');
+      if (panel) panel.classList.add("active");
+    });
+  });
+
+  /* ============ Step 3: 卡片生成 ============ */
+  const FINAL_NUMBER = "4821 6733 9021 4487";
+  let generated = false;
+
+  function startGenerate() {
+    if (generated) return;
+    generated = true;
+
+    const btn = document.getElementById("genBtn");
+    btn.disabled = true;
+    btn.textContent = "正在生成…";
+
+    const card = document.getElementById("genCard");
+    const numEl = document.getElementById("genNumber");
+
+    card.classList.remove("masked");
+    card.classList.add("revealed", "scanning");
+
+    const chars = FINAL_NUMBER.split("");
+    numEl.innerHTML = chars.map((c) => c === " " ? " " : '<span class="digit-hidden">' + c + '</span>').join("");
+
+    const digits = numEl.querySelectorAll(".digit-hidden");
+    digits.forEach((d, i) => {
+      setTimeout(() => d.classList.add("digit-shown"), 120 + i * 90);
+    });
+
+    setTimeout(() => card.classList.remove("scanning"), 1900);
+
+    setTimeout(() => {
+      btn.textContent = "卡片已生成";
+      setTimeout(() => goStep(4), 700);
+    }, 120 + digits.length * 90 + 500);
+  }
+  window.startGenerate = startGenerate;
+
+  /* ============ Step 4: 20 秒合规排队 ============ */
+  let auditTimer = null;
+
+  function startAudit() {
+    if (auditTimer) return;
+
+    const TOTAL = 20;
+    let remaining = TOTAL;
+
+    const ring = document.getElementById("ringFill");
+    const numEl = document.getElementById("countNum");
+    const items = document.querySelectorAll(".check-item");
+    const CIRC = 2 * Math.PI * 54;
+
+    ring.style.strokeDasharray = CIRC;
+    ring.style.strokeDashoffset = 0;
+    numEl.textContent = TOTAL;
+
+    items.forEach((it) => {
+      it.classList.remove("active", "done");
+      it.querySelector(".status").textContent = "";
+    });
+
+    const marks = [4, 8, 14, 20];
+
+    auditTimer = setInterval(function () {
+      remaining -= 1;
+      numEl.textContent = Math.max(remaining, 0);
+      const progress = (TOTAL - remaining) / TOTAL;
+      ring.style.strokeDashoffset = CIRC * progress;
+
+      const elapsed = TOTAL - remaining;
+
+      for (let i = 0; i < items.length; i++) {
+        const startAt = i === 0 ? 0 : marks[i - 1];
+        const doneAt = marks[i];
+        if (elapsed >= doneAt) {
+          items[i].classList.remove("active");
+          items[i].classList.add("done");
+          items[i].querySelector(".status").textContent = "✓";
+        } else if (elapsed >= startAt) {
+          items[i].classList.add("active");
+        }
+      }
+
+      if (remaining <= 0) {
+        clearInterval(auditTimer);
+        auditTimer = null;
+        items.forEach((it) => {
+          it.classList.remove("active");
+          it.classList.add("done");
+          it.querySelector(".status").textContent = "✓";
+        });
+        setTimeout(() => goStep(5), 600);
+      }
+    }, 1000);
+  }
+
+  /* ============ Step 5: 卡片信息 + 身份绑定 ============ */
+  function copyText(btn) {
+    const text = btn.dataset.copy || "";
+    const done = () => {
+      const orig = btn.textContent;
+      btn.textContent = "已复制";
+      btn.classList.add("copied");
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.classList.remove("copied");
+      }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(done);
+    } else {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+      done();
+    }
+  }
+  window.copyText = copyText;
+
+  function toggleCvv() {
+    const mask = document.getElementById("cvvMask");
+    const val = document.getElementById("cvvValue");
+    const toggle = document.getElementById("cvvToggle");
+    const showing = val.style.display !== "none";
+    if (showing) {
+      val.style.display = "none";
+      mask.style.display = "inline";
+      toggle.textContent = "显示";
+    } else {
+      val.style.display = "inline";
+      mask.style.display = "none";
+      toggle.textContent = "隐藏";
+      setTimeout(() => {
+        if (val.style.display !== "none") {
+          val.style.display = "none";
+          mask.style.display = "inline";
+          toggle.textContent = "显示";
+        }
+      }, 15000);
+    }
+  }
+  window.toggleCvv = toggleCvv;
+
+  const kycForm = document.getElementById("kycForm");
+
+  kycForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let ok = true;
+
+    const name = document.getElementById("holderName");
+    const nameValid = name.value.trim().length >= 2;
+    name.classList.toggle("err", !nameValid);
+    showErr("nameErr", !nameValid);
+    if (!nameValid) ok = false;
+
+    const birth = document.getElementById("birthday");
+    const birthValid = !!birth.value;
+    birth.classList.toggle("err", !birthValid);
+    showErr("birthErr", !birthValid);
+    if (!birthValid) ok = false;
+
+    const country = document.getElementById("country");
+    const countryValid = !!country.value;
+    country.classList.toggle("err", !countryValid);
+    showErr("countryErr", !countryValid);
+    if (!countryValid) ok = false;
+
+    const idType = document.getElementById("idType");
+    const idTypeValid = !!idType.value;
+    idType.classList.toggle("err", !idTypeValid);
+    showErr("idTypeErr", !idTypeValid);
+    if (!idTypeValid) ok = false;
+
+    const idNum = document.getElementById("idNumber");
+    const idNumValid = idNum.value.trim().length >= 5;
+    idNum.classList.toggle("err", !idNumValid);
+    showErr("idNumErr", !idNumValid);
+    if (!idNumValid) ok = false;
+
+    if (!ok) return;
+
+    goStep(6);
+  });
+
+})();
+</script>
+
+<!-- 引入外部多语言 JS -->
+<script src="script.js"></script>
+</body>
+</html>
