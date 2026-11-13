@@ -3,6 +3,17 @@
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  /* 隐藏 Loader 的方法 */
+  function hideLoader() {
+    const loader = document.getElementById('i18n-loader');
+    if (loader && loader.style.display !== 'none') {
+      loader.style.opacity = '0';
+      setTimeout(() => {
+        loader.style.display = 'none';
+      }, 300);
+    }
+  }
+
   /* =========================================
      1. 页面原有交互（滚动、光斑、动画等）
      ========================================= */
@@ -117,13 +128,13 @@
   }
 
   /* =========================================
-     2. 国际化 (i18n) - 请求后端 API
+     2. 国际化 (i18n)
      ========================================= */
   let currentLangs = [];
 
   async function fetchLangsFromServer() {
     try {
-      const res = await fetch('/api/data'); // 请求后端
+      const res = await fetch('/api/data');
       const data = await res.json();
       currentLangs = data.langs || [];
       renderLangMenu();
@@ -138,7 +149,7 @@
     
     let html = `<a href="#" onclick="changeLang('zh', event)">简体中文</a>`;
     currentLangs.forEach(l => {
-      // 【核心判断】：如果 status 为 false，则不渲染
+      // status === false 说明被后台禁用了
       if (l.code !== 'zh' && l.status !== false && l.dict && Object.keys(l.dict).length > 0) {
         html += `<a href="#" onclick="changeLang('${l.code}', event)">${l.name}</a>`;
       }
@@ -147,7 +158,10 @@
   }
 
   function applyTranslation(dict) {
-    if (!dict) return;
+    if (!dict) {
+      hideLoader();
+      return;
+    }
 
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     let node;
@@ -176,7 +190,12 @@
 
     if (dict['领取虚拟卡'] && document.title.includes('领取虚拟卡')) {
       document.title = document.title.replace('领取虚拟卡', dict['领取虚拟卡']);
+    } else if (dict['你的 USDC，不卖也能花'] && document.title.includes('你的 USDC')) {
+       document.title = dict['你的 USDC，不卖也能花'];
     }
+
+    // 翻译结束，移除加载遮罩
+    hideLoader();
   }
 
   window.changeLang = function(lang, e) {
@@ -190,6 +209,8 @@
       const target = currentLangs.find(l => l.code === lang);
       if (target && target.dict) {
         applyTranslation(target.dict);
+      } else {
+        hideLoader();
       }
     }
   };
@@ -213,8 +234,15 @@
     if (lang && lang !== 'zh') {
       const target = currentLangs.find(l => l.code === lang);
       if (target && target.dict) {
-        setTimeout(() => applyTranslation(target.dict), 100);
+        // 延迟一点点确保 DOM 完全就绪
+        setTimeout(() => applyTranslation(target.dict), 50);
+      } else {
+        // 找不到该语言配置，或者该语言被后台关闭了，也要放出页面
+        hideLoader();
       }
+    } else {
+      // 本身是中文，不需要翻译，直接隐藏 loader (正常情况下它都没显示)
+      hideLoader();
     }
   });
 
