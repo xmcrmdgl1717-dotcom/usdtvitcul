@@ -7,9 +7,16 @@
      1. 页面原有交互（滚动、光斑、动画等）
      ========================================= */
   const topbar = document.getElementById("topbar");
+  const langSwitchWrap = document.querySelector(".lang-switch-wrap");
+  
   window.addEventListener("scroll", () => {
-    if (window.scrollY > 80) topbar.classList.add("scrolled");
-    else topbar.classList.remove("scrolled");
+    if (window.scrollY > 80) {
+      if(topbar) topbar.classList.add("scrolled");
+      if(langSwitchWrap) langSwitchWrap.classList.add("scrolled");
+    } else {
+      if(topbar) topbar.classList.remove("scrolled");
+      if(langSwitchWrap) langSwitchWrap.classList.remove("scrolled");
+    }
   });
 
   const glow = document.getElementById("cursorGlow");
