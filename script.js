@@ -52,7 +52,7 @@
     revealEls.forEach((el) => io.observe(el));
   }
 
-  // 动态渲染
+  // 动态渲染 (仅限 index.html 的元素，如果页面没有则不执行)
   const partners = ["Visa", "Mastercard", "Circle", "Stripe", "Coinbase", "Bitget", "Binance", "OKX", "Tether", "Solana", "Ethereum", "Chainlink", "Aave", "Uniswap", "Fireblocks", "Chainalysis", "Elliptic", "Lead Bank"];
   const partnersTrack = document.getElementById("partnersTrack");
   if (partnersTrack) {
@@ -145,8 +145,11 @@
     dropdown.innerHTML = html;
   }
 
+  // 【核心增强】：翻译页面文本、输入框 Placeholder、下拉选项、页面 Title
   function applyTranslation(dict) {
     if (!dict) return;
+
+    // 1. 翻译普通文本节点
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     let node;
     while (node = walker.nextNode()) {
@@ -155,6 +158,31 @@
       if (txt && dict[txt]) {
         node.nodeValue = node.nodeValue.replace(txt, dict[txt]);
       }
+    }
+
+    // 2. 翻译表单的 Placeholder 属性
+    document.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(el => {
+      const t = el.getAttribute('placeholder');
+      if (t && dict[t]) el.setAttribute('placeholder', dict[t]);
+    });
+
+    // 3. 翻译下拉框的 Option
+    document.querySelectorAll('option').forEach(el => {
+      const t = el.textContent.trim();
+      if (t && dict[t]) el.textContent = dict[t];
+    });
+
+    // 4. 翻译 Title 属性
+    document.querySelectorAll('[title]').forEach(el => {
+      const t = el.getAttribute('title');
+      if (t && dict[t]) el.setAttribute('title', dict[t]);
+    });
+
+    // 5. 翻译网页 Title
+    if (dict['领取虚拟卡'] && document.title.includes('领取虚拟卡')) {
+      document.title = document.title.replace('领取虚拟卡', dict['领取虚拟卡']);
+    } else if (dict['你的 USDC，不卖也能花']) {
+       // 兜底首页
     }
   }
 
@@ -176,7 +204,8 @@
   window.toggleLangMenu = function(e) {
     e.preventDefault();
     e.stopPropagation();
-    document.getElementById("langDropdown").classList.toggle("show");
+    const dropdown = document.getElementById("langDropdown");
+    if(dropdown) dropdown.classList.toggle("show");
   };
 
   document.addEventListener("click", (e) => {
@@ -190,7 +219,10 @@
     let lang = localStorage.getItem('nexa_manual_lang');
     if (lang && lang !== 'zh') {
       const target = currentLangs.find(l => l.code === lang);
-      if (target && target.dict) applyTranslation(target.dict);
+      if (target && target.dict) {
+        // 延迟一点确保 DOM 渲染完毕（特别是 apply.html）
+        setTimeout(() => applyTranslation(target.dict), 100);
+      }
     }
   });
 
