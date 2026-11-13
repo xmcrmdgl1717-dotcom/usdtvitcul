@@ -25,7 +25,12 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; }
+  /* ============ 修复 1：滚动条稳定，防止水平偏移 ============ */
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+  }
 
   body {
     min-height: 100vh;
@@ -56,9 +61,26 @@
 
   .bg-orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.5; will-change: transform; }
 
-  .orb-1 { width: 620px; height: 620px; top: 900px; left: 50%; margin-left: -310px; background: radial-gradient(circle, rgba(0, 240, 255, 0.26), transparent 66%); animation: float1 18s ease-in-out infinite; }
-  .orb-2 { width: 460px; height: 460px; top: 2400px; left: -160px; background: radial-gradient(circle, rgba(43, 214, 123, 0.18), transparent 68%); animation: float2 22s ease-in-out infinite; }
-  .orb-3 { width: 520px; height: 520px; top: 4200px; right: -200px; background: radial-gradient(circle, rgba(0, 140, 255, 0.2), transparent 68%); animation: float1 26s ease-in-out infinite reverse; }
+  /* ============ 修复 2：光晕改为视口百分比，每屏都可见 ============ */
+  .orb-1 {
+    width: 620px; height: 620px;
+    top: -12%; left: 50%;
+    margin-left: -310px;
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.26), transparent 66%);
+    animation: float1 18s ease-in-out infinite;
+  }
+  .orb-2 {
+    width: 460px; height: 460px;
+    top: 38%; left: -10%;
+    background: radial-gradient(circle, rgba(43, 214, 123, 0.18), transparent 68%);
+    animation: float2 22s ease-in-out infinite;
+  }
+  .orb-3 {
+    width: 520px; height: 520px;
+    top: 72%; right: -12%;
+    background: radial-gradient(circle, rgba(0, 140, 255, 0.2), transparent 68%);
+    animation: float1 26s ease-in-out infinite reverse;
+  }
 
   @keyframes float1 { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(30px, 40px, 0) scale(1.08); } }
   @keyframes float2 { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(50px, -30px, 0) scale(1.12); } }
@@ -74,7 +96,9 @@
   .topbar {
     position: sticky; top: 0; z-index: 60;
     border-bottom: 1px solid rgba(26, 53, 64, 0.5);
-    background: rgba(5, 8, 12, 0.72); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    background: rgba(5, 8, 12, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
   .topbar-inner { max-width: 1120px; margin: 0 auto; padding: 13px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 
@@ -117,6 +141,12 @@
     position: relative; width: 100%; height: 100vh; min-height: 620px; overflow: hidden;
     display: flex; align-items: center; justify-content: center; text-align: center; background: #05080c;
   }
+
+  /* ============ 修复 3：移动端 dvh 防止地址栏跳动 ============ */
+  @supports (height: 100dvh) {
+    .hero { height: 100dvh; }
+  }
+
   .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; pointer-events: none; }
   .hero-overlay {
     position: absolute; inset: 0; z-index: 1;
@@ -173,8 +203,7 @@
 
   /* ============ 信任数据条 ============ */
   .trust-stats {
-    position: relative; z-index: 10;
-    padding: 36px 0;
+    position: relative; z-index: 10; padding: 36px 0;
     border-top: 1px solid rgba(26, 53, 64, 0.4);
     border-bottom: 1px solid rgba(26, 53, 64, 0.4);
     background: linear-gradient(180deg, rgba(10, 30, 40, 0.35), rgba(5, 8, 12, 0));
@@ -200,6 +229,7 @@
   }
   @keyframes haloPulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.14); opacity: 1; } }
 
+  /* ============ 修复 4：3D 变换加 backface 优化，减少边缘像素抖动 ============ */
   .credit-card {
     position: relative; width: 380px; height: 238px; border-radius: 22px; padding: 24px;
     display: flex; flex-direction: column; justify-content: space-between;
@@ -211,6 +241,8 @@
     box-shadow: 0 30px 70px -22px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(0, 240, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.09);
     transform: rotateY(-13deg) rotateX(9deg) rotateZ(-2deg);
     transform-style: preserve-3d;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     animation: cardFloat 7s ease-in-out infinite;
     overflow: hidden;
   }
@@ -302,28 +334,15 @@
   }
 
   /* ============ Auto Earnings 可视化 ============ */
-  .earn-visual-section {
-    position: relative; z-index: 10; padding: 84px 0;
-    overflow: hidden;
-  }
+  .earn-visual-section { position: relative; z-index: 10; padding: 84px 0; overflow: hidden; }
   .earn-visual-section::before {
     content: ""; position: absolute; inset: 0;
     background: radial-gradient(ellipse 70% 80% at 50% 50%, rgba(43, 214, 123, 0.06), transparent 70%);
     pointer-events: none;
   }
-  .earn-layout {
-    position: relative;
-    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 48px; align-items: center;
-  }
-  .earn-left h2 {
-    font-size: clamp(26px, 3.4vw, 40px); font-weight: 800;
-    letter-spacing: -0.028em; line-height: 1.16; margin-bottom: 18px;
-  }
-  .earn-left h2 .hl {
-    background: linear-gradient(100deg, #6ff8ff, #2bd67b);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
+  .earn-layout { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+  .earn-left h2 { font-size: clamp(26px, 3.4vw, 40px); font-weight: 800; letter-spacing: -0.028em; line-height: 1.16; margin-bottom: 18px; }
+  .earn-left h2 .hl { background: linear-gradient(100deg, #6ff8ff, #2bd67b); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .earn-left p { font-size: 15px; line-height: 1.75; color: var(--text-2); margin-bottom: 24px; }
   .earn-bullets { display: grid; gap: 12px; margin-bottom: 28px; }
   .earn-bullet { display: flex; gap: 11px; align-items: flex-start; font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
@@ -339,7 +358,6 @@
     background: radial-gradient(ellipse at 50% 50%, rgba(43, 214, 123, 0.15), transparent 65%);
     filter: blur(40px); pointer-events: none;
   }
-
   .earn-card {
     position: relative; z-index: 2;
     display: flex; align-items: center; gap: 16px;
@@ -364,20 +382,15 @@
   .earn-body { flex: 1; min-width: 0; }
   .earn-title { font-size: 14px; font-weight: 700; color: var(--text); }
   .earn-sub { margin-top: 3px; font-size: 11.5px; color: var(--muted); letter-spacing: 0.02em; }
-  .earn-value {
-    text-align: right; font-size: 20px; font-weight: 800; letter-spacing: -0.02em;
-    color: var(--green); font-variant-numeric: tabular-nums;
-  }
+  .earn-value { text-align: right; font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--green); font-variant-numeric: tabular-nums; }
   .earn-value.cyan { color: var(--cyan-soft); }
   .earn-value.small { font-size: 16px; }
   .earn-pulse { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); margin-right: 5px; vertical-align: middle; animation: pulseDot 1.6s ease-in-out infinite; }
 
   .earn-spark {
-    position: relative; z-index: 2; margin-top: 4px;
-    height: 60px; border-radius: 14px;
+    position: relative; z-index: 2; margin-top: 4px; height: 60px; border-radius: 14px;
     background: rgba(10, 30, 40, 0.55); border: 1px solid rgba(0, 240, 255, 0.14);
-    overflow: hidden; padding: 0 14px;
-    display: flex; align-items: center; gap: 12px;
+    overflow: hidden; padding: 0 14px; display: flex; align-items: center; gap: 12px;
   }
   .earn-spark-label { font-size: 11px; color: var(--muted); white-space: nowrap; }
   .earn-spark-bar { flex: 1; height: 3px; border-radius: 999px; background: rgba(35, 69, 82, 0.7); position: relative; overflow: hidden; }
@@ -393,14 +406,12 @@
   .transfer-section { padding: 84px 0; }
   .transfer-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: center; }
   .transfer-visual {
-    position: relative; aspect-ratio: 1.1 / 1;
-    border-radius: 26px;
+    position: relative; aspect-ratio: 1.1 / 1; border-radius: 26px;
     background:
       radial-gradient(circle at 30% 25%, rgba(0, 240, 255, 0.15), transparent 50%),
       radial-gradient(circle at 75% 80%, rgba(43, 214, 123, 0.12), transparent 55%),
       linear-gradient(165deg, rgba(10, 30, 40, 0.85), rgba(6, 16, 25, 0.9));
-    border: 1px solid var(--border);
-    overflow: hidden;
+    border: 1px solid var(--border); overflow: hidden;
     display: grid; place-items: center;
   }
   .transfer-visual::before {
@@ -413,12 +424,7 @@
     -webkit-mask-image: radial-gradient(ellipse at 50% 50%, #000 20%, transparent 80%);
     pointer-events: none;
   }
-
-  .route-globe {
-    position: relative;
-    width: 74%; aspect-ratio: 1;
-    display: grid; place-items: center;
-  }
+  .route-globe { position: relative; width: 74%; aspect-ratio: 1; display: grid; place-items: center; }
   .route-ring {
     position: absolute; border-radius: 50%;
     border: 1px dashed rgba(0, 240, 255, 0.28);
@@ -428,19 +434,14 @@
   .route-ring:nth-child(2) { width: 74%; height: 74%; animation-duration: 16s; animation-direction: reverse; }
   .route-ring:nth-child(3) { width: 48%; height: 48%; animation-duration: 12s; }
   @keyframes spinRing { to { transform: rotate(360deg); } }
-  .route-node {
-    position: absolute; width: 14px; height: 14px; border-radius: 50%;
-    background: var(--cyan); box-shadow: 0 0 14px var(--cyan);
-  }
+  .route-node { position: absolute; width: 14px; height: 14px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 14px var(--cyan); }
   .route-node.green { background: var(--green); box-shadow: 0 0 14px var(--green); }
   .route-node.n1 { top: 0; left: 50%; margin-left: -7px; }
   .route-node.n2 { top: 50%; right: 0; margin-top: -7px; }
   .route-node.n3 { bottom: 0; left: 30%; margin-left: -7px; }
   .route-node.n4 { top: 32%; left: 0; margin-top: -7px; }
-
   .route-center {
-    position: relative; z-index: 2;
-    width: 92px; height: 92px; border-radius: 50%;
+    position: relative; z-index: 2; width: 92px; height: 92px; border-radius: 50%;
     display: grid; place-items: center;
     background: radial-gradient(circle, rgba(0, 240, 255, 0.22), rgba(6, 16, 25, 0.9) 72%);
     border: 1px solid rgba(0, 240, 255, 0.4);
@@ -448,21 +449,11 @@
     font-size: 28px; font-weight: 900; color: var(--cyan-soft);
   }
 
-  .transfer-content h2 {
-    font-size: clamp(26px, 3.4vw, 40px); font-weight: 800;
-    letter-spacing: -0.028em; line-height: 1.16; margin-bottom: 16px;
-  }
+  .transfer-content h2 { font-size: clamp(26px, 3.4vw, 40px); font-weight: 800; letter-spacing: -0.028em; line-height: 1.16; margin-bottom: 16px; }
   .transfer-content p { font-size: 15px; line-height: 1.75; color: var(--text-2); margin-bottom: 28px; }
   .transfer-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-  .t-stat {
-    padding: 18px 20px;
-    border: 1px solid var(--border); border-radius: 14px;
-    background: rgba(10, 30, 40, 0.55);
-  }
-  .t-stat .num {
-    font-size: 22px; font-weight: 800; letter-spacing: -0.02em;
-    color: var(--cyan-soft); font-variant-numeric: tabular-nums;
-  }
+  .t-stat { padding: 18px 20px; border: 1px solid var(--border); border-radius: 14px; background: rgba(10, 30, 40, 0.55); }
+  .t-stat .num { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: var(--cyan-soft); font-variant-numeric: tabular-nums; }
   .t-stat .lbl { margin-top: 4px; font-size: 12px; color: var(--muted); line-height: 1.4; }
 
   /* ============ 痛点 ============ */
@@ -571,6 +562,7 @@
     display: flex; gap: 16px; width: max-content;
     animation: scrollX 42s linear infinite;
     margin-bottom: 16px;
+    will-change: transform;
   }
   .community-track.reverse { animation-direction: reverse; animation-duration: 50s; margin-bottom: 0; }
   @keyframes scrollX { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -593,7 +585,6 @@
     pointer-events: none;
   }
   .ucard-quote { font-size: 12.5px; line-height: 1.62; color: var(--text-2); position: relative; z-index: 2; }
-  .ucard-quote strong { color: var(--text); font-weight: 600; }
   .ucard-foot { display: flex; align-items: center; gap: 9px; position: relative; z-index: 2; }
   .ucard-avatar {
     width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
@@ -609,11 +600,16 @@
   .partners-section { padding: 40px 0 80px; border-top: 1px solid rgba(26, 53, 64, 0.4); border-bottom: 1px solid rgba(26, 53, 64, 0.4); overflow: hidden; }
   .partners-head { text-align: center; margin-bottom: 32px; }
   .partners-head h2 { font-size: 20px; font-weight: 700; color: var(--text-2); letter-spacing: 0.02em; }
-  .partners-marquee { position: relative; overflow: hidden; padding: 12px 0;
+  .partners-marquee {
+    position: relative; overflow: hidden; padding: 12px 0;
     mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   }
-  .partners-track { display: flex; gap: 14px; width: max-content; animation: scrollX 46s linear infinite; }
+  .partners-track {
+    display: flex; gap: 14px; width: max-content;
+    animation: scrollX 46s linear infinite;
+    will-change: transform;
+  }
   .partner-chip {
     flex-shrink: 0;
     display: flex; align-items: center; gap: 10px;
@@ -742,6 +738,12 @@
     .transfer-visual { aspect-ratio: 1.3 / 1; }
   }
 
+  @supports (height: 100dvh) {
+    @media (max-width: 960px) {
+      .hero { height: 88dvh; }
+    }
+  }
+
   @media (max-width: 560px) {
     .container, .topbar-inner, .footer-inner { padding-left: 18px; padding-right: 18px; }
     .hero { height: 84vh; min-height: 520px; }
@@ -759,6 +761,12 @@
     .earn-card { padding: 18px 16px; gap: 12px; }
     .earn-value { font-size: 17px; }
     .earn-value.small { font-size: 14px; }
+  }
+
+  @supports (height: 100dvh) {
+    @media (max-width: 560px) {
+      .hero { height: 84dvh; }
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -797,7 +805,6 @@
   </div>
 </header>
 
-<!-- ============ Hero ============ -->
 <section class="hero">
   <video class="hero-video" autoplay muted loop playsinline preload="auto">
     <source src="homeBg.3__npe53rz97a.webm" type="video/webm" />
@@ -841,7 +848,6 @@
   </div>
 </section>
 
-<!-- ============ 信任数据条 ============ -->
 <section class="trust-stats reveal">
   <div class="container">
     <div class="trust-stats-grid">
@@ -853,7 +859,6 @@
   </div>
 </section>
 
-<!-- ============ 卡片展示区 ============ -->
 <section class="showcase">
   <div class="container">
     <div class="section-head reveal" style="text-align:center;margin-left:auto;margin-right:auto;">
@@ -896,7 +901,6 @@
   </div>
 </section>
 
-<!-- ============ 钱包能力矩阵（新增） ============ -->
 <section class="section wallet-section">
   <div class="container">
     <div class="section-head reveal">
@@ -908,9 +912,7 @@
     <div class="wallet-grid">
       <article class="wallet-card reveal">
         <div class="w-icon">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="2.5" y="6" width="19" height="13" rx="2.5"/><path d="M2.5 10.5h19"/>
-          </svg>
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="13" rx="2.5"/><path d="M2.5 10.5h19"/></svg>
         </div>
         <h3>多链钱包</h3>
         <p>一个助记词管理 130+ 公链上的 100 万+ 代币。Ethereum、Solana、BNB Chain、Base、Arbitrum 原生支持，新链上线即接入。</p>
@@ -923,9 +925,7 @@
 
       <article class="wallet-card reveal d1">
         <div class="w-icon">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>
-          </svg>
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
         </div>
         <h3>实时生息</h3>
         <p>稳定币和主流币的余额默认进入生息池，消费前每一秒都在产生收益。按日结算，随时可取，年化 4%–8%。</p>
@@ -938,9 +938,7 @@
 
       <article class="wallet-card reveal d1">
         <div class="w-icon">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M13 2L4 14h7l-1 8 9-12h-7z"/>
-          </svg>
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>
         </div>
         <h3>无 Gas 跨链</h3>
         <p>基于 EIP-7702 与聚合桥，一笔签名完成跨链，Gas 从输入代币里自动扣除。不再为每条链单独准备原生代币。</p>
@@ -953,9 +951,7 @@
 
       <article class="wallet-card reveal d2">
         <div class="w-icon">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M4 7h16M4 12h10M4 17h16"/><path d="M17 12l3-3-3-3" />
-          </svg>
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h16"/><path d="M17 12l3-3-3-3" /></svg>
         </div>
         <h3>智能兑换</h3>
         <p>聚合 500+ DEX 和做市商，多路径拆单寻找最优价格，滑点和 MEV 保护内置。10 万美元的大额单也能拆成最优路径。</p>
@@ -969,7 +965,6 @@
   </div>
 </section>
 
-<!-- ============ Auto Earnings 可视化（新增） ============ -->
 <section class="earn-visual-section">
   <div class="container">
     <div class="earn-layout">
@@ -1030,7 +1025,6 @@
   </div>
 </section>
 
-<!-- ============ 极速转账（新增） ============ -->
 <section class="section transfer-section">
   <div class="container">
     <div class="transfer-layout">
@@ -1075,7 +1069,6 @@
   </div>
 </section>
 
-<!-- ============ 痛点 ============ -->
 <section class="section">
   <div class="container">
     <div class="section-head reveal">
@@ -1106,7 +1099,6 @@
   </div>
 </section>
 
-<!-- ============ 三步机制 ============ -->
 <section class="section">
   <div class="container">
     <div class="section-head reveal">
@@ -1150,7 +1142,6 @@
   </div>
 </section>
 
-<!-- ============ 费用透明 ============ -->
 <section class="section">
   <div class="container">
     <div class="fee-layout">
@@ -1178,7 +1169,6 @@
   </div>
 </section>
 
-<!-- ============ 安全防护（新增） ============ -->
 <section class="section sec-section">
   <div class="container">
     <div class="section-head reveal">
@@ -1209,7 +1199,6 @@
   </div>
 </section>
 
-<!-- ============ 合作伙伴条（新增） ============ -->
 <section class="partners-section">
   <div class="container">
     <div class="partners-head reveal">
@@ -1221,7 +1210,6 @@
   </div>
 </section>
 
-<!-- ============ 用户社区照片墙（新增） ============ -->
 <section class="section community-section">
   <div class="container">
     <div class="section-head reveal">
@@ -1235,7 +1223,6 @@
   <div class="community-track reverse" id="communityRow2"></div>
 </section>
 
-<!-- ============ 社会证明 ============ -->
 <section class="section">
   <div class="container">
     <div class="section-head reveal">
@@ -1262,7 +1249,6 @@
   </div>
 </section>
 
-<!-- ============ FAQ（新增） ============ -->
 <section class="section faq-section">
   <div class="container">
     <div class="section-head reveal">
@@ -1322,7 +1308,6 @@
   </div>
 </section>
 
-<!-- ============ 收口 CTA ============ -->
 <section class="container">
   <div class="final-cta reveal">
     <h2>现在领卡，你的第一笔消费就开始生息。</h2>
@@ -1335,7 +1320,6 @@
   </div>
 </section>
 
-<!-- ============ 页脚 ============ -->
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
@@ -1430,7 +1414,7 @@
   if (earnAmountEl && !reduceMotion) {
     let earn = 641.00;
     let monthly = 3842.61;
-    let daySeconds = 16 * 3600 + 29 * 60; // 16:29 in seconds
+    let daySeconds = 16 * 3600 + 29 * 60;
 
     setInterval(() => {
       earn += Math.random() * 0.42 + 0.08;
