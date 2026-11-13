@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const dns = require('dns');
-const { Agent, fetch } = require('undici');
+const { Agent, fetch } = require('undici'); // 显式引入 undici 的 fetch
 
 // 强制优先 IPv4，规避 Render 等云平台 IPv6 出站问题
 dns.setDefaultResultOrder('ipv4first');
@@ -41,26 +41,20 @@ app.post('/api/data', (req, res) => {
 const upstreamAgent = new Agent({
     connections: 10,
     pipelining: 1,
-    keepAliveTimeout: 60000, // 保持连接活跃，减少重建频率
+    keepAliveTimeout: 60000,
     keepAliveMaxTimeout: 120000,
 });
 
-// 判断是否可重试的状态码
 const retryableStatuses = new Set([502, 503, 504]);
 
-/**
- * 带指数退避重试的 fetch 封装
- * 参考 Render 官方文档：https://render.com/docs/outbound-connection-resets
- */
 async function fetchWithRetry(url, options = {}, retries = 3) {
     for (let attempt = 0; attempt <= retries; attempt++) {
         try {
             const response = await fetch(url, {
                 ...options,
-                dispatcher: upstreamAgent, // 使用连接池
+                dispatcher: upstreamAgent,
             });
 
-            // 如果是可重试的服务器错误，抛出异常以触发重试
             if (retryableStatuses.has(response.status)) {
                 await response.body?.cancel();
                 throw new Error(`上游返回状态码 ${response.status}`);
@@ -68,12 +62,9 @@ async function fetchWithRetry(url, options = {}, retries = 3) {
 
             return response;
         } catch (error) {
-            // 如果是最后一次尝试，直接抛出错误
             if (attempt === retries) {
                 throw error;
             }
-
-            // 指数退避 + 随机抖动，避免重试风暴
             const delay = 500 * 2 ** attempt * (0.5 + Math.random());
             console.warn(`[重试] 第 ${attempt + 1} 次失败，${Math.round(delay)}ms 后重试...`);
             await new Promise((resolve) => setTimeout(resolve, delay));
@@ -81,7 +72,6 @@ async function fetchWithRetry(url, options = {}, retries = 3) {
     }
 }
 
-// 翻译代理接口
 app.post('/api/translate', async (req, res) => {
     const { text, targetLang, deeplKey } = req.body;
 
@@ -96,7 +86,6 @@ app.post('/api/translate', async (req, res) => {
         : 'https://api.deepl.com/v2/translate';
 
     try {
-        // 使用带重试的 fetch
         const response = await fetchWithRetry(apiUrl, {
             method: 'POST',
             headers: {
@@ -109,7 +98,6 @@ app.post('/api/translate', async (req, res) => {
             })
         });
 
-        // 防御性解析：先读取为文本
         const responseText = await response.text();
 
         if (!responseText || responseText.trim() === '') {
@@ -128,13 +116,11 @@ app.post('/api/translate', async (req, res) => {
             return res.json({ translatedText: data.translations[0].text });
         }
 
-        // 4xx 错误（Key 无效、额度耗尽等）直接返回，不重试
         if (response.status >= 400 && response.status < 500) {
             const errMsg = data.message || '翻译请求被拒绝，请检查 API Key 或额度';
             return res.status(response.status).json({ error: errMsg });
         }
 
-        // 其他错误
         throw new Error(`DeepL 返回状态码 ${response.status}`);
 
     } catch (err) {
@@ -143,12 +129,10 @@ app.post('/api/translate', async (req, res) => {
     }
 });
 
-// 健康检查端点（可选，但推荐用于 Render）
 app.get('/health', (req, res) => {
     res.status(200).send('OK');
 });
 
-// 设置环境变量以兼容 Render 的代理超时
 process.env.KEEP_ALIVE_TIMEOUT = '120';
 process.env.HEADERS_TIMEOUT = '121';
 
