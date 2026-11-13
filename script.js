@@ -98,6 +98,11 @@
     const half = Math.ceil(communityCards.length / 2);
     communityCards.slice(0, half).concat(communityCards.slice(0, half)).forEach((item) => cRow1.appendChild(makeUCard(item)));
     communityCards.slice(half).concat(communityCards.slice(half)).forEach((item) => cRow2.appendChild(makeUCard(item)));
+    
+    // 动态渲染后，若当前有翻译字典，触发一次翻译
+    if (window.activeDict) {
+      setTimeout(() => window.applyTranslation(window.activeDict), 50);
+    }
   }
 
   document.querySelectorAll(".faq-q").forEach((btn) => {
@@ -131,7 +136,7 @@
      2. 国际化 (i18n) - 全面增强版
      ========================================= */
   let currentLangs = [];
-  let activeDict = null;
+  window.activeDict = null;
 
   async function fetchLangsFromServer() {
     try {
@@ -158,12 +163,12 @@
   }
 
   // 核心翻译执行器
-  function applyTranslation(dict) {
+  window.applyTranslation = function(dict) {
     if (!dict) {
       hideLoader();
       return;
     }
-    activeDict = dict;
+    window.activeDict = dict;
 
     // 1. 遍历所有文本节点（支持标签穿插）
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
@@ -203,35 +208,15 @@
        document.title = dict['你的 USDC，不卖也能花'];
     }
 
-    // 6. 【特殊处理】浏览器原生的日期控件
-    document.querySelectorAll('input[type="date"]').forEach(el => {
-      if (!el.dataset.translated) {
-        el.dataset.translated = "true";
-        el.dataset.originalType = "date";
-        el.type = "text"; // 变为文本以支持自定义占位符
-        if (dict['年/月/日']) {
-          el.placeholder = dict['年/月/日'];
-        }
-        el.addEventListener('focus', function() {
-          this.type = 'date'; // 聚焦时变回日期选择器
-        });
-        el.addEventListener('blur', function() {
-          if (!this.value) {
-            this.type = 'text'; // 失去焦点且为空时变回文本
-          }
-        });
-      }
-    });
-
     hideLoader();
-  }
+  };
 
   // 动态渲染内容后，触发二次翻译
-  function triggerRetranslate() {
-    if (activeDict) {
-      applyTranslation(activeDict);
+  window.triggerRetranslate = function() {
+    if (window.activeDict) {
+      window.applyTranslation(window.activeDict);
     }
-  }
+  };
 
   window.changeLang = function(lang, e) {
     if (e) e.preventDefault();
@@ -243,7 +228,7 @@
     } else {
       const target = currentLangs.find(l => l.code === lang);
       if (target && target.dict) {
-        applyTranslation(target.dict);
+        window.applyTranslation(target.dict);
       } else {
         hideLoader();
       }
@@ -272,20 +257,19 @@
       if (target && target.dict) {
         // 翻译页面主体
         setTimeout(() => {
-          applyTranslation(target.dict);
+          window.applyTranslation(target.dict);
           
           // 【特殊处理】：针对 apply.html 动态生成后的重翻译
           if (window.startGenerate) {
             const origGenerate = window.startGenerate;
             window.startGenerate = function() {
               origGenerate();
-              setTimeout(triggerRetranslate, 100);
+              setTimeout(window.triggerRetranslate, 100);
             };
           }
           
-          // 【特殊处理】：针对 index.html 社区卡片动态渲染后的重翻译
-          // 由于 script.js 同步执行完 innerHTML 才会往下走，这里直接延时触发一次兜底
-          setTimeout(triggerRetranslate, 300);
+          // 兜底延时重翻译
+          setTimeout(window.triggerRetranslate, 300);
           
         }, 50);
       } else {
