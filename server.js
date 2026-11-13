@@ -4,10 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const dns = require('dns');
 
-// ==========================================
-// 核心修复：强制 Node.js 优先解析 IPv4 地址
-// 解决 Render 等云平台因不支持 IPv6 导致的 ENOTFOUND 错误
-// ==========================================
+// 强制优先 IPv4，规避 Render 等云平台 IPv6 出站问题
 dns.setDefaultResultOrder('ipv4first');
 
 const app = express();
@@ -17,12 +14,10 @@ app.use(express.static(__dirname));
 
 const DATA_FILE = path.join(__dirname, 'data.json');
 
-// 初始化数据文件
 if (!fs.existsSync(DATA_FILE)) {
     fs.writeFileSync(DATA_FILE, JSON.stringify({ langs: [], globalDict: {} }, null, 2));
 }
 
-// 获取数据接口
 app.get('/api/data', (req, res) => {
     try {
         const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
@@ -32,7 +27,6 @@ app.get('/api/data', (req, res) => {
     }
 });
 
-// 保存数据接口
 app.post('/api/data', (req, res) => {
     try {
         fs.writeFileSync(DATA_FILE, JSON.stringify(req.body, null, 2));
@@ -43,8 +37,7 @@ app.post('/api/data', (req, res) => {
 });
 
 // ==========================================
-// 翻译代理接口
-// 包含：Header 鉴权、超时控制、失败重试、具体错误捕获
+// 翻译代理接口（修复 Unexpected end of JSON input）
 // ==========================================
 app.post('/api/translate', async (req, res) => {
     const { text, targetLang, deeplKey } = req.body;
@@ -54,26 +47,25 @@ app.post('/api/translate', async (req, res) => {
     }
 
     const cleanKey = deeplKey.trim();
-    // 自动识别免费版（通常以 :fx 结尾）和专业版接口
     const isFreeApi = cleanKey.endsWith(':fx');
     const apiUrl = isFreeApi 
         ? 'https://api-free.deepl.com/v2/translate' 
         : 'https://api.deepl.com/v2/translate';
 
-    const MAX_RETRIES = 2; // 最多重试 2 次
+    const MAX_RETRIES = 3; // 增加到 3 次重试
     let lastError = null;
 
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
         try {
-            // 设置 15 秒请求超时
+            // 超时设置为 20 秒，给慢响应更多时间
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const timeoutId = setTimeout(() => controller.abort(), 20000);
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': `DeepL-Auth-Key ${cleanKey}` // 最新的鉴权方式
+                    'Authorization': `DeepL-Auth-Key ${cleanKey}`
                 },
                 body: new URLSearchParams({ 
                     text: text, 
@@ -83,45 +75,55 @@ app.post('/api/translate', async (req, res) => {
             });
 
             clearTimeout(timeoutId);
-            const data = await response.json();
+
+            // 关键修复：先读取为文本，检查响应体是否为空或不完整
+            const responseText = await response.text();
+
+            if (!responseText || responseText.trim() === '') {
+                // 空响应体，通常由连接截断引起，触发重试
+                throw new Error('响应体为空，连接可能被中断');
+            }
+
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (parseErr) {
+                // JSON 解析失败，可能是响应被截断或返回了 HTML 错误页
+                console.warn(`[翻译请求] JSON 解析失败 (第 ${attempt + 1} 次)，原始响应片段: ${responseText.slice(0, 100)}...`);
+                throw new Error('响应数据不完整或格式错误');
+            }
 
             if (response.ok) {
                 return res.json({ translatedText: data.translations[0].text });
             }
 
-            // 如果遇到 4xx 错误（如 Key 填错、额度耗尽），直接返回，不需要重试
+            // 4xx 错误（Key 无效、额度耗尽等）直接返回，不重试
             if (response.status >= 400 && response.status < 500) {
-                const errMsg = data.message || '翻译请求被拒绝，请检查 API Key 是否有效或额度是否耗尽';
+                const errMsg = data.message || '翻译请求被拒绝，请检查 API Key 或额度';
                 return res.status(response.status).json({ error: errMsg });
             }
 
-            // 5xx 服务器错误，记录异常并准备重试
+            // 5xx 服务器错误，记录并准备重试
             lastError = new Error(`DeepL 服务器返回状态码: ${response.status}`);
 
         } catch (err) {
-            // 捕获网络异常或超时
             lastError = err;
             console.warn(`[翻译请求] 第 ${attempt + 1} 次尝试失败:`, err.message);
         }
 
-        // 如果还有重试机会，等待一小段时间再试 (1秒、2秒...)
+        // 重试等待（递增：1秒、2秒、3秒）
         if (attempt < MAX_RETRIES) {
             await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
         }
     }
 
-    // 如果重试完仍然失败，提取具体错误原因返回给前端
-    const cause = lastError?.cause?.code || lastError?.cause?.message || lastError?.message || '未知网络错误';
+    // 所有重试均失败，返回具体原因
+    const cause = lastError?.message || '未知网络错误';
     console.error('[翻译请求] 最终失败，原因:', cause);
     
-    let friendlyMsg = `网络请求失败 (${cause})`;
-    if (cause === 'ENOTFOUND') friendlyMsg = '网络解析失败，请确保服务器支持访问外网';
-    if (cause === 'ETIMEDOUT' || lastError?.name === 'AbortError') friendlyMsg = '请求 DeepL 超时，请检查服务器网络';
-
-    res.status(502).json({ error: friendlyMsg });
+    res.status(502).json({ error: `网络请求失败 (${cause})，请稍后重试` });
 });
 
-// 启动服务
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`✅ 后端服务器已启动，监听端口: ${PORT}`);
