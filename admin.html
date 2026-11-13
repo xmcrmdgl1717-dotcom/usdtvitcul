@@ -42,7 +42,7 @@
   .card { background: var(--surface); border-radius: 10px; padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; }
   .form-group { margin-bottom: 15px; }
   .form-group label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; }
-  .form-group input { width: 100%; max-width: 400px; padding: 10px; border: 1px solid var(--border); border-radius: 6px; outline: none; }
+  .form-group input { width: 100%; max-width: 400px; padding: 10px; border: 1px solid var(--border); border-radius: 6px; outline: none; font-family: monospace; }
   
   table { width: 100%; border-collapse: collapse; margin-top: 15px; }
   th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
@@ -81,7 +81,6 @@
 
   .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 6px; font-size: 14px; z-index: 9999; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
-  /* 进度条样式 */
   .progress-wrap { display: none; background: var(--surface); padding: 16px 24px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
   .progress-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; font-weight: 600; }
   .progress-track { width: 100%; height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden; }
@@ -182,8 +181,9 @@
       <hr style="border:0; border-top:1px solid var(--border); margin: 20px 0;">
       <div class="form-group">
         <label>DeepL API Key (免费版或专业版)</label>
-        <input type="password" id="set-deepl-key" placeholder="输入 DeepL API Key">
-        <p style="font-size:12px; color:var(--text-light); margin-top:5px;">必填项。请确保填写正确，否则翻译将无法调用。</p>
+        <!-- 这里改成了 type="text" 明文显示 -->
+        <input type="text" id="set-deepl-key" placeholder="输入 DeepL API Key">
+        <p style="font-size:12px; color:var(--text-light); margin-top:5px;">必填项。免费版 Key 一般以 :fx 结尾，请确保填写正确，否则翻译将无法调用。</p>
       </div>
       <button class="btn btn-primary" onclick="saveSettings()">保存配置</button>
     </div>
@@ -397,12 +397,10 @@ function renderLangTable() {
   const tbody = document.getElementById('lang-tbody');
   tbody.innerHTML = '';
   
-  // 去重计算，解决永远无法 100% 的问题
   const uniqueTexts = [...new Set(flattenValues(globalDict))];
   const totalTexts = uniqueTexts.length;
 
   currentLangs.forEach((lang) => {
-    // 如果翻译结果为空，或与原文相同（说明没翻出来），则不算进度
     const validDictCount = Object.keys(lang.dict || {}).filter(k => {
         const val = lang.dict[k];
         return val && val.trim() !== "" && val !== k;
@@ -538,27 +536,22 @@ async function fetchTranslation(text, targetLang) {
   const deeplKey = localStorage.getItem('nexa_deepl_key');
   
   if (!deeplKey) {
-    throw new Error("请先在设置中配置 DeepL API Key");
+    throw new Error("请先在「API 配置」中填写 DeepL API Key");
   }
 
-  try {
-    const res = await fetch('/api/translate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, targetLang, deeplKey })
-    });
-    
-    if (res.ok) {
-      const data = await res.json();
-      return data.translatedText;
-    } else {
-      const err = await res.text();
-      console.warn("翻译失败:", err);
-    }
-  } catch (e) {
-    console.warn("请求代理接口失败", e);
+  const res = await fetch('/api/translate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, targetLang, deeplKey })
+  });
+  
+  if (res.ok) {
+    const data = await res.json();
+    return data.translatedText;
+  } else {
+    const errData = await res.json();
+    throw new Error(errData.error || "翻译失败");
   }
-  return text;
 }
 
 function updateProgress(current, total) {
@@ -590,7 +583,7 @@ async function translateSingleLang(code) {
   const missingTexts = textsToTranslate.filter(text => {
     if (!text || !text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return false;
     const val = translatedDict[text];
-    if (val && val.trim() !== "" && val !== text) return false; // 只要有翻译且不是原文，就跳过
+    if (val && val.trim() !== "" && val !== text) return false;
     return true;
   });
 
@@ -605,27 +598,33 @@ async function translateSingleLang(code) {
   const loading = document.getElementById('translate-loading');
   loading.classList.add('show');
 
-  const CONCURRENCY = 5;
-  let completed = 0;
-
-  for (let i = 0; i < missingTexts.length; i += CONCURRENCY) {
-    const chunk = missingTexts.slice(i, i + CONCURRENCY);
-    document.getElementById('edit-json-textarea').value = `正在并发补齐缺失的文案 (${i+1}/${missingTexts.length})...\n\n当前批次翻译: \n${chunk.join('\n')}`;
-    
-    const promises = chunk.map(async (text) => {
-      const translated = await fetchTranslation(text, tLang);
-      return { text, translated };
-    });
-    const results = await Promise.all(promises);
-    results.forEach(r => { translatedDict[r.text] = r.translated; });
-  }
-
-  lang.dict = translatedDict;
-  await saveData();
+  // 并发调为 3，防止 DeepL 免费版报 429 错误
+  const CONCURRENCY = 3;
   
-  loading.classList.remove('show');
-  document.getElementById('edit-json-textarea').value = JSON.stringify(lang.dict, null, 2);
-  document.getElementById('edit-modal-title').innerText = `翻译完成: ${lang.name}`;
+  try {
+    for (let i = 0; i < missingTexts.length; i += CONCURRENCY) {
+      const chunk = missingTexts.slice(i, i + CONCURRENCY);
+      document.getElementById('edit-json-textarea').value = `正在并发补齐缺失的文案 (${i+1}/${missingTexts.length})...\n\n当前批次翻译: \n${chunk.join('\n')}`;
+      
+      const promises = chunk.map(async (text) => {
+        const translated = await fetchTranslation(text, tLang);
+        return { text, translated };
+      });
+      const results = await Promise.all(promises);
+      results.forEach(r => { translatedDict[r.text] = r.translated; });
+    }
+
+    lang.dict = translatedDict;
+    await saveData();
+    
+    loading.classList.remove('show');
+    document.getElementById('edit-json-textarea').value = JSON.stringify(lang.dict, null, 2);
+    document.getElementById('edit-modal-title').innerText = `翻译完成: ${lang.name}`;
+  } catch (err) {
+    loading.classList.remove('show');
+    closeModal('modal-edit-json');
+    alert('❌ 翻译中断：' + err.message);
+  }
 }
 
 async function performTranslate(lang) {
@@ -642,7 +641,7 @@ async function performTranslate(lang) {
 
   if (missingTexts.length === 0) return false;
 
-  const CONCURRENCY = 5;
+  const CONCURRENCY = 3;
   let completed = 0;
 
   for (let i = 0; i < missingTexts.length; i += CONCURRENCY) {
@@ -680,7 +679,7 @@ async function globalTranslate() {
   btn.disabled = true;
 
   let translatedAny = false;
-  updateProgress(0, 1); // 初始化显示
+  updateProgress(0, 1);
   
   try {
     for (let i = 0; i < currentLangs.length; i++) {
@@ -703,12 +702,12 @@ async function globalTranslate() {
     }
   } catch (e) {
     console.error(e);
-    alert('翻译过程中发生错误：' + e.message);
+    alert('❌ 翻译出错：' + e.message);
   } finally {
     isGlobalTranslating = false;
     btn.innerHTML = origText;
     btn.disabled = false;
-    updateProgress(null); // 隐藏进度条
+    updateProgress(null);
   }
 }
 
@@ -724,7 +723,7 @@ function saveSettings() {
   }
   
   if (deeplKey !== null) {
-    localStorage.setItem('nexa_deepl_key', deeplKey);
+    localStorage.setItem('nexa_deepl_key', deeplKey.trim());
     alert('API 配置已保存');
   }
 }
