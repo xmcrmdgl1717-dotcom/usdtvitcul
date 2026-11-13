@@ -3,7 +3,12 @@
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* 隐藏 Loader 的方法 */
+  /* ============ 全局翻译函数供动态代码调用 ============ */
+  window.t = function(text) {
+    if (window.activeDict && window.activeDict[text]) return window.activeDict[text];
+    return text;
+  };
+
   function hideLoader() {
     const loader = document.getElementById('i18n-loader');
     if (loader && loader.style.display !== 'none') {
@@ -63,7 +68,6 @@
     revealEls.forEach((el) => io.observe(el));
   }
 
-  // 动态渲染
   const partners = ["Visa", "Mastercard", "Circle", "Stripe", "Coinbase", "Bitget", "Binance", "OKX", "Tether", "Solana", "Ethereum", "Chainlink", "Aave", "Uniswap", "Fireblocks", "Chainalysis", "Elliptic", "Lead Bank"];
   const partnersTrack = document.getElementById("partnersTrack");
   if (partnersTrack) {
@@ -85,13 +89,16 @@
     { q: "虚拟卡 20 秒出，Apple Pay 绑定直接能用。", name: "Ryan", tag: "产品经理 · 东京", accent: "rgba(0, 240, 255, 0.2)" },
     { q: "客服 24 小时在线，这在加密领域真的少见。", name: "Sophie", tag: "内容创作者 · 悉尼", accent: "rgba(43, 214, 123, 0.2)" }
   ];
+  
   function makeUCard(item) {
     const el = document.createElement("div");
     el.className = "ucard";
     el.style.setProperty("--accent", item.accent);
-    el.innerHTML = '<div class="ucard-quote">"' + item.q + '"</div><div class="ucard-foot"><div class="ucard-avatar">' + item.name.charAt(0) + '</div><div class="ucard-meta"><strong>' + item.name + '</strong>' + item.tag + '</div></div>';
+    // 去掉硬编码的引号，交给 CSS 伪元素处理
+    el.innerHTML = '<div class="ucard-quote">' + item.q + '</div><div class="ucard-foot"><div class="ucard-avatar">' + item.name.charAt(0) + '</div><div class="ucard-meta"><strong>' + item.name + '</strong>' + item.tag + '</div></div>';
     return el;
   }
+  
   const cRow1 = document.getElementById("communityRow1");
   const cRow2 = document.getElementById("communityRow2");
   if (cRow1 && cRow2) {
@@ -99,7 +106,7 @@
     communityCards.slice(0, half).concat(communityCards.slice(0, half)).forEach((item) => cRow1.appendChild(makeUCard(item)));
     communityCards.slice(half).concat(communityCards.slice(half)).forEach((item) => cRow2.appendChild(makeUCard(item)));
     
-    // 动态渲染后，若当前有翻译字典，触发一次翻译
+    // 动态渲染后触发二次翻译
     if (window.activeDict) {
       setTimeout(() => window.applyTranslation(window.activeDict), 50);
     }
@@ -133,7 +140,7 @@
   }
 
   /* =========================================
-     2. 国际化 (i18n) - 全面增强版
+     2. 国际化 (i18n)
      ========================================= */
   let currentLangs = [];
   window.activeDict = null;
@@ -162,7 +169,6 @@
     dropdown.innerHTML = html;
   }
 
-  // 核心翻译执行器
   window.applyTranslation = function(dict) {
     if (!dict) {
       hideLoader();
@@ -170,7 +176,6 @@
     }
     window.activeDict = dict;
 
-    // 1. 遍历所有文本节点（支持标签穿插）
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     let node;
     while (node = walker.nextNode()) {
@@ -178,30 +183,25 @@
       const rawTxt = node.nodeValue;
       const txt = rawTxt.trim();
       if (txt && dict[txt]) {
-        // 保持原有前后空格
         node.nodeValue = rawTxt.replace(txt, dict[txt]);
       }
     }
 
-    // 2. 翻译 Placeholder
     document.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(el => {
       const t = el.getAttribute('placeholder');
       if (t && dict[t]) el.setAttribute('placeholder', dict[t]);
     });
 
-    // 3. 翻译 Select 选项
     document.querySelectorAll('option').forEach(el => {
       const t = el.textContent.trim();
       if (t && dict[t]) el.textContent = dict[t];
     });
 
-    // 4. 翻译 Title 属性
     document.querySelectorAll('[title]').forEach(el => {
       const t = el.getAttribute('title');
       if (t && dict[t]) el.setAttribute('title', dict[t]);
     });
 
-    // 5. 翻译网页 Title
     if (dict['领取虚拟卡'] && document.title.includes('领取虚拟卡')) {
       document.title = document.title.replace('领取虚拟卡', dict['领取虚拟卡']);
     } else if (dict['你的 USDC，不卖也能花'] && document.title.includes('你的 USDC')) {
@@ -211,7 +211,6 @@
     hideLoader();
   };
 
-  // 动态渲染内容后，触发二次翻译
   window.triggerRetranslate = function() {
     if (window.activeDict) {
       window.applyTranslation(window.activeDict);
@@ -249,17 +248,14 @@
     }
   });
 
-  // 初始化
   fetchLangsFromServer().then(() => {
     let lang = localStorage.getItem('nexa_manual_lang');
     if (lang && lang !== 'zh') {
       const target = currentLangs.find(l => l.code === lang);
       if (target && target.dict) {
-        // 翻译页面主体
         setTimeout(() => {
           window.applyTranslation(target.dict);
           
-          // 【特殊处理】：针对 apply.html 动态生成后的重翻译
           if (window.startGenerate) {
             const origGenerate = window.startGenerate;
             window.startGenerate = function() {
@@ -268,7 +264,6 @@
             };
           }
           
-          // 兜底延时重翻译
           setTimeout(window.triggerRetranslate, 300);
           
         }, 50);
