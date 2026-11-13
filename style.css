@@ -37,7 +37,7 @@ body {
 a { color: inherit; text-decoration: none; }
 button { font: inherit; cursor: pointer; }
 
-/* ============ 头部导航语言切换器 (独立固定，永不消失) ============ */
+/* ============ 头部导航语言切换器 ============ */
 .lang-switch-wrap {
   position: fixed; 
   left: 50%; 
@@ -91,7 +91,6 @@ button { font: inherit; cursor: pointer; }
 }
 .lang-dropdown a:hover { background: rgba(0, 240, 255, 0.1); color: var(--cyan); }
 
-/* 当飞出去悬浮在右侧时，下拉菜单向右展开 */
 .lang-switch-wrap.scrolled .lang-dropdown {
   top: 50%;
   left: auto;
@@ -670,6 +669,8 @@ body.has-pointer .cursor-glow { opacity: 1; }
   pointer-events: none;
 }
 .ucard-quote { font-size: 12.5px; line-height: 1.62; color: var(--text-2); position: relative; z-index: 2; }
+.ucard-quote::before { content: "“"; }
+.ucard-quote::after { content: "”"; }
 .ucard-foot { display: flex; align-items: center; gap: 9px; position: relative; z-index: 2; }
 .ucard-avatar {
   width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
