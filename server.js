@@ -4,7 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const dns = require('dns');
 
-// 强制优先 IPv4，规避 Render 等云平台 IPv6 出站问题
+// 强制优先 IPv4，规避 Render 等云平台的 IPv6 出站问题
 dns.setDefaultResultOrder('ipv4first');
 
 const app = express();
@@ -40,11 +40,10 @@ app.post('/api/data', (req, res) => {
 const MAX_RETRIES = 3;
 const BASE_DELAY = 1000; // 1秒
 
-// 带指数退避重试的 fetch 封装（使用原生 fetch）
+// 带指数退避重试的 fetch 封装
 async function fetchWithRetry(url, options = {}, retries = MAX_RETRIES) {
     for (let attempt = 0; attempt <= retries; attempt++) {
         try {
-            // 使用原生 AbortController 控制超时
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 20000); // 20秒超时
 
@@ -55,7 +54,6 @@ async function fetchWithRetry(url, options = {}, retries = MAX_RETRIES) {
 
             clearTimeout(timeoutId);
 
-            // 如果是可重试的服务器错误（5xx），抛出异常触发重试
             if (response.status >= 500) {
                 await response.body?.cancel();
                 throw new Error(`上游返回状态码 ${response.status}`);
@@ -63,12 +61,9 @@ async function fetchWithRetry(url, options = {}, retries = MAX_RETRIES) {
 
             return response;
         } catch (error) {
-            // 最后一次尝试，直接抛出错误
             if (attempt === retries) {
                 throw error;
             }
-
-            // 指数退避 + 随机抖动
             const delay = BASE_DELAY * 2 ** attempt * (0.5 + Math.random());
             console.warn(`[重试] 第 ${attempt + 1} 次失败 (${error.message})，${Math.round(delay)}ms 后重试...`);
             await new Promise((resolve) => setTimeout(resolve, delay));
@@ -103,7 +98,6 @@ app.post('/api/translate', async (req, res) => {
             })
         });
 
-        // 防御性解析：先读取为文本，避免空响应导致 JSON 解析崩溃
         const responseText = await response.text();
 
         if (!responseText || responseText.trim() === '') {
@@ -122,7 +116,6 @@ app.post('/api/translate', async (req, res) => {
             return res.json({ translatedText: data.translations[0].text });
         }
 
-        // 4xx 错误（Key 无效、额度耗尽等）直接返回，不重试
         if (response.status >= 400 && response.status < 500) {
             const errMsg = data.message || '翻译请求被拒绝，请检查 API Key 或额度';
             return res.status(response.status).json({ error: errMsg });
@@ -141,13 +134,12 @@ app.get('/health', (req, res) => {
     res.status(200).send('OK');
 });
 
-// 设置 Keep-Alive 超时，兼容 Render 的负载均衡器
+// 设置 Keep-Alive 超时，避免负载均衡器因空闲连接超时导致 502
 process.env.KEEP_ALIVE_TIMEOUT = '120';
 process.env.HEADERS_TIMEOUT = '121';
 
+// 关键：从环境变量读取 PORT，并显式绑定到 0.0.0.0
 const PORT = process.env.PORT || 3000;
-
-// 关键：绑定到 0.0.0.0，Render 要求如此
 const HOST = '0.0.0.0';
 
 app.listen(PORT, HOST, () => {
