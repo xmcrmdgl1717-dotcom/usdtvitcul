@@ -792,7 +792,7 @@
   <div class="orb orb-3"></div>
 </div>
 
-<!-- 悬浮语言切换器 (复用 index 逻辑) -->
+<!-- 悬浮语言切换器 -->
 <div class="lang-switch-wrap">
   <div class="lang-switch-btn" onclick="toggleLangMenu(event)">🌏</div>
   <div class="lang-dropdown" id="langDropdown"></div>
@@ -1083,7 +1083,7 @@
         <div class="err-msg" id="nameErr">请输入持卡人真实姓名</div>
       </div>
       <div class="input-wrap">
-        <input type="text" class="input" id="birthday" placeholder="出生日期 (YYYY-MM-DD)" />
+        <input type="text" class="input" id="birthday" placeholder="出生日期" />
         <div class="err-msg" id="birthErr">请选择出生日期</div>
       </div>
       <div class="input-wrap">
@@ -1292,7 +1292,7 @@
 
     const btn = document.getElementById("genBtn");
     btn.disabled = true;
-    btn.textContent = "正在生成…";
+    btn.textContent = window.t("正在生成…");
 
     const card = document.getElementById("genCard");
     const numEl = document.getElementById("genNumber");
@@ -1311,7 +1311,7 @@
     setTimeout(() => card.classList.remove("scanning"), 1900);
 
     setTimeout(() => {
-      btn.textContent = "卡片已生成";
+      btn.textContent = window.t("卡片已生成");
       setTimeout(() => goStep(4), 700);
     }, 120 + digits.length * 90 + 500);
   }
@@ -1378,9 +1378,9 @@
   /* ============ Step 5: 卡片信息 + 身份绑定 ============ */
   function copyText(btn) {
     const text = btn.dataset.copy || "";
+    const orig = btn.textContent;
     const done = () => {
-      const orig = btn.textContent;
-      btn.textContent = "已复制";
+      btn.textContent = window.t("已复制");
       btn.classList.add("copied");
       setTimeout(() => {
         btn.textContent = orig;
@@ -1411,16 +1411,16 @@
     if (showing) {
       val.style.display = "none";
       mask.style.display = "inline";
-      toggle.textContent = "显示";
+      toggle.textContent = window.t("显示");
     } else {
       val.style.display = "inline";
       mask.style.display = "none";
-      toggle.textContent = "隐藏";
+      toggle.textContent = window.t("隐藏");
       setTimeout(() => {
         if (val.style.display !== "none") {
           val.style.display = "none";
           mask.style.display = "inline";
-          toggle.textContent = "显示";
+          toggle.textContent = window.t("显示");
         }
       }, 15000);
     }
