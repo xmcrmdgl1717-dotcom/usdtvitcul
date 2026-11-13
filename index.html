@@ -99,15 +99,87 @@
     background: rgba(5, 8, 12, 0.72);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
+    /* 新增：悬浮收缩动画过渡 */
+    transition: padding 0.4s cubic-bezier(0.22, 1, 0.36, 1), background 0.4s ease, border-color 0.4s ease;
   }
-  .topbar-inner { max-width: 1120px; margin: 0 auto; padding: 13px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .topbar-inner { 
+    max-width: 1120px; 
+    margin: 0 auto; 
+    padding: 13px 24px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    gap: 16px; 
+    /* 新增：布局动画过渡 */
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* 新增：向下滚动时的导航条悬浮收缩 */
+  .topbar.scrolled {
+    background: transparent;
+    border-bottom-color: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .topbar.scrolled .topbar-inner {
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: 24px;
+    margin-top: 12px;
+    background: rgba(10, 30, 40, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 40px;
+    padding: 8px 20px;
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(0, 240, 255, 0.1);
+  }
+  .topbar.scrolled .topbar-note { display: none; }
+  .topbar.scrolled .logo-mark { width: 24px; height: 24px; font-size: 12px; border-radius: 7px; }
+  .topbar.scrolled .logo { font-size: 13px; }
+  .topbar.scrolled .lang-switch { font-size: 13px; }
 
   .logo { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 800; letter-spacing: 0.06em; }
   .logo-mark {
     width: 30px; height: 30px; border-radius: 9px;
     background: linear-gradient(135deg, var(--cyan), #2bd67b); display: grid; place-items: center;
     color: #001018; font-size: 14px; font-weight: 900; box-shadow: 0 0 22px rgba(0, 240, 255, 0.4);
+    transition: all 0.4s ease;
   }
+
+  /* 新增：语言切换器 */
+  .lang-switch {
+    position: relative;
+    margin-left: 12px;
+    font-size: 15px;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.2s, font-size 0.4s ease;
+  }
+  .lang-switch:hover { transform: scale(1.1); }
+  
+  .lang-dropdown {
+    position: absolute;
+    top: 30px; left: 0;
+    background: var(--surface-solid);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 0;
+    display: none;
+    flex-direction: column;
+    min-width: 120px;
+    z-index: 100;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  .lang-dropdown.show { display: flex; }
+  .lang-dropdown a {
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--text-2);
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s;
+  }
+  .lang-dropdown a:hover { background: rgba(0, 240, 255, 0.1); color: var(--cyan); }
 
   .topbar-note { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 7px; }
   .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); animation: pulseDot 2s ease-in-out infinite; }
@@ -761,6 +833,13 @@
     .earn-card { padding: 18px 16px; gap: 12px; }
     .earn-value { font-size: 17px; }
     .earn-value.small { font-size: 14px; }
+    
+    /* 移动端导航栏收起时的尺寸优化 */
+    .topbar.scrolled .topbar-inner {
+      max-width: 260px;
+      padding: 6px 16px;
+      margin-right: 16px;
+    }
   }
 
   @supports (height: 100dvh) {
@@ -792,11 +871,23 @@
 </div>
 <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
-<header class="topbar">
+<header class="topbar" id="topbar">
   <div class="topbar-inner">
     <a class="logo" href="#">
       <span class="logo-mark">N</span>
       <span>NEXA</span>
+      <!-- 新增：语言切换器 -->
+      <div class="lang-switch" onclick="toggleLangMenu(event)">
+        🌏
+        <div class="lang-dropdown" id="langDropdown">
+          <a href="#" onclick="changeLang('zh', event)">简体中文</a>
+          <a href="#" onclick="changeLang('en-US', event)">English (US)</a>
+          <a href="#" onclick="changeLang('vi', event)">Tiếng Việt</a>
+          <a href="#" onclick="changeLang('ja', event)">日本語</a>
+          <a href="#" onclick="changeLang('ko', event)">한국어</a>
+          <a href="#" onclick="changeLang('es', event)">Español</a>
+        </div>
+      </div>
     </a>
     <div class="topbar-note">
       <span class="live-dot"></span>
@@ -1342,6 +1433,42 @@
   "use strict";
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- 新增：滚动导航栏动画 ---------- */
+  const topbar = document.getElementById("topbar");
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 80) {
+      topbar.classList.add("scrolled");
+    } else {
+      topbar.classList.remove("scrolled");
+    }
+  });
+
+  /* ---------- 新增：语言下拉菜单开关 ---------- */
+  window.toggleLangMenu = function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const dropdown = document.getElementById("langDropdown");
+    dropdown.classList.toggle("show");
+  };
+
+  // 点击页面其他区域关闭下拉菜单
+  document.addEventListener("click", (e) => {
+    const dropdown = document.getElementById("langDropdown");
+    if (dropdown && dropdown.classList.contains("show")) {
+      if (!e.target.closest(".lang-switch")) {
+        dropdown.classList.remove("show");
+      }
+    }
+  });
+
+  window.changeLang = function(lang, e) {
+    if (e) e.preventDefault();
+    const dropdown = document.getElementById("langDropdown");
+    dropdown.classList.remove("show");
+    // 实际应用中可接入 i18n 切换逻辑
+    console.log("语言切换至:", lang);
+  };
 
   /* ---------- 滚动渐显 ---------- */
   const revealEls = document.querySelectorAll(".reveal");
