@@ -181,7 +181,6 @@
       <hr style="border:0; border-top:1px solid var(--border); margin: 20px 0;">
       <div class="form-group">
         <label>DeepL API Key (免费版或专业版)</label>
-        <!-- 这里改成了 type="text" 明文显示 -->
         <input type="text" id="set-deepl-key" placeholder="输入 DeepL API Key">
         <p style="font-size:12px; color:var(--text-light); margin-top:5px;">必填项。免费版 Key 一般以 :fx 结尾，请确保填写正确，否则翻译将无法调用。</p>
       </div>
@@ -598,13 +597,13 @@ async function translateSingleLang(code) {
   const loading = document.getElementById('translate-loading');
   loading.classList.add('show');
 
-  // 并发调为 3，防止 DeepL 免费版报 429 错误
-  const CONCURRENCY = 3;
+  // 【关键修改】修改为 1，串行请求
+  const CONCURRENCY = 1;
   
   try {
     for (let i = 0; i < missingTexts.length; i += CONCURRENCY) {
       const chunk = missingTexts.slice(i, i + CONCURRENCY);
-      document.getElementById('edit-json-textarea').value = `正在并发补齐缺失的文案 (${i+1}/${missingTexts.length})...\n\n当前批次翻译: \n${chunk.join('\n')}`;
+      document.getElementById('edit-json-textarea').value = `正在逐条补齐缺失的文案 (${i+1}/${missingTexts.length})...\n\n当前翻译: \n${chunk.join('\n')}`;
       
       const promises = chunk.map(async (text) => {
         const translated = await fetchTranslation(text, tLang);
@@ -612,6 +611,9 @@ async function translateSingleLang(code) {
       });
       const results = await Promise.all(promises);
       results.forEach(r => { translatedDict[r.text] = r.translated; });
+      
+      // 【关键修改】每次请求后延迟 1.5 秒，避免触发 DeepL 限流
+      await new Promise(r => setTimeout(r, 1500));
     }
 
     lang.dict = translatedDict;
@@ -641,7 +643,8 @@ async function performTranslate(lang) {
 
   if (missingTexts.length === 0) return false;
 
-  const CONCURRENCY = 3;
+  // 【关键修改】修改为 1，串行请求
+  const CONCURRENCY = 1;
   let completed = 0;
 
   for (let i = 0; i < missingTexts.length; i += CONCURRENCY) {
@@ -655,7 +658,11 @@ async function performTranslate(lang) {
       translatedDict[r.text] = r.translated;
       completed++;
     });
+    
     updateProgress(completed, missingTexts.length);
+    
+    // 【关键修改】每次请求后延迟 1.5 秒，避免触发 DeepL 限流
+    await new Promise(r => setTimeout(r, 1500));
   }
 
   lang.dict = translatedDict;
