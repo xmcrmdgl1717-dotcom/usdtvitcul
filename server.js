@@ -24,36 +24,45 @@ app.post('/api/data', (req, res) => {
     res.json({ success: true });
 });
 
-// 新增：DeepL 翻译代理接口（解决前端 CORS 跨域问题）
+// 新增：DeepL 翻译代理接口（解决前端 CORS 跨域问题，并自动识别免费/专业版）
 app.post('/api/translate', async (req, res) => {
     const { text, targetLang, deeplKey } = req.body;
     
     if (!text || !deeplKey) {
-        return res.status(400).json({ error: 'Missing text or deeplKey' });
+        return res.status(400).json({ error: '缺少文本或 API Key' });
     }
 
+    const cleanKey = deeplKey.trim();
+    // 免费版 API Key 通常以 :fx 结尾
+    const isFreeApi = cleanKey.endsWith(':fx');
+    const apiUrl = isFreeApi 
+        ? 'https://api-free.deepl.com/v2/translate' 
+        : 'https://api.deepl.com/v2/translate';
+
     try {
-        const response = await fetch('https://api-free.deepl.com/v2/translate', {
+        const response = await fetch(apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({ 
-                auth_key: deeplKey, 
+                auth_key: cleanKey, 
                 text: text, 
                 target_lang: targetLang.toUpperCase() 
             })
         });
 
+        const data = await response.json();
+
         if (response.ok) {
-            const data = await response.json();
             res.json({ translatedText: data.translations[0].text });
         } else {
-            const errText = await response.text();
-            console.error("DeepL API Error:", errText);
-            res.status(response.status).json({ error: errText });
+            console.error("DeepL API 报错:", data);
+            // 将 DeepL 官方的报错信息返回给前端
+            const errMsg = data.message || (data.error && data.error.message) || '翻译失败，请检查 Key 是否正确或额度是否用尽';
+            res.status(response.status).json({ error: errMsg });
         }
     } catch (error) {
-        console.error("Fetch Error:", error);
-        res.status(500).json({ error: error.message });
+        console.error("请求代理异常:", error);
+        res.status(500).json({ error: '网络请求失败，请检查后端服务或服务器网络' });
     }
 });
 
