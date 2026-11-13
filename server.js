@@ -140,10 +140,8 @@ process.env.HEADERS_TIMEOUT = '121';
 
 // 关键：从环境变量读取 PORT，并显式绑定到 0.0.0.0
 const PORT = process.env.PORT || 3000;
-const HOST = '0.0.0.0';
+const HOST = '0.0.0.0'; // Render 要求必须绑定到 0.0.0.0
 
 app.listen(PORT, HOST, () => {
     console.log(`✅ 后端服务器已启动，监听地址: ${HOST}:${PORT}`);
-    console.log(`✅ 前端访问: http://localhost:${PORT}/index.html`);
-    console.log(`✅ 后台管理: http://localhost:${PORT}/admin.html`);
 });
