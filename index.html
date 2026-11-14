@@ -3,210 +3,171 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NEXAPAY — 快速。流畅。安全。</title>
+<title>NEXAPAY — 让加密货币融入真实生活</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  /* 覆盖原有的居中排版，改为左右布局 */
-  .hero {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 0 8vw;
-  }
-  
-  .hero-content {
-    max-width: 800px;
-    text-align: left;
-    margin-top: -40px;
+  /* 适配 GreotPay 风格的覆盖样式 */
+  :root {
+    --brand-red: #00f0ff; /* 保留原有的青色作为主色调 */
+    --bg-light: #f8f9fa;
+    --text-dark: #111;
+    --text-gray: #666;
   }
 
-  .greotpay-title {
-    font-size: clamp(40px, 6vw, 72px);
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    color: #fff;
-    margin-bottom: 20px;
-    line-height: 1.1;
+  body {
+    background: #fff;
+    color: var(--text-dark);
   }
 
-  .greotpay-sub {
-    font-size: clamp(18px, 2vw, 24px);
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 16px;
-    font-weight: 500;
-  }
-
-  /* 分割线 */
-  .divider-line {
+  /* 顶部导航 */
+  .topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 1px;
-    background: rgba(255, 255, 255, 0.15);
-    margin: 40px 0 30px;
-  }
-
-  /* 折叠菜单 */
-  .accordion-section {
-    width: 100%;
-    max-width: 600px;
-  }
-  
-  .accordion-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 0;
-    cursor: pointer;
-    font-size: 24px;
-    font-weight: 700;
-    color: #fff;
-    border-bottom: 1px solid transparent;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    z-index: 1000;
+    padding: 12px 0;
     transition: all 0.3s;
   }
-  
-  .accordion-header:hover {
-    color: var(--cyan);
-  }
-
-  .accordion-header .icon {
-    font-size: 24px;
-    font-weight: 300;
-    color: #fff;
-    transition: transform 0.3s;
-  }
-
-  .accordion-header.active .icon {
-    transform: rotate(45deg);
-  }
-
-  .accordion-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease-out;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px 20px;
-    opacity: 0;
-  }
-
-  .accordion-content.open {
-    max-height: 500px;
-    opacity: 1;
-    padding: 10px 0 30px;
-  }
-
-  .accordion-content a {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 15px;
-    text-decoration: none;
-    transition: color 0.2s;
-    white-space: nowrap;
-  }
-
-  .accordion-content a:hover {
-    color: #fff;
-  }
-
-  /* 右上角登录注册 */
-  .auth-actions {
+  .topbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    justify-content: space-between;
   }
+  .logo { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 800; color: #111; text-decoration: none; }
+  .logo-mark { width: 32px; height: 32px; background: var(--cyan); color: #000; border-radius: 8px; display: grid; place-items: center; font-size: 16px; }
 
-  .btn-auth {
-    font-size: 14px;
-    font-weight: 600;
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .btn-auth:hover {
-    color: var(--cyan);
-  }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: #555; text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: #111; }
 
-  .btn-register {
-    padding: 8px 20px;
-    border-radius: 8px;
-    background: #fff;
-    color: #000;
-  }
+  .auth-actions { display: flex; align-items: center; gap: 20px; }
+  .btn-auth { font-size: 14px; font-weight: 600; color: #111; cursor: pointer; text-decoration: none; }
+  .btn-register { background: #111; color: #fff; padding: 8px 20px; border-radius: 20px; }
+  .btn-register:hover { background: #333; }
 
-  .btn-register:hover {
-    background: var(--cyan-soft);
-    color: #000;
-  }
-
-  /* 简单弹窗样式 */
-  .auth-modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.8);
-    backdrop-filter: blur(10px);
-    z-index: 9999;
-    display: none;
+  /* Hero 区域 */
+  .hero-greotpay {
+    position: relative;
+    height: 80vh;
+    min-height: 600px;
+    display: flex;
     align-items: center;
     justify-content: center;
-  }
-  .auth-modal.show {
-    display: flex;
-  }
-  .auth-box {
-    background: #0a1e28;
-    border: 1px solid var(--border-2);
-    border-radius: 16px;
-    padding: 40px;
-    width: 100%;
-    max-width: 400px;
     text-align: center;
-    position: relative;
+    overflow: hidden;
+    background: #000;
   }
-  .auth-box h3 {
-    font-size: 24px;
-    color: #fff;
-    margin-bottom: 20px;
+  .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+  .hero-content-greotpay { position: relative; z-index: 2; max-width: 800px; padding: 0 20px; }
+  .hero-title-greotpay { font-size: clamp(40px, 5vw, 64px); font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 20px; }
+  .hero-sub-greotpay { font-size: clamp(16px, 2vw, 20px); color: rgba(255,255,255,0.8); margin-bottom: 40px; }
+  .btn-start {
+    display: inline-block; padding: 16px 32px; font-size: 16px; font-weight: 700;
+    background: var(--cyan); color: #000; border-radius: 30px; text-decoration: none;
+    transition: all 0.3s;
   }
-  .auth-box input {
-    width: 100%;
-    padding: 14px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    color: #fff;
-    margin-bottom: 16px;
-    outline: none;
-  }
-  .auth-box input:focus {
-    border-color: var(--cyan);
-  }
-  .auth-box .btn-main {
-    width: 100%;
-    margin-bottom: 20px;
-  }
-  .auth-box .close-modal {
-    position: absolute;
-    top: 16px;
-    right: 20px;
-    font-size: 24px;
-    color: rgba(255,255,255,0.5);
-    cursor: pointer;
-  }
-  .auth-box .close-modal:hover {
-    color: #fff;
-  }
+  .btn-start:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,240,255,0.3); }
 
-  @media (max-width: 768px) {
-    .hero { padding: 0 5vw; align-items: flex-start; padding-top: 120px; }
-    .accordion-content { grid-template-columns: repeat(2, 1fr); }
-    .greotpay-title { font-size: 40px; }
-    .auth-actions { display: none; /* 移动端隐藏，或者可以放到汉堡菜单 */ }
+  /* 通用区块 */
+  .section-greotpay { padding: 80px 20px; }
+  .container-greotpay { max-width: 1200px; margin: 0 auto; }
+  .section-title { font-size: 32px; font-weight: 800; margin-bottom: 40px; text-align: center; }
+
+  /* 4 卡片区 */
+  .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .feature-card { border-radius: 16px; overflow: hidden; background: #f0f0f0; display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; min-height: 320px; position: relative; }
+  .feature-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.8)); z-index: 1; }
+  .feature-card h3 { position: relative; z-index: 2; color: #fff; font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .feature-card p { position: relative; z-index: 2; color: rgba(255,255,255,0.7); font-size: 13px; line-height: 1.5; }
+  .feature-card:nth-child(1) { background: linear-gradient(135deg, #e0e0e0, #c0c0c0); }
+  .feature-card:nth-child(2) { background: linear-gradient(135deg, #ffcccc, #ff9999); }
+  .feature-card:nth-child(3) { background: linear-gradient(135deg, #ccffcc, #99ff99); }
+  .feature-card:nth-child(4) { background: linear-gradient(135deg, #ccccff, #9999ff); }
+
+  /* 黑底展示区 */
+  .dark-showcase { background: #0f0f0f; border-radius: 32px; padding: 80px 20px; text-align: center; margin: 0 20px; position: relative; overflow: hidden; }
+  .dark-showcase h2 { color: #fff; font-size: 40px; font-weight: 800; margin-bottom: 16px; }
+  .dark-showcase p { color: rgba(255,255,255,0.6); font-size: 16px; margin-bottom: 40px; }
+  .mock-card { width: 340px; height: 210px; margin: 0 auto; background: linear-gradient(135deg, #ff0055, #ff5599); border-radius: 16px; box-shadow: 0 20px 40px rgba(255,0,85,0.3); position: relative; }
+  
+  /* 交替图文 */
+  .zigzag-row { display: flex; align-items: center; justify-content: space-between; gap: 60px; margin-bottom: 100px; }
+  .zigzag-row:nth-child(even) { flex-direction: row-reverse; }
+  .zigzag-text { flex: 1; max-width: 450px; }
+  .zigzag-text h3 { font-size: 36px; font-weight: 800; margin-bottom: 16px; line-height: 1.3; }
+  .zigzag-text p { font-size: 16px; color: var(--text-gray); line-height: 1.6; margin-bottom: 24px; }
+  .btn-text { font-size: 14px; font-weight: 700; color: #111; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-text::after { content: '→'; }
+  
+  .zigzag-visual { flex: 1; display: flex; justify-content: center; }
+  .mock-phone { width: 280px; height: 560px; background: #f0f0f0; border-radius: 40px; border: 8px solid #111; box-shadow: 0 20px 40px rgba(0,0,0,0.1); position: relative; overflow: hidden; }
+  .mock-phone::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 24px; background: #111; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; z-index: 2; }
+
+  /* 深色数据区 */
+  .stats-dark { background: #0f0f0f; border-radius: 32px; padding: 60px 20px; margin: 0 20px; color: #fff; text-align: center; }
+  .stats-dark h2 { font-size: 28px; font-weight: 800; margin-bottom: 40px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 800px; margin: 0 auto; }
+  .stat-item { background: rgba(255,255,255,0.05); padding: 30px 20px; border-radius: 16px; }
+  .stat-item .num { font-size: 40px; font-weight: 800; margin-bottom: 8px; }
+  .stat-item .lbl { font-size: 14px; color: rgba(255,255,255,0.6); }
+
+  /* Logo 墙 */
+  .logo-wall { display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; opacity: 0.5; filter: grayscale(100%); margin-top: 30px; }
+  .logo-wall span { font-size: 24px; font-weight: 800; font-family: serif; }
+
+  /* 用户评价 */
+  .testimonials { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .test-card { background: #f8f9fa; padding: 30px; border-radius: 16px; }
+  .test-card p { font-size: 15px; color: #333; line-height: 1.6; margin-bottom: 20px; }
+  .test-card .author { font-size: 13px; font-weight: 700; color: #888; }
+
+  /* FAQ */
+  .faq-list { max-width: 800px; margin: 0 auto; }
+  .faq-item { border-bottom: 1px solid #eee; }
+  .faq-q { width: 100%; text-align: left; background: none; border: none; padding: 24px 0; font-size: 18px; font-weight: 600; color: #111; display: flex; justify-content: space-between; cursor: pointer; }
+  .faq-a { display: none; padding-bottom: 24px; font-size: 15px; color: var(--text-gray); line-height: 1.6; }
+  .faq-item.open .faq-a { display: block; }
+  .faq-q .plus { font-size: 24px; font-weight: 300; }
+
+  /* Footer */
+  .footer-greotpay { background: #0f0f0f; color: #fff; padding: 60px 20px 30px; margin-top: 80px; }
+  .footer-inner-greotpay { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 40px; }
+  .footer-brand h2 { font-size: 32px; font-weight: 800; margin-bottom: 12px; }
+  .footer-brand p { color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 30px; }
+  .footer-col h4 { font-size: 14px; font-weight: 700; margin-bottom: 20px; }
+  .footer-col a { display: block; color: rgba(255,255,255,0.5); font-size: 13px; margin-bottom: 12px; text-decoration: none; }
+  .footer-col a:hover { color: #fff; }
+  .footer-bottom { max-width: 1200px; margin: 60px auto 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; color: rgba(255,255,255,0.4); font-size: 12px; }
+
+  /* 登录/注册弹窗 (复用) */
+  .auth-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 9999; display: none; align-items: center; justify-content: center; }
+  .auth-modal.show { display: flex; }
+  .auth-box { background: #fff; border-radius: 16px; padding: 40px; width: 100%; max-width: 400px; text-align: center; position: relative; }
+  .auth-box h3 { font-size: 24px; color: #111; margin-bottom: 20px; font-weight: 800; }
+  .auth-box input { width: 100%; padding: 14px; background: #f0f0f0; border: 1px solid #ddd; border-radius: 8px; color: #111; margin-bottom: 16px; outline: none; font-size: 14px; }
+  .auth-box .btn-submit { width: 100%; padding: 14px; background: #111; color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 20px; }
+  .auth-box .close-modal { position: absolute; top: 16px; right: 20px; font-size: 24px; color: #888; cursor: pointer; }
+
+  @media (max-width: 960px) {
+    .features-grid, .stats-grid, .testimonials, .footer-inner-greotpay { grid-template-columns: 1fr; text-align: center; }
+    .zigzag-row, .zigzag-row:nth-child(even) { flex-direction: column; text-align: center; gap: 40px; }
+    .zigzag-text { max-width: 100%; }
+    .nav-links { display: none; }
+    .footer-brand { text-align: center; }
   }
 </style>
 </head>
 <body>
 
 <!-- 多语言防闪烁遮罩层 -->
-<div id="i18n-loader" style="display: none; position: fixed; inset: 0; z-index: 99999; background: #05080c; place-items: center; transition: opacity 0.3s ease;">
+<div id="i18n-loader" style="display: none; position: fixed; inset: 0; z-index: 99999; background: #fff; place-items: center; transition: opacity 0.3s ease;">
   <div style="width: 40px; height: 40px; border: 3px solid rgba(0, 240, 255, 0.2); border-top-color: #00f0ff; border-radius: 50%; animation: i18n-spin 1s linear infinite;"></div>
 </div>
 <style>
@@ -222,28 +183,27 @@
   })();
 </script>
 
-<div class="bg-layer" aria-hidden="true">
-  <div class="bg-grid"></div>
-  <div class="bg-orb orb-1"></div>
-  <div class="bg-orb orb-2"></div>
-  <div class="bg-orb orb-3"></div>
-</div>
-<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
-
-<!-- 语言切换器 -->
-<div class="lang-switch-wrap">
-  <div class="lang-switch-btn" onclick="toggleLangMenu(event)">🌏</div>
-  <div class="lang-dropdown" id="langDropdown"></div>
+<!-- 语言切换器 (固定右上角) -->
+<div class="lang-switch-wrap" style="right: 120px; left: auto;">
+  <div class="lang-switch-btn" onclick="toggleLangMenu(event)" style="background:#fff; color:#111; border-color:#ddd;">🌏</div>
+  <div class="lang-dropdown" id="langDropdown" style="right: 0; left: auto;"></div>
 </div>
 
-<header class="topbar" id="topbar">
+<header class="topbar">
   <div class="topbar-inner">
     <a class="logo" href="#">
       <span class="logo-mark">N</span>
       <span>NEXAPAY</span>
     </a>
     
-    <!-- 右上角登录注册 -->
+    <div class="nav-links">
+      <a href="#">个人</a>
+      <a href="#">企业</a>
+      <a href="#">公司</a>
+      <a href="#">赚币</a>
+      <a href="#">探索</a>
+    </div>
+
     <div class="auth-actions">
       <span class="btn-auth" onclick="openAuthModal('登录')">登录</span>
       <span class="btn-auth btn-register" onclick="openAuthModal('注册')">注册</span>
@@ -251,59 +211,218 @@
   </div>
 </header>
 
-<!-- 视频背景区域 -->
-<section class="hero">
+<!-- Hero 区域 (保留视频) -->
+<section class="hero-greotpay">
   <video class="hero-video" autoplay muted loop playsinline preload="auto">
     <source src="homeBg.3__npe53rz97a.webm" type="video/webm" />
   </video>
+  <div class="hero-content-greotpay">
+    <h1 class="hero-title-greotpay">让加密货币<br>融入真实生活</h1>
+    <p class="hero-sub-greotpay">向稳定币支付敞开大门</p>
+    <a href="apply.html" class="btn-start">立即开始</a>
+  </div>
+</section>
 
-  <div class="hero-overlay" aria-hidden="true"></div>
-
-  <!-- 左侧主内容区 -->
-  <div class="hero-content">
-    <div class="greotpay-sub">与 NEXAPAY 开启稳定币支付之旅</div>
-    <h1 class="greotpay-title">快速。流畅。安全。</h1>
-
-    <div class="divider-line"></div>
-
-    <!-- 个人折叠菜单 -->
-    <div class="accordion-section">
-      <div class="accordion-header active" onclick="toggleAccordion(this)">
-        <span>个人</span>
-        <span class="icon">+</span>
+<!-- 日常权益 (4个卡片) -->
+<section class="section-greotpay">
+  <div class="container-greotpay">
+    <h2 class="section-title">享受日常权益</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>轻松获取稳定币</h3>
+        <p>通过 P2P 兑换和法币入金。</p>
       </div>
-      <div class="accordion-content open">
-        <a href="#">卡片</a>
-        <a href="#">扫码支付</a>
-        <a href="#">手机充值</a>
-        <a href="#">信用额度</a>
-        <a href="#">全球转账</a>
-        <a href="#">应用内转账</a>
-        <a href="#">多币种钱包</a>
-        <a href="#">赚币</a>
-        <a href="#">兑换</a>
-        <a href="#">P2P 市场</a>
-        <a href="#">NEXAPAY Pro</a>
-        <a href="#">积分与奖励</a>
+      <div class="feature-card">
+        <h3>随时使用稳定币支付</h3>
+        <p>绑定卡片，随心支付。</p>
+      </div>
+      <div class="feature-card">
+        <h3>快速安全地转移加密货币</h3>
+        <p>支持 100+ 国家/地区。</p>
+      </div>
+      <div class="feature-card">
+        <h3>多种货币，一个应用</h3>
+        <p>一站式管理加密资产。</p>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- 企业折叠菜单 -->
-    <div class="accordion-section">
-      <div class="accordion-header" onclick="toggleAccordion(this)">
-        <span>企业</span>
-        <span class="icon">+</span>
+<!-- 黑底展示区 -->
+<section class="dark-showcase">
+  <h2>数字支付，简单随行</h2>
+  <p>快速、安全、无缝的数字支付，随时随地畅享。</p>
+  <div class="mock-card"></div>
+</section>
+
+<!-- 交替图文 (Zigzag) -->
+<section class="section-greotpay">
+  <div class="container-greotpay">
+    
+    <div class="zigzag-row reveal">
+      <div class="zigzag-text">
+        <h3>发送加密货币，收取本地货币</h3>
+        <p>即时转账，零隐藏费用，让收款人使用最方便的货币。</p>
+        <a href="#" class="btn-text">立即体验</a>
       </div>
-      <div class="accordion-content">
-        <a href="#">企业账户</a>
-        <a href="#">批量支付</a>
-        <a href="#">API 接入</a>
-        <a href="#">发卡服务</a>
+      <div class="zigzag-visual"><div class="mock-phone"></div></div>
+    </div>
+
+    <div class="zigzag-row reveal">
+      <div class="zigzag-text">
+        <h3>向任何 NEXAPAY 用户发送加密货币</h3>
+        <p>无论何时何地，只需对方 NEXAPAY ID，即发即达。</p>
+        <a href="#" class="btn-text">立即体验</a>
       </div>
+      <div class="zigzag-visual"><div class="mock-phone"></div></div>
+    </div>
+
+    <div class="zigzag-row reveal">
+      <div class="zigzag-text">
+        <h3>连接加密货币与日常生活</h3>
+        <p>绑定虚拟卡，全球商户畅享支付体验。</p>
+        <a href="#" class="btn-text">立即体验</a>
+      </div>
+      <div class="zigzag-visual"><div class="mock-phone"></div></div>
+    </div>
+
+    <div class="zigzag-row reveal">
+      <div class="zigzag-text">
+        <h3>持有加密货币，使用信用额度</h3>
+        <p>无需卖出您的加密资产，即可享受消费额度。</p>
+        <a href="#" class="btn-text">立即体验</a>
+      </div>
+      <div class="zigzag-visual"><div class="mock-phone"></div></div>
+    </div>
+
+    <div class="zigzag-row reveal">
+      <div class="zigzag-text">
+        <h3>轻松增值您的加密资产</h3>
+        <p>让闲钱为您工作，获取稳定收益。</p>
+        <a href="#" class="btn-text">立即体验</a>
+      </div>
+      <div class="zigzag-visual"><div class="mock-phone"></div></div>
+    </div>
+
+    <div class="zigzag-row reveal">
+      <div class="zigzag-text">
+        <h3>轻松兑换加密资产</h3>
+        <p>极具竞争力的汇率，支持多种主流币种兑换。</p>
+        <a href="#" class="btn-text">立即体验</a>
+      </div>
+      <div class="zigzag-visual"><div class="mock-phone"></div></div>
+    </div>
+
+    <div class="zigzag-row reveal">
+      <div class="zigzag-text">
+        <h3>点对点交易，由您驱动</h3>
+        <p>直接与其他用户交易，安全、高效、低费率。</p>
+        <a href="#" class="btn-text">立即体验</a>
+      </div>
+      <div class="zigzag-visual"><div class="mock-phone"></div></div>
     </div>
 
   </div>
 </section>
+
+<!-- 数据区 -->
+<section class="stats-dark">
+  <h2>备受全球信赖</h2>
+  <div class="stats-grid">
+    <div class="stat-item"><div class="num">8M+</div><div class="lbl">全球用户</div></div>
+    <div class="stat-item"><div class="num">100+</div><div class="lbl">国家/地区</div></div>
+    <div class="stat-item"><div class="num">$12B</div><div class="lbl">累计交易额</div></div>
+  </div>
+</section>
+
+<!-- 投资 & 伙伴 -->
+<section class="section-greotpay">
+  <div class="container-greotpay">
+    <p style="text-align:center; font-size:14px; font-weight:700; color:#888; margin-bottom:20px; text-transform:uppercase;">我们的投资背景</p>
+    <div class="logo-wall">
+      <span>Accel</span><span>BCAP</span><span>Galaxy</span><span>Goodwater</span><span>HongShan</span><span>Lightspeed</span>
+    </div>
+    <p style="text-align:center; font-size:14px; font-weight:700; color:#888; margin-top:60px; margin-bottom:20px; text-transform:uppercase;">我们的商业伙伴</p>
+    <div class="logo-wall">
+      <span>Visa</span><span>Mastercard</span><span>Circle</span><span>Stripe</span><span>Coinbase</span>
+    </div>
+  </div>
+</section>
+
+<!-- 社区心声 -->
+<section class="section-greotpay" style="background:#f8f9fa;">
+  <div class="container-greotpay">
+    <h2 class="section-title">聆听社区心声</h2>
+    <div class="testimonials">
+      <div class="test-card">
+        <p>“用 NEXAPAY 的虚拟卡支付太方便了，加密货币直接变法币支付，汇率也很透明。”</p>
+        <div class="author">Alex · 自由设计师</div>
+      </div>
+      <div class="test-card">
+        <p>“使用体验非常流畅，扫码支付几乎秒到账，而且没有隐藏的手续费。”</p>
+        <div class="author">Mia · 远程工作者</div>
+      </div>
+      <div class="test-card">
+        <p>“客服响应速度极快，解决了我关于跨链转账的疑问，非常靠谱的应用。”</p>
+        <div class="author">Kevin · 跨境电商</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section-greotpay">
+  <div class="container-greotpay">
+    <h2 class="section-title">常见问题</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q"><span>为什么加密支付还没普及？</span><span class="plus">+</span></button>
+        <div class="faq-a"><p>目前加密资产主要用于投资。NEXAPAY 致力于打破这一局限，让稳定币直接链接现实消费场景，解决合规与清算的技术难题。</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>可以用 NEXAPAY 支付吗？</span><span class="plus">+</span></button>
+        <div class="faq-a"><p>当然可以。我们支持全球超 1.5 亿 Visa 受理商户，无论是线上订阅还是线下扫码，均可使用 NEXAPAY 虚拟卡完成支付。</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>NEXAPAY 安全吗？</span><span class="plus">+</span></button>
+        <div class="faq-a"><p>您的资产由持牌金融机构托管，并配备了硬件级密钥保护和实时风控系统。同时我们共享 $7 亿用户保护基金，全方位保障您的资金安全。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer-greotpay">
+  <div class="footer-inner-greotpay">
+    <div class="footer-brand">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+        <span style="width:32px; height:32px; background:var(--cyan); color:#000; border-radius:8px; display:grid; place-items:center; font-weight:900;">N</span>
+        <span style="font-size:24px; font-weight:800;">NEXAPAY</span>
+      </div>
+      <p>与 NEXAPAY 开启稳定币支付之旅<br><span style="color:#fff; font-weight:700; font-size:20px; margin-top:10px; display:inline-block;">快速。流畅。安全。</span></p>
+    </div>
+    <div class="footer-col">
+      <h4>个人</h4>
+      <a href="#">卡片</a><a href="#">扫码支付</a><a href="#">全球转账</a><a href="#">多币种钱包</a><a href="#">赚币</a>
+    </div>
+    <div class="footer-col">
+      <h4>公司</h4>
+      <a href="#">关于我们</a><a href="#">联系我们</a><a href="#">加入我们</a><a href="#">新闻中心</a>
+    </div>
+    <div class="footer-col">
+      <h4>资源</h4>
+      <a href="#">帮助中心</a><a href="#">API 文档</a><a href="#">博客</a><a href="#">费率标准</a>
+    </div>
+    <div class="footer-col">
+      <h4>法律条款</h4>
+      <a href="#">服务条款</a><a href="#">隐私政策</a><a href="#">风险披露</a><a href="#">牌照信息</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 NEXAPAY. All rights reserved.</span>
+    <span>简体中文</span>
+  </div>
+</footer>
 
 <!-- 登录/注册弹窗 -->
 <div class="auth-modal" id="authModal">
@@ -312,47 +431,41 @@
     <h3 id="authTitle">登录</h3>
     <input type="email" placeholder="邮箱地址" />
     <input type="password" placeholder="密码" />
-    <button class="btn-main" onclick="closeAuthModal()">确认</button>
-    <p style="font-size:12px; color:var(--muted);">此为演示功能，无实际后端逻辑。</p>
+    <button class="btn-submit" onclick="closeAuthModal()">确认</button>
+    <p style="font-size:12px; color:#888;">此为演示功能，无实际后端逻辑。</p>
   </div>
 </div>
 
 <script src="script.js"></script>
 <script>
-  // 折叠菜单逻辑
-  window.toggleAccordion = function(header) {
-    const content = header.nextElementSibling;
-    const icon = header.querySelector('.icon');
-    
-    // 关闭其他所有
-    document.querySelectorAll('.accordion-header').forEach(h => {
-      if (h !== header) {
-        h.classList.remove('active');
-        h.nextElementSibling.classList.remove('open');
-        h.querySelector('.icon').textContent = '+';
-      }
-    });
-
-    // 切换当前
-    header.classList.toggle('active');
-    content.classList.toggle('open');
-    
-    if (content.classList.contains('open')) {
-      icon.textContent = '×';
-    } else {
-      icon.textContent = '+';
-    }
-  };
-
   // 弹窗逻辑
   window.openAuthModal = function(type) {
     document.getElementById('authTitle').textContent = type;
     document.getElementById('authModal').classList.add('show');
   };
-
   window.closeAuthModal = function() {
     document.getElementById('authModal').classList.remove('show');
   };
+
+  // FAQ 折叠逻辑
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.parentElement;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // 导航栏滚动变色
+  window.addEventListener('scroll', () => {
+    const topbar = document.querySelector('.topbar');
+    if (window.scrollY > 50) {
+      topbar.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
+    } else {
+      topbar.style.boxShadow = 'none';
+    }
+  });
 </script>
 </body>
 </html>
