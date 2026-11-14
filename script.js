@@ -79,15 +79,16 @@
     });
   }
 
+  // 【已更新】扫码支付相关的社区评价
   const communityCards = [
-    { q: "刷卡前不用卖币，余额一直在生息。这是我等了三年的产品。", name: "Alex", tag: "自由设计师 · 新加坡", accent: "rgba(0, 240, 255, 0.2)" },
-    { q: "以前每次收 USDT 都要先提到交易所，现在直接刷卡消费。", name: "Mia", tag: "远程工程师 · 曼谷", accent: "rgba(43, 214, 123, 0.2)" },
-    { q: "清算窗口能看到钱去哪了，这是我信任它的原因。", name: "Kevin", tag: "跨境电商 · 吉隆坡", accent: "rgba(0, 240, 255, 0.2)" },
-    { q: "汇率不是卡商说了算，是我第一次感觉到透明。", name: "Lena", tag: "自由撰稿人 · 台北", accent: "rgba(43, 214, 123, 0.2)" },
-    { q: "自动生息的收益比我过去买的货币基金高，而且随取随用。", name: "David", tag: "独立开发者 · 香港", accent: "rgba(0, 240, 255, 0.2)" },
-    { q: "P2P 入金零手续费，这一步就省了我不少钱。", name: "Nina", tag: "海外务工 · 迪拜", accent: "rgba(43, 214, 123, 0.2)" },
-    { q: "虚拟卡 20 秒出，Apple Pay 绑定直接能用。", name: "Ryan", tag: "产品经理 · 东京", accent: "rgba(0, 240, 255, 0.2)" },
-    { q: "客服 24 小时在线，这在加密领域真的少见。", name: "Sophie", tag: "内容创作者 · 悉尼", accent: "rgba(43, 214, 123, 0.2)" }
+    { q: "扫码直接扣 USDC，不用每次先去交易所卖币，秒级到账太爽了。", name: "Alex", tag: "自由设计师 · 新加坡", accent: "rgba(0, 240, 255, 0.2)" },
+    { q: "以前每次收 USDT 都要等半天，现在扫一扫直接买咖啡，一点不卡顿。", name: "Mia", tag: "远程工程师 · 曼谷", accent: "rgba(43, 214, 123, 0.2)" },
+    { q: "扫码支付的清算速度比我用的信用卡还快，而且每一笔去向都清清楚楚。", name: "Kevin", tag: "跨境电商 · 吉隆坡", accent: "rgba(0, 240, 255, 0.2)" },
+    { q: "付款时的汇率直接按照实时市场价走，再也不用被卡商偷偷吃差价了。", name: "Lena", tag: "自由撰稿人 · 台北", accent: "rgba(43, 214, 123, 0.2)" },
+    { q: "最爽的是不用兑换，直接拿着链上资产扫码付款，几秒钟就确认了。", name: "David", tag: "独立开发者 · 香港", accent: "rgba(0, 240, 255, 0.2)" },
+    { q: "P2P 入金零手续费，扫码付钱也极快，真的省了我不少事。", name: "Nina", tag: "海外务工 · 迪拜", accent: "rgba(43, 214, 123, 0.2)" },
+    { q: "虚拟卡 20 秒出，绑定 Apple Pay 后，抬腕扫一下就付好了。", name: "Ryan", tag: "产品经理 · 东京", accent: "rgba(0, 240, 255, 0.2)" },
+    { q: "扫码支付遇到问题，客服秒回，这在币圈支付里真的少见。", name: "Sophie", tag: "内容创作者 · 悉尼", accent: "rgba(43, 214, 123, 0.2)" }
   ];
   
   function makeUCard(item) {
@@ -167,7 +168,6 @@
     dropdown.innerHTML = html;
   }
 
-  // 核心翻译执行器
   window.applyTranslation = function(dict) {
     if (!dict) {
       hideLoader();
@@ -175,9 +175,6 @@
     }
     window.activeDict = dict;
 
-    // 构建两套字典用于容错匹配：
-    // 1. 单空格版（兼容英文）
-    // 2. 无空格版（兼容中文换行导致的匹配失败）
     const dictMapSpace = {};
     const dictMapNoSpace = {};
 
@@ -207,7 +204,6 @@
 
       let translated = null;
 
-      // 优先匹配单空格版，兜底匹配无空格版
       if (dictMapSpace[nodeTxtWithSpace]) {
         translated = dictMapSpace[nodeTxtWithSpace];
       } else if (dictMapNoSpace[nodeTxtNoSpace]) {
@@ -215,14 +211,12 @@
       }
 
       if (translated !== null) {
-        // 保留原有的首尾空白，防止破坏原来的 HTML 排版
         const leadingSpace = rawTxt.match(/^\s*/)[0];
         const trailingSpace = rawTxt.match(/\s*$/)[0];
         node.nodeValue = leadingSpace + translated + trailingSpace;
       }
     }
 
-    // 翻译 Placeholder
     document.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(el => {
       const t = el.getAttribute('placeholder');
       if (!t) return;
@@ -236,7 +230,6 @@
       }
     });
 
-    // 翻译 Select 选项
     document.querySelectorAll('option').forEach(el => {
       const t = el.textContent;
       if (!t) return;
@@ -250,7 +243,6 @@
       }
     });
 
-    // 翻译 Title 属性
     document.querySelectorAll('[title]').forEach(el => {
       const t = el.getAttribute('title');
       if (!t) return;
@@ -264,7 +256,6 @@
       }
     });
 
-    // 翻译网页 Title
     if (dict['领取虚拟卡'] && document.title.includes('领取虚拟卡')) {
       document.title = document.title.replace('领取虚拟卡', dict['领取虚拟卡']);
     } else if (dict['你的 USDC，不卖也能花'] && document.title.includes('你的 USDC')) {
