@@ -93,7 +93,7 @@
   .split-left { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; background: var(--surface); border-radius: 10px; border: 1px solid var(--border); overflow: hidden; }
   .split-right { flex: 1; background: var(--surface); border-radius: 10px; border: 1px solid var(--border); overflow-y: auto; padding: 24px; position: relative; }
   
-  .list-header { padding: 16px 20px; border-bottom: 1px solid var(--border); font-weight: 600; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
+  .list-header { padding: 16px 20px; border-bottom: 1px solid var(--border); font-weight: 600; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; flex-wrap: wrap; gap: 10px; }
   .list-items { flex: 1; overflow-y: auto; }
   .list-item { padding: 16px 20px; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; position: relative; }
   .list-item:hover { background: #f8fafc; }
@@ -200,6 +200,11 @@
         <div class="list-items" id="faq-list-items"></div>
       </div>
       <div class="split-right">
+        <!-- 全局翻译按钮 -->
+        <div style="margin-bottom:20px; display:flex; justify-content:flex-end;">
+            <button class="btn btn-primary" id="faq-trans-all-btn" onclick="translateAllItems('faq')">⚡ 一键翻译全部问题</button>
+        </div>
+
         <div class="loading-overlay" id="faq-loading"><div class="spinner"></div>加载中...</div>
         <div id="faq-editor" style="display:none;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
@@ -240,6 +245,11 @@
         <div class="list-items" id="review-list-items"></div>
       </div>
       <div class="split-right">
+        <!-- 全局翻译按钮 -->
+        <div style="margin-bottom:20px; display:flex; justify-content:flex-end;">
+            <button class="btn btn-primary" id="review-trans-all-btn" onclick="translateAllItems('review')">⚡ 一键翻译全部评论</button>
+        </div>
+
         <div class="loading-overlay" id="review-loading"><div class="spinner"></div>加载中...</div>
         <div id="review-editor" style="display:none;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
@@ -344,36 +354,75 @@ const COMMON_LANGS = [
   { code: "id", name: "Bahasa Indonesia" }, { code: "ar", name: "العربية" }
 ];
 
+// 最完整的字典：涵盖了 index.html 和 login.html 中所有的中文文本和占位符
 const DEFAULT_DICT = {
   "nav": { "personal": "个人", "business": "企业", "company": "公司", "earn": "赚币", "explore": "探索" },
-  "hero_title": "让加密货币融入真实生活", "hero_sub": "向稳定币支付敞开大门", "hero_btn": "立即开始支付",
+  "hero_title": "让加密货币融入真实生活",
+  "hero_sub": "向稳定币支付敞开大门",
+  "hero_btn": "立即开始支付",
   "feature_title": "享受日常权益",
   "f1_t": "轻松获取稳定币", "f1_d": "通过 P2P 兑换和法币入金。",
   "f2_t": "随时使用稳定币支付", "f2_d": "绑定卡片，随心支付。",
   "f3_t": "快速安全地转移加密货币", "f3_d": "支持 100+ 国家/地区。",
   "f4_t": "多种货币，一个应用", "f4_d": "一站式管理加密资产。",
-  "showcase_t": "数字支付，简单随行", "showcase_d": "轻松、安全地支付订阅、旅行和日常消费。",
-  "showcase_btn": "了解更多", "tab_virtual": "虚拟卡", "tab_physical": "实体卡",
-  "card_holder": "持卡人", "card_exp": "有效期",
-  "s1_tag": "赚币", "s1_title": "轻松增值您的加密资产", "s1_desc": "让加密货币为您工作，获得每日奖励。",
-  "s2_tag": "全球转账", "s2_title": "发送加密货币，收取本地货币", "s2_desc": "轻松转账，每笔交易都有保障，让收款人更快收到资金。",
-  "s3_tag": "多币种钱包", "s3_title": "连接加密货币与日常生活", "s3_desc": "集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。",
-  "s4_tag": "兑换", "s4_title": "轻松兑换加密资产", "s4_desc": "提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。",
+  "showcase_t": "数字支付，简单随行",
+  "showcase_d": "轻松、安全地支付订阅、旅行和日常消费。",
+  "showcase_btn": "了解更多",
+  "tab_virtual": "虚拟卡", 
+  "tab_physical": "实体卡",
+  "card_holder": "持卡人", 
+  "card_exp": "有效期",
+  "s1_tag": "赚币", 
+  "s1_title": "轻松增值您的加密资产", 
+  "s1_desc": "让加密货币为您工作，获得每日奖励。",
+  "s2_tag": "全球转账", 
+  "s2_title": "发送加密货币，收取本地货币", 
+  "s2_desc": "轻松转账，每笔交易都有保障，让收款人更快收到资金。",
+  "s3_tag": "多币种钱包", 
+  "s3_title": "连接加密货币与日常生活", 
+  "s3_desc": "集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。",
+  "s4_tag": "兑换", 
+  "s4_title": "轻松兑换加密资产", 
+  "s4_desc": "提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。",
   "btn_more": "了解更多",
-  "stats_title": "备受全球信赖", "stats_1": "全球用户", "stats_2": "国家", "stats_3": "年度支付交易额",
-  "testi_title": "聆听社区心声", "faq_title": "常见问题",
-  "footer_desc": "与 NEXAPAY 开启稳定币支付之旅", "footer_slogan": "快速。流畅。安全。",
-  "footer_copy": "© 2026 NEXAPAY. All rights reserved.", "footer_lang": "简体中文",
+  "stats_title": "备受全球信赖", 
+  "stats_1": "全球用户", 
+  "stats_2": "国家", 
+  "stats_3": "年度支付交易额",
+  "testi_title": "聆听社区心声", 
+  "faq_title": "常见问题",
+  "footer_desc": "与 NEXAPAY 开启稳定币支付之旅", 
+  "footer_slogan": "快速。流畅。安全。",
+  "footer_copy": "© 2026 NEXAPAY. All rights reserved.", 
+  "footer_lang": "简体中文",
   "login_page": {
-    "account": "您的账户", "welcome": "欢迎回来", "desc": "登录以管理您的个人资料。",
-    "email": "电子邮箱", "pwd": "密码", "show": "显示", "hide": "隐藏", "login_btn": "登录",
-    "first_time": "初次使用 NEXAPAY?", "create": "创建账户", "back": "返回首页",
-    "sec_title": "正在建立安全连接", "sec_desc": "为了您的账户安全，正在检测环境并生成加密信息...",
-    "step1": "检测网络环境与设备指纹", "step2": "生成 AES-256 本地加密密钥",
-    "step3": "建立端到端安全传输通道", "step4": "同步账户加密凭证",
-    "new_user": "新用户注册", "create_title": "创建您的账户", "create_desc": "注册以开始使用 NEXAPAY 服务。",
-    "username": "用户名", "username_ph": "请输入用户名", "register_btn": "注册",
-    "have_account": "已有账户？", "go_login": "去登录", "email_ph": "请输入邮箱", "pwd_ph": "请输入密码"
+    "account": "您的账户", 
+    "welcome": "欢迎回来", 
+    "desc": "登录以管理您的个人资料。",
+    "email": "电子邮箱", 
+    "pwd": "密码", 
+    "show": "显示", 
+    "hide": "隐藏", 
+    "login_btn": "登录",
+    "first_time": "初次使用 NEXAPAY?", 
+    "create": "创建账户", 
+    "back": "返回首页",
+    "sec_title": "正在建立安全连接", 
+    "sec_desc": "为了您的账户安全，正在检测环境并生成加密信息...",
+    "step1": "检测网络环境与设备指纹", 
+    "step2": "生成 AES-256 本地加密密钥",
+    "step3": "建立端到端安全传输通道", 
+    "step4": "同步账户加密凭证",
+    "new_user": "新用户注册", 
+    "create_title": "创建您的账户", 
+    "create_desc": "注册以开始使用 NEXAPAY 服务。",
+    "username": "用户名", 
+    "username_ph": "请输入用户名", 
+    "register_btn": "注册",
+    "have_account": "已有账户？", 
+    "go_login": "去登录", 
+    "email_ph": "请输入邮箱", 
+    "pwd_ph": "请输入密码"
   }
 };
 
@@ -394,6 +443,13 @@ async function fetchData() {
         if (!appData.testimonials) appData.testimonials = [];
         if (!appData.sysConfig) appData.sysConfig = { safariTitle: "请使用 Safari 浏览器打开", safariDesc: "系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。" };
         if (!appData.globalDict || Object.keys(appData.globalDict).length === 0) appData.globalDict = DEFAULT_DICT;
+        
+        // 【关键修复】：强制确保语言列表中有简体中文 (zh)
+        let hasZh = appData.langs.find(l => l.code === 'zh');
+        if (!hasZh) {
+            appData.langs.unshift({ code: "zh", name: "简体中文", status: true, dict: {} });
+            await fetch('/api/data', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(appData) });
+        }
     } catch (e) { alert('无法连接后端，请运行 node server.js'); }
 }
 
@@ -753,7 +809,6 @@ function renderLangTabs() {
     btn.className = `lang-tab-btn ${activeEditLang === l.code ? 'active' : ''} ${!isTranslated && l.code !== 'zh' ? 'warn' : ''}`;
     btn.innerHTML = `${l.name} ${!isTranslated && l.code !== 'zh' ? '⚠️' : ''}`;
     btn.onclick = () => {
-      // 先保存当前输入
       saveItemToMemory();
       activeEditLang = l.code;
       renderLangTabs();
@@ -848,6 +903,54 @@ async function translateItem(type) {
   } catch(e) { alert(e.message); }
   finally {
     btn.disabled = false; btn.textContent = '⚡ 补齐当前条目的其他语言';
+  }
+}
+
+// 全局翻译当前分类的所有条目
+async function translateAllItems(type) {
+  const btn = document.getElementById(type === 'faq' ? 'faq-trans-all-btn' : 'review-trans-all-btn');
+  btn.disabled = true; btn.textContent = '⏳ 正在翻译全部...';
+  
+  try {
+    const dataList = type === 'faq' ? appData.faqs : appData.testimonials;
+    const langs = appData.langs.filter(l => l.code !== 'zh' && l.status !== false);
+    
+    let hasChanges = false;
+    for (let item of dataList) {
+        const source = item.translations['zh'];
+        if (!source || (type === 'faq' && !source.q) || (type === 'review' && !source.content)) continue;
+        
+        for (let l of langs) {
+            const tLang = l.code.split('-')[0];
+            if (!item.translations[l.code] || (type === 'faq' && !item.translations[l.code].q) || (type === 'review' && !item.translations[l.code].content)) {
+                 if (type === 'faq') {
+                    const q = await fetchTranslation(source.q, tLang);
+                    const a = await fetchTranslation(source.a, tLang);
+                    item.translations[l.code] = { q, a };
+                 } else {
+                    const content = await fetchTranslation(source.content, tLang);
+                    const name = await fetchTranslation(source.name, tLang);
+                    const tag = await fetchTranslation(source.tag, tLang);
+                    item.translations[l.code] = { content, name, tag };
+                 }
+                 hasChanges = true;
+                 await saveData(); // 每次翻译完一条保存一次，防止丢失
+            }
+        }
+    }
+    
+    if (hasChanges) {
+        renderItemList(type);
+        if (activeType === type) renderLangTabs();
+        showToast('✅ 全部翻译完成');
+    } else {
+        showToast('所有条目均已全量翻译，无需更新。');
+    }
+  } catch (e) {
+      alert('翻译出错：' + e.message);
+  } finally {
+      btn.disabled = false; 
+      btn.textContent = type === 'faq' ? '⚡ 一键翻译全部问题' : '⚡ 一键翻译全部评论';
   }
 }
 </script>
