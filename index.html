@@ -3,8 +3,205 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NEXAPAY — 你的 USDC，不卖也能花</title>
+<title>NEXAPAY — 快速。流畅。安全。</title>
 <link rel="stylesheet" href="style.css">
+<style>
+  /* 覆盖原有的居中排版，改为左右布局 */
+  .hero {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 8vw;
+  }
+  
+  .hero-content {
+    max-width: 800px;
+    text-align: left;
+    margin-top: -40px;
+  }
+
+  .greotpay-title {
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #fff;
+    margin-bottom: 20px;
+    line-height: 1.1;
+  }
+
+  .greotpay-sub {
+    font-size: clamp(18px, 2vw, 24px);
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  /* 分割线 */
+  .divider-line {
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    margin: 40px 0 30px;
+  }
+
+  /* 折叠菜单 */
+  .accordion-section {
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s;
+  }
+  
+  .accordion-header:hover {
+    color: var(--cyan);
+  }
+
+  .accordion-header .icon {
+    font-size: 24px;
+    font-weight: 300;
+    color: #fff;
+    transition: transform 0.3s;
+  }
+
+  .accordion-header.active .icon {
+    transform: rotate(45deg);
+  }
+
+  .accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px 20px;
+    opacity: 0;
+  }
+
+  .accordion-content.open {
+    max-height: 500px;
+    opacity: 1;
+    padding: 10px 0 30px;
+  }
+
+  .accordion-content a {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 15px;
+    text-decoration: none;
+    transition: color 0.2s;
+    white-space: nowrap;
+  }
+
+  .accordion-content a:hover {
+    color: #fff;
+  }
+
+  /* 右上角登录注册 */
+  .auth-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .btn-auth {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .btn-auth:hover {
+    color: var(--cyan);
+  }
+
+  .btn-register {
+    padding: 8px 20px;
+    border-radius: 8px;
+    background: #fff;
+    color: #000;
+  }
+
+  .btn-register:hover {
+    background: var(--cyan-soft);
+    color: #000;
+  }
+
+  /* 简单弹窗样式 */
+  .auth-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .auth-modal.show {
+    display: flex;
+  }
+  .auth-box {
+    background: #0a1e28;
+    border: 1px solid var(--border-2);
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+  }
+  .auth-box h3 {
+    font-size: 24px;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  .auth-box input {
+    width: 100%;
+    padding: 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: #fff;
+    margin-bottom: 16px;
+    outline: none;
+  }
+  .auth-box input:focus {
+    border-color: var(--cyan);
+  }
+  .auth-box .btn-main {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  .auth-box .close-modal {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-size: 24px;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+  }
+  .auth-box .close-modal:hover {
+    color: #fff;
+  }
+
+  @media (max-width: 768px) {
+    .hero { padding: 0 5vw; align-items: flex-start; padding-top: 120px; }
+    .accordion-content { grid-template-columns: repeat(2, 1fr); }
+    .greotpay-title { font-size: 40px; }
+    .auth-actions { display: none; /* 移动端隐藏，或者可以放到汉堡菜单 */ }
+  }
+</style>
 </head>
 <body>
 
@@ -33,6 +230,7 @@
 </div>
 <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
+<!-- 语言切换器 -->
 <div class="lang-switch-wrap">
   <div class="lang-switch-btn" onclick="toggleLangMenu(event)">🌏</div>
   <div class="lang-dropdown" id="langDropdown"></div>
@@ -45,545 +243,116 @@
       <span>NEXAPAY</span>
     </a>
     
-    <div class="topbar-note">
-      <span class="live-dot"></span>
-      <span>本期开卡名额还剩 <strong id="quotaText" style="color:var(--text-2)">312</strong> 个</span>
+    <!-- 右上角登录注册 -->
+    <div class="auth-actions">
+      <span class="btn-auth" onclick="openAuthModal('登录')">登录</span>
+      <span class="btn-auth btn-register" onclick="openAuthModal('注册')">注册</span>
     </div>
   </div>
 </header>
 
+<!-- 视频背景区域 -->
 <section class="hero">
   <video class="hero-video" autoplay muted loop playsinline preload="auto">
     <source src="homeBg.3__npe53rz97a.webm" type="video/webm" />
-    您的浏览器不支持 HTML5 视频标签。
   </video>
 
   <div class="hero-overlay" aria-hidden="true"></div>
 
+  <!-- 左侧主内容区 -->
   <div class="hero-content">
-    <span class="hero-badge">
-      <span class="live-dot"></span>
-      Visa 虚拟卡 · 限时免年费
-    </span>
+    <div class="greotpay-sub">与 NEXAPAY 开启稳定币支付之旅</div>
+    <h1 class="greotpay-title">快速。流畅。安全。</h1>
 
-    <h1 class="hero-title">
-      你的 USDC<br />
-      本来就不该<span class="grad">躺着不动</span>。
-    </h1>
+    <div class="divider-line"></div>
 
-    <p class="hero-sub">
-      一张 Visa 卡，让稳定币直接<strong>扫码支付</strong>，刷卡时自动清算，
-      花完还有<strong>返现</strong>。不卖币，也能花。
-    </p>
-
-    <div class="hero-actions">
-      <button class="btn-main" type="button" onclick="location.href='apply.html'">
-        领取虚拟卡 · 免年费
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </button>
+    <!-- 个人折叠菜单 -->
+    <div class="accordion-section">
+      <div class="accordion-header active" onclick="toggleAccordion(this)">
+        <span>个人</span>
+        <span class="icon">+</span>
+      </div>
+      <div class="accordion-content open">
+        <a href="#">卡片</a>
+        <a href="#">扫码支付</a>
+        <a href="#">手机充值</a>
+        <a href="#">信用额度</a>
+        <a href="#">全球转账</a>
+        <a href="#">应用内转账</a>
+        <a href="#">多币种钱包</a>
+        <a href="#">赚币</a>
+        <a href="#">兑换</a>
+        <a href="#">P2P 市场</a>
+        <a href="#">NEXAPAY Pro</a>
+        <a href="#">积分与奖励</a>
+      </div>
     </div>
 
-    <div class="hero-fineprint">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v5h1"/></svg>
-      开卡免费，首笔消费后按 0.90% 收取交易费。无月费、无隐藏费用。
+    <!-- 企业折叠菜单 -->
+    <div class="accordion-section">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>企业</span>
+        <span class="icon">+</span>
+      </div>
+      <div class="accordion-content">
+        <a href="#">企业账户</a>
+        <a href="#">批量支付</a>
+        <a href="#">API 接入</a>
+        <a href="#">发卡服务</a>
+      </div>
     </div>
-  </div>
 
-  <div class="hero-scroll" aria-hidden="true">
-    <span>Scroll</span>
-    <span class="hero-scroll-line"></span>
   </div>
 </section>
 
-<section class="trust-stats reveal">
-  <div class="container">
-    <div class="trust-stats-grid">
-      <div class="ts-cell"><div class="ts-num">100M+</div><div class="ts-label">全球用户</div></div>
-      <div class="ts-cell"><div class="ts-num">$700M+</div><div class="ts-label">用户保护基金</div></div>
-      <div class="ts-cell"><div class="ts-num">130+</div><div class="ts-label">支持公链</div></div>
-      <div class="ts-cell"><div class="ts-num">1.5亿+</div><div class="ts-label">全球受理商户</div></div>
-    </div>
+<!-- 登录/注册弹窗 -->
+<div class="auth-modal" id="authModal">
+  <div class="auth-box">
+    <span class="close-modal" onclick="closeAuthModal()">×</span>
+    <h3 id="authTitle">登录</h3>
+    <input type="email" placeholder="邮箱地址" />
+    <input type="password" placeholder="密码" />
+    <button class="btn-main" onclick="closeAuthModal()">确认</button>
+    <p style="font-size:12px; color:var(--muted);">此为演示功能，无实际后端逻辑。</p>
   </div>
-</section>
-
-<section class="showcase">
-  <div class="container">
-    <div class="section-head reveal" style="text-align:center;margin-left:auto;margin-right:auto;">
-      <span class="eyebrow">你拿到的那张卡</span>
-      <h2>一张让你随时随地，扫一扫秒级支付的卡。</h2>
-    </div>
-
-    <div class="card-stage reveal d1">
-      <div class="card-halo" aria-hidden="true"></div>
-
-      <div class="credit-card">
-        <div class="cc-top">
-          <span class="cc-brand">NEXAPAY</span>
-          <span class="cc-chip" aria-hidden="true"></span>
-        </div>
-
-        <div class="cc-middle">
-          <div>
-            <div class="cc-balance-label">Available · USDC</div>
-            <div class="cc-balance" id="ccBalance">8,420.50</div>
-          </div>
-          <div class="cc-apy">
-            <div class="val">⚡ 3s</div>
-            <div class="lbl">Fast Pay</div>
-          </div>
-        </div>
-
-        <div class="cc-bottom">
-          <span class="cc-number">•••• •••• •••• 4821</span>
-          <span class="cc-network" aria-hidden="true">
-            <span class="cc-circle a"></span>
-            <span class="cc-circle b"></span>
-          </span>
-        </div>
-      </div>
-
-      <div class="float-tag tag-1">扫码支付 <span class="amt">-$12.00</span> 刚刚</div>
-      <div class="float-tag tag-2">秒级清算 <span class="amt">完成</span> 返现 +1.44 BGB</div>
-    </div>
-  </div>
-</section>
-
-<section class="section wallet-section">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">不止是一张卡</span>
-      <h2>你得到的，是一个完整的链上钱包。</h2>
-      <p>卡只是入口。背后是 130+ 公链、100 万+ 代币、500+ DEX 聚合的完整钱包能力，以及一个让支付随时随地的账户底座。</p>
-    </div>
-
-    <div class="wallet-grid">
-      <article class="wallet-card reveal">
-        <div class="w-icon">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="13" rx="2.5"/><path d="M2.5 10.5h19"/></svg>
-        </div>
-        <h3>多链钱包</h3>
-        <p>一个助记词管理 130+ 公链上的 100 万+ 代币。Ethereum、Solana、BNB Chain、Base、Arbitrum 原生支持，新链上线即接入。</p>
-        <div class="w-metrics">
-          <span class="w-pill">130+ 公链</span>
-          <span class="w-pill">100 万+ 代币</span>
-          <span class="w-pill">硬件级密钥</span>
-        </div>
-      </article>
-
-      <article class="wallet-card reveal d1">
-        <div class="w-icon">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>
-        </div>
-        <h3>扫码秒付</h3>
-        <p>打开相机扫一扫，3 秒完成支付，资金即时清算。支持主流稳定币与代币直接支付，无需复杂兑换，秒级确认。</p>
-        <div class="w-metrics">
-          <span class="w-pill">秒级确认</span>
-          <span class="w-pill">极速清算</span>
-          <span class="w-pill">无需兑换</span>
-        </div>
-      </article>
-
-      <article class="wallet-card reveal d1">
-        <div class="w-icon">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>
-        </div>
-        <h3>无 Gas 跨链</h3>
-        <p>基于 EIP-7702 与聚合桥，一笔签名完成跨链，Gas 从输入代币里自动扣除。不再为每条链单独准备原生代币。</p>
-        <div class="w-metrics">
-          <span class="w-pill">1 步完成</span>
-          <span class="w-pill">1 次签名</span>
-          <span class="w-pill">40+ 链支持</span>
-        </div>
-      </article>
-
-      <article class="wallet-card reveal d2">
-        <div class="w-icon">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h16"/><path d="M17 12l3-3-3-3" /></svg>
-        </div>
-        <h3>智能兑换</h3>
-        <p>聚合 500+ DEX 和做市商，多路径拆单寻找最优价格，滑点和 MEV 保护内置。10 万美元的大额单也能拆成最优路径。</p>
-        <div class="w-metrics">
-          <span class="w-pill">500+ DEX</span>
-          <span class="w-pill">MEV 保护</span>
-          <span class="w-pill">智能拆单</span>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section class="earn-visual-section">
-  <div class="container">
-    <div class="earn-layout">
-      <div class="earn-left reveal">
-        <span class="eyebrow">扫一扫，钱就付好了</span>
-        <h2>每一次，支付都在<span class="hl">秒级完成</span>。</h2>
-        <p>你不需要打开银行 App、不需要手动输入金额、不需要等待短信验证码。打开相机扫一扫，3 秒完成支付，资金即时到账。</p>
-
-        <div class="earn-bullets">
-          <div class="earn-bullet"><span class="b-tick">✓</span><span><strong>扫码即付</strong>，3 秒内完成支付确认，无需等待。</span></div>
-          <div class="earn-bullet"><span class="b-tick">✓</span><span><strong>自动清算</strong>，扫码瞬间资金从账户划转至商户，无需手动确认。</span></div>
-          <div class="earn-bullet"><span class="b-tick">✓</span><span><strong>无感支付</strong>，支持 Apple Pay、Google Pay，抬腕即付。</span></div>
-        </div>
-
-        <button class="btn-main" type="button" onclick="location.href='apply.html'">
-          开启扫码支付
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </button>
-      </div>
-
-      <div class="earn-right reveal d1">
-        <div class="earn-glow" aria-hidden="true"></div>
-
-        <div class="earn-card">
-          <span class="earn-icon">⚡</span>
-          <div class="earn-body">
-            <div class="earn-title">Instant Payment</div>
-            <div class="earn-sub">Today, <span id="earnTime">16:29</span></div>
-          </div>
-          <div class="earn-value" id="earnAmount">-$641.00</div>
-        </div>
-
-        <div class="earn-card">
-          <span class="earn-icon">⏱️</span>
-          <div class="earn-body">
-            <div class="earn-title">平均支付确认时间</div>
-            <div class="earn-sub">Scan · Pay · Done</div>
-          </div>
-          <div class="earn-value cyan small">&lt; 3 秒</div>
-        </div>
-
-        <div class="earn-card">
-          <span class="earn-icon">✓</span>
-          <div class="earn-body">
-            <div class="earn-title">本月已支付</div>
-            <div class="earn-sub"><span class="earn-pulse"></span>支付通道正常</div>
-          </div>
-          <div class="earn-value" id="earnMonthly">$3,842.61</div>
-        </div>
-
-        <div class="earn-spark">
-          <span class="earn-spark-label">支付处理进度</span>
-          <div class="earn-spark-bar"><div class="earn-spark-fill" id="sparkFill"></div></div>
-          <span class="earn-spark-val" id="sparkVal">00:00 / 24:00</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section transfer-section">
-  <div class="container">
-    <div class="transfer-layout">
-      <div class="transfer-visual reveal">
-        <div class="route-globe">
-          <div class="route-ring"></div>
-          <div class="route-ring"></div>
-          <div class="route-ring"></div>
-          <span class="route-node n1"></span>
-          <span class="route-node n2 green"></span>
-          <span class="route-node n3"></span>
-          <span class="route-node n4 green"></span>
-          <div class="route-center">↔</div>
-        </div>
-      </div>
-
-      <div class="transfer-content reveal d1">
-        <span class="eyebrow">极速转账</span>
-        <h2>稳定币汇入本地银行，秒级到账。</h2>
-        <p>不是“1–3 个工作日”。不是“扣除电汇费后到账”。你的 USDC 会在几秒内兑换成当地法币，直接汇入收款银行账户。</p>
-
-        <div class="transfer-stats">
-          <div class="t-stat">
-            <div class="num">≤ 30s</div>
-            <div class="lbl">平均到账时间</div>
-          </div>
-          <div class="t-stat">
-            <div class="num">0.1%</div>
-            <div class="lbl">起始汇款费率</div>
-          </div>
-          <div class="t-stat">
-            <div class="num">100+</div>
-            <div class="lbl">本地法币通道</div>
-          </div>
-          <div class="t-stat">
-            <div class="num">24/7</div>
-            <div class="lbl">全年无休结算</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">为什么换一张卡</span>
-      <h2>大多数加密卡，让你在刷卡时付出三种代价。</h2>
-      <p>持有稳定币的人不是不想花，而是每次花都像在做一次被迫的交易。</p>
-    </div>
-
-    <div class="pain-grid">
-      <article class="pain-card reveal">
-        <div class="pain-num">01</div>
-        <h3>扫码支付，却要繁琐兑换</h3>
-        <p>钱在链上，卡在链下。为了买一杯咖啡，你得先把它换成法币，再等它到账。</p>
-      </article>
-
-      <article class="pain-card reveal d1">
-        <div class="pain-num">02</div>
-        <h3>汇率不透明，隐性费用多</h3>
-        <p>入金费率、兑换价差、跨境附加费，三笔成本叠在一起，你在付款前算不清。</p>
-      </article>
-
-      <article class="pain-card reveal d2">
-        <div class="pain-num">03</div>
-        <h3>支付确认慢，等待时间长</h3>
-        <p>余额躺在账户里，扫码后还要等待漫长的确认时间，这期间什么都做不了。</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">它怎么做到的</span>
-      <h2>三步，钱在花出去之前一直在工作。</h2>
-      <p>不是把资产卖掉换一张卡，而是让资产在消费的最后一刻才离开账户状态。</p>
-    </div>
-
-    <div class="flow-wrap">
-      <div class="flow-line" aria-hidden="true"></div>
-
-      <div class="flow-grid">
-        <div class="flow-step reveal">
-          <div class="flow-icon">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
-          </div>
-          <h3>绑定账户</h3>
-          <p>通过本地 P2P 通道，用本地法币直接买入 USDC 进入账户，跳过交易所提币的多次摩擦。</p>
-          <span class="flow-metric">P2P 通道费 0</span>
-        </div>
-
-        <div class="flow-step reveal d1">
-          <div class="flow-icon">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
-          </div>
-          <h3>扫码即付</h3>
-          <p>打开相机扫一扫，在清算发生前每一秒都在极速处理，按日结算，随取随用。</p>
-          <span class="flow-metric">秒级确认</span>
-        </div>
-
-        <div class="flow-step reveal d2">
-          <div class="flow-icon">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="13" rx="2.5"/><path d="M2.5 10.5h19"/></svg>
-          </div>
-          <h3>秒级清算</h3>
-          <p>授权瞬间从账户划转所需金额完成支付，清算后差额自动返还，并发放返现。</p>
-          <span class="flow-metric">单笔交易费 0.90%</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <div class="fee-layout">
-      <div class="reveal">
-        <span class="eyebrow">费用，写在明面上</span>
-        <h2 style="font-size:clamp(24px,3vw,34px);font-weight:800;letter-spacing:-0.028em;line-height:1.18;">你会在开卡前<br />就知道每一笔花多少。</h2>
-        <p style="margin-top:14px;font-size:14.5px;line-height:1.72;color:var(--text-2);">没有“低费率”这种说法，只有具体数字。</p>
-
-        <div class="trust-list">
-          <div class="trust-item"><span class="tick">✓</span><span>资金由持牌金融机构托管，支付清算账户与资金严格隔离。</span></div>
-          <div class="trust-item"><span class="tick">✓</span><span>支付服务由持牌第三方提供，平台只做展示与路由，不触碰资产所有权。</span></div>
-          <div class="trust-item"><span class="tick">✓</span><span>每笔授权与清算均可在账户内追溯到原始记录。</span></div>
-        </div>
-      </div>
-
-      <div class="fee-table reveal d1">
-        <div class="fee-row"><span class="k">年费 / 开卡费 / 销卡费</span><span class="v free">$0</span></div>
-        <div class="fee-row"><span class="k">交易手续费</span><span class="v cost">0.90%</span></div>
-        <div class="fee-row"><span class="k">非 USD 跨境交易附加费</span><span class="v cost">1.00%</span></div>
-        <div class="fee-row"><span class="k">本地 P2P 入金通道费</span><span class="v free">$0</span></div>
-        <div class="fee-row"><span class="k">账户管理费</span><span class="v free">$0</span></div>
-        <div class="fee-row"><span class="k">消费返现</span><span class="v free">按等级 2% – 12%</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section sec-section">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">安全，是默认设置</span>
-      <h2>你的资产安全，不需要你额外操心。</h2>
-      <p>从密钥生成到每一笔授权，安全防护贯穿全链路。不是让你“小心一点”，而是让风险从一开始就无处发生。</p>
-    </div>
-
-    <div class="sec-grid">
-      <article class="sec-card reveal">
-        <div class="sec-num">100%</div>
-        <h3>硬件级密钥</h3>
-        <p>私钥在设备的安全芯片内生成和保管，永远不会以明文形式出现在网络中。自托管意味着——只有你能动用你的资产。</p>
-      </article>
-
-      <article class="sec-card reveal d1">
-        <div class="sec-num">$700M</div>
-        <h3>用户保护基金</h3>
-        <p>由独立托管方保管的 $7 亿用户保护基金，链上地址公开可查。当极端事件发生时，用户的第一时间损失由基金覆盖。</p>
-      </article>
-
-      <article class="sec-card reveal d2">
-        <div class="sec-num">24/7</div>
-        <h3>实时风控 + 客服</h3>
-        <p>交易实时监控，异常地址自动拦截；钓鱼网站数据库持续更新。任何时区、任何时间，都能找到真人客服。</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section class="partners-section">
-  <div class="container">
-    <div class="partners-head reveal">
-      <h2>与全球顶尖的金融机构与加密生态同行</h2>
-    </div>
-  </div>
-  <div class="partners-marquee reveal d1">
-    <div class="partners-track" id="partnersTrack"></div>
-  </div>
-</section>
-
-<section class="section community-section">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">100M+ 用户的选择</span>
-      <h2>来自新加坡、曼谷、吉隆坡、圣保罗的声音。</h2>
-      <p>自由职业者、远程工作者、跨境卖家、长期持有者——他们选择 NEXAPAY 的理由，都不太一样。</p>
-    </div>
-  </div>
-
-  <div class="community-track" id="communityRow1"></div>
-  <div class="community-track reverse" id="communityRow2"></div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">已经有人在用</span>
-      <h2>他们说清楚的，不是产品多好，而是省掉了什么。</h2>
-    </div>
-
-    <div class="quotes">
-      <article class="quote reveal">
-        <p>“以前扫码付款要等半天确认，现在不到 3 秒就提示支付成功，体验太顺滑了。”</p>
-        <div class="quote-foot"><span class="avatar">L</span><span>自由职业者 · 新加坡</span></div>
-      </article>
-
-      <article class="quote reveal d1">
-        <p>“最有用的是实时清算进度，扫完码马上能看到钱扣了没有，不用提心吊胆。”</p>
-        <div class="quote-foot"><span class="avatar">M</span><span>远程工作者 · 曼谷</span></div>
-      </article>
-
-      <article class="quote reveal d2">
-        <p>“汇率透明，扫码秒付，加上零年费，这三件事加起来让我直接换掉了原来的卡。”</p>
-        <div class="quote-foot"><span class="avatar">K</span><span>跨境卖家 · 吉隆坡</span></div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section class="section faq-section">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">还有疑问？</span>
-      <h2>你可能会问的几个问题。</h2>
-    </div>
-
-    <div class="faq-list">
-      <div class="faq-item">
-        <button class="faq-q" type="button">
-          <span>NEXAPAY 和普通的加密卡有什么区别？</span>
-          <span class="plus">+</span>
-        </button>
-        <div class="faq-a"><p>普通加密卡要求你先卖出资产才能消费，NEXAPAY 让你直接扫码支付。刷卡瞬间才从账户清算所需金额。其余部分继续保留，清算后差额自动回到账户。</p></div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-q" type="button">
-          <span>我的 USDC 放在 NEXAPAY，安全吗？</span>
-          <span class="plus">+</span>
-        </button>
-        <div class="faq-a"><p>资金由持牌金融机构托管，支付清算账户与资金严格隔离。支付服务由持牌第三方提供，平台只做展示与路由，不触碰你的资产所有权。同时共享 $7 亿用户保护基金。</p></div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-q" type="button">
-          <span>支付收益怎么算？会随时停止吗？</span>
-          <span class="plus">+</span>
-        </button>
-        <div class="faq-a"><p>支付按日结算，资金自动复投。没有锁定期，随存随取。收益率会根据市场状况浮动，但不会因为单笔消费而中断——只有实际支付金额才离开账户。</p></div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-q" type="button">
-          <span>虚拟卡可以在哪些地方使用？</span>
-          <span class="plus">+</span>
-        </button>
-        <div class="faq-a"><p>NEXAPAY 虚拟卡由 Visa 网络签发，全球 1.5 亿+ 受理商户可用。支持线上订阅、线下感应支付、Apple Pay、Google Pay，以及绑定支付宝、微信支付。</p></div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-q" type="button">
-          <span>开卡需要多久？有年费吗？</span>
-          <span class="plus">+</span>
-        </button>
-        <div class="faq-a"><p>完成身份验证后，虚拟卡在 20 秒内生成并激活。年费 $0、开卡费 $0、销卡费 $0，仅在消费时收取 0.90% 交易手续费（非 USD 跨境交易另加 1%）。</p></div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-q" type="button">
-          <span>如果卡片丢失或被盗刷怎么办？</span>
-          <span class="plus">+</span>
-        </button>
-        <div class="faq-a"><p>卡片可在 App 内一键冻结或注销，冻结后所有新交易立即停止，余额不受影响。每笔交易默认开启生物识别二次确认，非本人操作会自动拦截。若发生盗刷，24/7 客服可协助追溯和追回。</p></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="container">
-  <div class="final-cta reveal">
-    <h2>现在领卡，体验一秒扫码支付的快感。</h2>
-    <p>开卡免费，虚拟卡即时发放。首笔消费后才产生交易费用，随时可以停用。</p>
-    <button class="btn-main" type="button" onclick="location.href='apply.html'">
-      领取虚拟卡 · 免年费
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-    </button>
-    <div class="final-note">本期名额剩余 <strong style="color:var(--text-2)">312</strong> 个 · 无需充值即可提交申请</div>
-  </div>
-</section>
-
-<footer>
-  <div class="footer-inner">
-    <div class="footer-top">
-      <span>© 2026 NEXAPAY. All rights reserved.</span>
-      <div class="footer-links">
-        <a href="#">服务条款</a>
-        <a href="#">隐私政策</a>
-        <a href="#">风险披露</a>
-        <a href="#">牌照信息</a>
-      </div>
-    </div>
-    <p class="footer-disclaimer">
-      风险提示：加密资产价格波动剧烈，本产品提供的支付服务不构成任何形式的投资回报承诺。本服务仅在支持该服务的司法管辖区提供，具体可用性以申请时的地区判定为准。支付卡由合作持牌机构发行，NEXAPAY 提供前端技术服务。请在充分了解相关风险后使用。
-    </p>
-  </div>
-</footer>
+</div>
 
 <script src="script.js"></script>
+<script>
+  // 折叠菜单逻辑
+  window.toggleAccordion = function(header) {
+    const content = header.nextElementSibling;
+    const icon = header.querySelector('.icon');
+    
+    // 关闭其他所有
+    document.querySelectorAll('.accordion-header').forEach(h => {
+      if (h !== header) {
+        h.classList.remove('active');
+        h.nextElementSibling.classList.remove('open');
+        h.querySelector('.icon').textContent = '+';
+      }
+    });
+
+    // 切换当前
+    header.classList.toggle('active');
+    content.classList.toggle('open');
+    
+    if (content.classList.contains('open')) {
+      icon.textContent = '×';
+    } else {
+      icon.textContent = '+';
+    }
+  };
+
+  // 弹窗逻辑
+  window.openAuthModal = function(type) {
+    document.getElementById('authTitle').textContent = type;
+    document.getElementById('authModal').classList.add('show');
+  };
+
+  window.closeAuthModal = function() {
+    document.getElementById('authModal').classList.remove('show');
+  };
+</script>
 </body>
 </html>
