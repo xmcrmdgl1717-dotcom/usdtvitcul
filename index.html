@@ -11,26 +11,56 @@
     --text-dark: #111;
     --text-gray: #666;
     --cyan: #00f0ff;
+    --neon: #00ffaa;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  html { scroll-behavior: smooth; }
 
   body {
-    background: #fff;
+    background: #f0f4f8;
     color: var(--text-dark);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
     overflow-x: hidden;
+  }
+
+  /* ================= 动态绚丽背景 ================= */
+  .bg-glow {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+    background: #fff;
+  }
+  .glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.4;
+    animation: float 20s infinite alternate;
+  }
+  .glow-1 { width: 500px; height: 500px; background: #00f0ff; top: -10%; left: -10%; }
+  .glow-2 { width: 600px; height: 600px; background: #ff3366; bottom: -20%; right: -10%; animation-delay: -10s; }
+  .glow-3 { width: 400px; height: 400px; background: #00ffaa; top: 40%; left: 60%; animation-delay: -5s; }
+  @keyframes float {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(100px, 100px) scale(1.2); }
   }
 
   /* ================= 顶部导航 ================= */
   .topbar {
     position: fixed;
     top: 0; left: 0; width: 100%;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
     z-index: 1000;
-    padding: 12px 0;
+    padding: 16px 0;
+    transition: all 0.3s;
   }
   .topbar-inner {
     max-width: 1200px;
@@ -40,107 +70,208 @@
     align-items: center;
     justify-content: space-between;
   }
-  .logo { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 800; color: #111; text-decoration: none; }
-  .logo-mark { width: 32px; height: 32px; background: var(--cyan); color: #000; border-radius: 8px; display: grid; place-items: center; font-size: 16px; }
+  .logo { display: flex; align-items: center; gap: 8px; font-size: 22px; font-weight: 800; color: #111; text-decoration: none; }
+  .logo-mark { width: 36px; height: 36px; background: linear-gradient(135deg, var(--cyan), var(--neon)); color: #000; border-radius: 10px; display: grid; place-items: center; font-size: 18px; box-shadow: 0 4px 15px rgba(0,240,255,0.4); }
 
-  /* 右侧操作区 */
   .header-actions { display: flex; align-items: center; gap: 16px; margin-left: auto; }
   
-  /* 语言切换 */
-  .lang-switch-wrap {
-    position: relative;
-    display: inline-flex; align-items: center;
-  }
+  .lang-switch-wrap { position: relative; display: inline-flex; align-items: center; }
   .lang-switch-btn {
-    width: 32px; height: 32px;
-    border-radius: 50%; background: #f0f0f0; border: 1px solid #ddd;
+    width: 36px; height: 36px;
+    border-radius: 50%; background: rgba(255,255,255,0.5); border: 1px solid var(--glass-border);
     display: flex; justify-content: center; align-items: center;
-    font-size: 16px; cursor: pointer; transition: all 0.2s;
+    font-size: 16px; cursor: pointer; transition: all 0.3s;
+    backdrop-filter: blur(10px);
   }
-  .lang-switch-btn:hover { background: #e0e0e0; }
+  .lang-switch-btn:hover { background: #fff; transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
   .lang-dropdown {
-    position: absolute; top: 40px; right: 0;
-    background: #fff; border: 1px solid #ddd; border-radius: 8px;
-    padding: 8px 0; display: none; flex-direction: column; min-width: 120px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 1001;
+    position: absolute; top: 50px; right: 0;
+    background: #fff; border: 1px solid #eee; border-radius: 12px;
+    padding: 8px 0; display: none; flex-direction: column; min-width: 140px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1); z-index: 1001;
   }
   .lang-dropdown.show { display: flex; }
-  .lang-dropdown a { padding: 8px 16px; font-size: 13px; color: #333; text-decoration: none; white-space: nowrap; cursor: pointer; }
-  .lang-dropdown a:hover { background: #f5f5f5; }
+  .lang-dropdown a { padding: 10px 16px; font-size: 14px; color: #333; text-decoration: none; white-space: nowrap; cursor: pointer; }
+  .lang-dropdown a:hover { background: #f8f9fa; color: var(--brand-red); }
 
-  /* 登录/注册/头像 */
-  .auth-group { display: flex; align-items: center; gap: 16px; }
-  .btn-auth { font-size: 14px; font-weight: 600; color: #111; cursor: pointer; text-decoration: none; }
-  .btn-register { background: #111; color: #fff; padding: 8px 20px; border-radius: 20px; }
-  .btn-register:hover { background: #333; }
+  .auth-group { display: flex; align-items: center; gap: 20px; }
+  .btn-auth { font-size: 15px; font-weight: 600; color: #111; cursor: pointer; text-decoration: none; transition: color 0.2s; }
+  .btn-auth:hover { color: var(--brand-red); }
+  .btn-register { 
+    background: #111; color: #fff; padding: 10px 24px; border-radius: 30px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s;
+  }
+  .btn-register:hover { background: #333; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); color: #fff; }
 
   .user-avatar-wrap { position: relative; display: none; cursor: pointer; }
-  .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--cyan); display: grid; place-items: center; font-weight: 800; color: #000; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+  .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--neon)); display: grid; place-items: center; font-weight: 800; color: #000; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
   .user-dropdown {
-    position: absolute; top: 45px; right: 0;
-    background: #fff; border: 1px solid #ddd; border-radius: 8px;
-    padding: 8px 0; display: none; flex-direction: column; min-width: 120px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 1001;
+    position: absolute; top: 50px; right: 0;
+    background: #fff; border: 1px solid #eee; border-radius: 12px;
+    padding: 8px 0; display: none; flex-direction: column; min-width: 140px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1); z-index: 1001;
   }
   .user-avatar-wrap:hover .user-dropdown { display: flex; }
-  .user-dropdown a { padding: 8px 16px; font-size: 13px; color: #333; text-decoration: none; cursor: pointer; white-space: nowrap; }
-  .user-dropdown a:hover { background: #f5f5f5; color: var(--brand-red); }
+  .user-dropdown a { padding: 10px 16px; font-size: 14px; color: #333; text-decoration: none; cursor: pointer; white-space: nowrap; }
+  .user-dropdown a:hover { background: #f8f9fa; color: var(--brand-red); }
 
-  /* ================= Hero (全屏视频) ================= */
+  /* ================= Hero ================= */
   .hero-greotpay {
     position: relative; 
     height: 100vh; height: 100dvh;
     display: flex; align-items: center; justify-content: flex-start;
     text-align: left; overflow: hidden; background: #000; 
     padding: 80px 8vw 0;
+    border-radius: 0 0 40px 40px;
   }
-  .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
+  .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.65; }
   .hero-content-greotpay { position: relative; z-index: 2; max-width: 800px; }
-  .hero-title-greotpay { font-size: clamp(40px, 6vw, 72px); font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 20px; }
-  .hero-sub-greotpay { font-size: clamp(16px, 2vw, 22px); color: rgba(255,255,255,0.8); margin-bottom: 40px; }
+  .hero-title-greotpay { font-size: clamp(40px, 6vw, 76px); font-weight: 800; color: #fff; line-height: 1.15; margin-bottom: 24px; text-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+  .hero-sub-greotpay { font-size: clamp(16px, 2vw, 24px); color: rgba(255,255,255,0.9); margin-bottom: 48px; text-shadow: 0 4px 12px rgba(0,0,0,0.5); }
   .btn-start {
-    display: inline-block; padding: 16px 32px; font-size: 16px; font-weight: 700;
-    background: var(--brand-red); color: #fff; border-radius: 30px; text-decoration: none; cursor: pointer;
-    transition: all 0.3s;
+    display: inline-block; padding: 18px 40px; font-size: 16px; font-weight: 700;
+    background: var(--brand-red); color: #fff; border-radius: 40px; text-decoration: none; cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 30px rgba(255,51,51,0.4);
+    position: relative; overflow: hidden;
   }
-  .btn-start:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,51,51,0.3); }
+  .btn-start::after {
+    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: skewX(-20deg); transition: 0.5s;
+  }
+  .btn-start:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 15px 40px rgba(255,51,51,0.6); }
+  .btn-start:hover::after { left: 150%; }
 
   /* ================= 通用区块 ================= */
-  .section-greotpay { padding: 80px 20px; }
+  .section-greotpay { padding: 100px 20px; position: relative; z-index: 10; }
   .container-greotpay { max-width: 1200px; margin: 0 auto; }
-  .section-title { font-size: 32px; font-weight: 800; margin-bottom: 40px; text-align: center; }
+  .section-title { font-size: 36px; font-weight: 800; margin-bottom: 48px; text-align: center; letter-spacing: -1px; }
 
-  /* 卡片区 */
-  .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-  .feature-card { border-radius: 16px; overflow: hidden; background: #f0f0f0; display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; min-height: 320px; position: relative; cursor: pointer; }
-  .feature-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.8)); z-index: 1; }
-  .feature-card h3 { position: relative; z-index: 2; color: #fff; font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-  .feature-card p { position: relative; z-index: 2; color: rgba(255,255,255,0.7); font-size: 13px; line-height: 1.5; }
-  .feature-card:nth-child(1) { background: linear-gradient(135deg, #e0e0e0, #c0c0c0); }
-  .feature-card:nth-child(2) { background: linear-gradient(135deg, #ffcccc, #ff9999); }
-  .feature-card:nth-child(3) { background: linear-gradient(135deg, #ccffcc, #99ff99); }
-  .feature-card:nth-child(4) { background: linear-gradient(135deg, #ccccff, #9999ff); }
+  /* ================= 横向滑动卡片区 (玻璃态) ================= */
+  .horizontal-scroll-wrap {
+    position: relative;
+    width: 100%;
+    padding: 20px 0;
+  }
+  /* 隐藏滚动条 */
+  .horizontal-scroll-wrap::-webkit-scrollbar { display: none; }
+  .horizontal-scroll-wrap { -ms-overflow-style: none; scrollbar-width: none; }
 
-  /* 黑底展示区 */
-  .dark-showcase { background: #0f0f0f; border-radius: 32px; padding: 60px 20px; text-align: center; margin: 0 20px; position: relative; overflow: hidden; }
-  .dark-showcase h2 { color: #fff; font-size: 32px; font-weight: 800; margin-bottom: 16px; }
-  .dark-showcase p { color: rgba(255,255,255,0.6); font-size: 15px; margin-bottom: 40px; }
-  .mock-card { width: 340px; height: 210px; margin: 0 auto; background: linear-gradient(135deg, #111, #333); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); position: relative; border: 1px solid #444; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; text-align: left; }
+  .scroll-track {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 20px 8vw; /* 边缘留白 */
+    scroll-padding: 0 8vw;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .glass-card {
+    flex: 0 0 320px;
+    height: 420px;
+    border-radius: 24px;
+    scroll-snap-align: center;
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .glass-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+    border-color: rgba(255,255,255,0.9);
+  }
+  .glass-card img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    position: absolute; top: 0; left: 0;
+    z-index: 1;
+    transition: transform 0.5s;
+  }
+  .glass-card:hover img { transform: scale(1.05); }
+  /* 卡片底部渐变遮罩 */
+  .glass-card::after {
+    content: ''; position: absolute; inset: 0; z-index: 2;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);
+  }
+  .card-content {
+    position: relative; z-index: 3;
+    margin-top: auto;
+    padding: 24px;
+    color: #fff;
+  }
+  .card-content h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .card-content p { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.5; }
+
+  /* ================= 黑底展示区 ================= */
+  .dark-showcase { 
+    background: #050505; border-radius: 40px; padding: 80px 20px; text-align: center; 
+    margin: 0 20px; position: relative; overflow: hidden; 
+    box-shadow: inset 0 0 100px rgba(0,240,255,0.1);
+  }
+  .dark-showcase::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(0,240,255,0.1) 0%, transparent 60%);
+    animation: rotate 20s linear infinite;
+  }
+  @keyframes rotate { 100% { transform: rotate(360deg); } }
+  .dark-showcase h2 { color: #fff; font-size: 36px; font-weight: 800; margin-bottom: 16px; position: relative; z-index: 2; }
+  .dark-showcase p { color: rgba(255,255,255,0.6); font-size: 16px; margin-bottom: 48px; position: relative; z-index: 2; }
   
-  /* 轮播区 */
-  .feature-slider-section { padding: 60px 20px; background: #fff; position: relative; }
+  .mock-card { 
+    width: 360px; height: 220px; margin: 0 auto; 
+    background: linear-gradient(135deg, #111, #222); 
+    border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.1); 
+    position: relative; display: flex; flex-direction: column; justify-content: space-between; 
+    padding: 30px; text-align: left; z-index: 2; transition: transform 0.5s;
+  }
+  .mock-card:hover { transform: translateY(-10px) rotateX(5deg) rotateY(-5deg); }
+
+  /* ================= 图文轮播区 ================= */
+  .feature-slider-section { padding: 100px 20px; position: relative; z-index: 10; }
   .slider-container { max-width: 1100px; margin: 0 auto; position: relative; min-height: 650px; }
-  .slide-block { display: flex; align-items: center; justify-content: space-between; gap: 40px; position: absolute; top: 0; left: 0; width: 100%; opacity: 0; visibility: hidden; transform: translateY(20px); transition: all 0.5s ease; pointer-events: none; }
+  
+  .slide-block { 
+    display: flex; align-items: center; justify-content: space-between; gap: 40px; 
+    position: absolute; top: 0; left: 0; width: 100%; 
+    opacity: 0; visibility: hidden; transform: translateY(30px); 
+    transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); pointer-events: none; 
+  }
   .slide-block.active { opacity: 1; visibility: visible; transform: translateY(0); position: relative; pointer-events: auto; }
+  
   .slide-text { width: 45%; }
-  .slider-tag { color: var(--brand-red); font-size: 15px; font-weight: 700; margin-bottom: 12px; display: block; }
-  .slide-title { font-size: clamp(32px, 4vw, 44px); font-weight: 800; color: #111; margin-bottom: 16px; line-height: 1.2; }
-  .slide-desc { font-size: 16px; color: var(--text-gray); margin-bottom: 24px; line-height: 1.6; }
-  .btn-more { display: inline-flex; align-items: center; gap: 8px; background: #111; color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 600; text-decoration: none; font-size: 14px; transition: background 0.3s; cursor: pointer; }
-  .btn-more:hover { background: #333; }
-  .btn-more svg { width: 14px; height: 14px; }
-  .slide-phone { width: 50%; display: flex; justify-content: center; }
-  .phone-mockup { width: 300px; height: 610px; background: #000; border-radius: 40px; padding: 10px; box-shadow: 0 30px 60px rgba(0,0,0,0.15); position: relative; }
+  .slider-tag { 
+    color: var(--brand-red); font-size: 14px; font-weight: 700; margin-bottom: 16px; 
+    display: inline-block; padding: 4px 12px; background: rgba(255,51,51,0.1); 
+    border-radius: 20px; border: 1px solid rgba(255,51,51,0.2);
+  }
+  .slide-title { font-size: clamp(32px, 4vw, 48px); font-weight: 800; color: #111; margin-bottom: 20px; line-height: 1.2; letter-spacing: -1px; }
+  .slide-desc { font-size: 16px; color: var(--text-gray); margin-bottom: 32px; line-height: 1.7; }
+  
+  .btn-more { 
+    display: inline-flex; align-items: center; gap: 8px; background: #111; color: #fff; 
+    padding: 14px 28px; border-radius: 30px; font-weight: 600; text-decoration: none; 
+    font-size: 15px; transition: all 0.3s; cursor: pointer;
+  }
+  .btn-more:hover { background: #333; transform: translateX(5px); }
+  .btn-more svg { width: 16px; height: 16px; }
+
+  .slide-phone { width: 50%; display: flex; justify-content: center; perspective: 1000px; }
+  .phone-mockup { 
+    width: 300px; height: 610px; background: #000; border-radius: 40px; padding: 10px; 
+    box-shadow: 0 40px 80px rgba(0,0,0,0.15), inset 0 0 0 2px #333; 
+    position: relative; transition: transform 0.5s; 
+  }
+  .slide-block:hover .phone-mockup { transform: rotateY(-10deg) rotateX(5deg); }
   .phone-screen { width: 100%; height: 100%; background: #fff; border-radius: 32px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
   .phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 110px; height: 25px; background: #000; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; z-index: 10; }
   
@@ -152,57 +283,74 @@
   .app-btn { margin-top: auto; background: #111; color: #fff; text-align: center; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 14px; }
 
   .slider-dots { position: absolute; right: -40px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 16px; z-index: 10; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: #e0e0e0; cursor: pointer; transition: all 0.3s; }
-  .dot.active { background: var(--brand-red); transform: scale(1.3); }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #ddd; cursor: pointer; transition: all 0.4s; }
+  .dot.active { background: var(--brand-red); transform: scale(1.5); box-shadow: 0 0 10px rgba(255,51,51,0.5); }
 
-  /* 其他区块 */
-  .stats-dark { background: #0f0f0f; border-radius: 32px; padding: 60px 20px; margin: 0 20px; color: #fff; text-align: center; }
-  .stats-dark h2 { font-size: 24px; font-weight: 800; margin-bottom: 40px; }
-  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 900px; margin: 0 auto; }
-  .stat-item { background: rgba(255,255,255,0.05); padding: 30px 20px; border-radius: 16px; }
-  .stat-item .num { font-size: 36px; font-weight: 800; margin-bottom: 8px; }
-  .stat-item .lbl { font-size: 13px; color: rgba(255,255,255,0.6); }
+  /* ================= 数据区 ================= */
+  .stats-dark { 
+    background: linear-gradient(135deg, #111, #222); border-radius: 40px; padding: 80px 20px; 
+    margin: 0 20px; color: #fff; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  }
+  .stats-dark h2 { font-size: 28px; font-weight: 800; margin-bottom: 48px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 900px; margin: 0 auto; }
+  .stat-item { 
+    background: rgba(255,255,255,0.05); padding: 40px 20px; border-radius: 20px; 
+    border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s;
+  }
+  .stat-item:hover { transform: translateY(-5px); background: rgba(255,255,255,0.08); }
+  .stat-item .num { font-size: 42px; font-weight: 800; margin-bottom: 8px; background: linear-gradient(135deg, var(--cyan), var(--neon)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .stat-item .lbl { font-size: 14px; color: rgba(255,255,255,0.6); }
 
-  .testimonials { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .test-card { background: #f8f9fa; padding: 24px; border-radius: 16px; }
-  .test-card p { font-size: 14px; color: #333; line-height: 1.6; margin-bottom: 16px; }
-  .test-card .author { font-size: 12px; font-weight: 700; color: #888; }
+  /* ================= 社区心声 (重新设计，绚丽滑动) ================= */
+  .testimonial-section { background: transparent; padding: 100px 0; overflow: hidden; }
+  .testimonial-track {
+    display: flex; gap: 24px; padding: 20px;
+    width: max-content;
+    animation: scrollX 40s linear infinite;
+  }
+  .testimonial-track:hover { animation-play-state: paused; }
+  @keyframes scrollX { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  
+  .glow-test-card {
+    width: 380px; padding: 32px; border-radius: 24px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+    position: relative;
+    transition: all 0.3s;
+  }
+  .glow-test-card:hover { transform: translateY(-5px); background: #fff; box-shadow: 0 20px 40px rgba(0,240,255,0.15); }
+  .glow-test-card p { font-size: 16px; color: #333; line-height: 1.7; margin-bottom: 24px; font-weight: 500; }
+  .glow-test-author { display: flex; align-items: center; gap: 12px; }
+  .glow-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #00f0ff, #00ffaa); display: grid; place-items: center; font-weight: 800; color: #fff; font-size: 18px; }
+  .glow-info { font-size: 14px; color: #666; font-weight: 600; display: flex; flex-direction: column; }
+  .glow-info span { font-size: 12px; color: #999; font-weight: 400; margin-top: 2px; }
 
-  /* ================= FAQ (修复版) ================= */
-  .faq-list { max-width: 800px; margin: 0 auto; }
+  /* ================= FAQ ================= */
+  .faq-list { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.03); }
   .faq-item { border-bottom: 1px solid #eee; }
+  .faq-item:last-child { border-bottom: none; }
   .faq-q { 
     width: 100%; text-align: left; background: none; border: none; 
-    outline: none; /* 去除聚焦黑框 */
-    -webkit-tap-highlight-color: transparent; /* 去除移动端点击高亮 */
-    padding: 24px 0; font-size: 16px; font-weight: 600; color: #111; 
-    display: flex; justify-content: space-between; align-items: center; 
-    cursor: pointer; 
+    outline: none; -webkit-tap-highlight-color: transparent;
+    padding: 24px 0; font-size: 18px; font-weight: 700; color: #111; 
+    display: flex; justify-content: space-between; align-items: center; cursor: pointer; 
   }
-  .faq-q .plus { font-size: 22px; font-weight: 300; transition: transform 0.3s; }
-  
-  /* 展开内容使用 max-height 动画，比 display 更平滑 */
-  .faq-a { 
-    max-height: 0; 
-    overflow: hidden; 
-    transition: max-height 0.4s ease, padding-bottom 0.4s ease; 
-    font-size: 14px; color: var(--text-gray); line-height: 1.8; 
-  }
-  .faq-item.open .faq-a { 
-    max-height: 300px; /* 给足够大的高度 */
-    padding-bottom: 24px; 
-  }
+  .faq-q .plus { font-size: 24px; font-weight: 300; transition: transform 0.3s; color: var(--brand-red); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding-bottom 0.4s ease; font-size: 15px; color: var(--text-gray); line-height: 1.8; }
+  .faq-item.open .faq-a { max-height: 300px; padding-bottom: 24px; }
 
-  /* 极简 Footer */
-  .footer-greotpay { background: #0f0f0f; color: #fff; padding: 40px 20px; text-align: center; }
+  /* ================= Footer ================= */
+  .footer-greotpay { background: #050505; color: #fff; padding: 60px 20px; text-align: center; position: relative; z-index: 10; }
   .footer-brand { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .footer-brand .logo-box { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
-  .footer-brand .logo-box span:first-child { width: 32px; height: 32px; background: var(--cyan); color: #000; border-radius: 8px; display: grid; place-items: center; font-weight: 900; }
-  .footer-brand .logo-box span:last-child { font-size: 24px; font-weight: 800; }
-  .footer-brand p { color: rgba(255,255,255,0.5); font-size: 13px; margin-bottom: 24px; line-height: 1.6; }
-  .footer-brand p span.slogan { color: #fff; font-weight: 700; font-size: 18px; margin-top: 8px; display: inline-block; }
+  .footer-brand .logo-box { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .footer-brand .logo-box span:first-child { width: 40px; height: 40px; background: linear-gradient(135deg, var(--cyan), var(--neon)); color: #000; border-radius: 10px; display: grid; place-items: center; font-weight: 900; font-size: 20px; }
+  .footer-brand .logo-box span:last-child { font-size: 28px; font-weight: 800; }
+  .footer-brand p { color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 30px; line-height: 1.6; }
+  .footer-brand p span.slogan { color: #fff; font-weight: 800; font-size: 20px; margin-top: 10px; display: inline-block; background: linear-gradient(90deg, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   
-  .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; color: rgba(255,255,255,0.4); font-size: 12px; }
+  .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; color: rgba(255,255,255,0.3); font-size: 13px; }
 
   /* ================= 移动端 ================= */
   @media (max-width: 960px) {
@@ -211,26 +359,31 @@
     
     .hero-greotpay { height: 100vh; height: 100dvh; padding: 100px 24px 0; justify-content: center; text-align: center; }
     
-    .features-grid { display: flex; flex-direction: column; gap: 16px; }
-    .feature-card { min-height: 240px; }
+    .glass-card { flex: 0 0 280px; height: 380px; }
     
     .slider-container { min-height: auto; }
     .slider-dots { display: none; }
-    .slide-block { position: relative !important; opacity: 1 !important; visibility: visible !important; transform: none !important; pointer-events: auto !important; flex-direction: column; text-align: center; padding: 40px 0; border-bottom: 1px solid #eee; gap: 32px; }
+    .slide-block { position: relative !important; opacity: 1 !important; visibility: visible !important; transform: none !important; pointer-events: auto !important; flex-direction: column; text-align: center; padding: 40px 0; border-bottom: 1px solid rgba(0,0,0,0.05); gap: 40px; }
     .slide-text { width: 100%; }
     .slide-phone { width: 100%; }
     .btn-more { margin: 0 auto; }
     
     .stats-grid { grid-template-columns: 1fr; }
-    .testimonials { grid-template-columns: 1fr; }
-    .dark-showcase { padding: 40px 16px; margin: 0 16px; }
-    .mock-card { width: 100%; max-width: 300px; height: 180px; }
+    .dark-showcase { padding: 50px 16px; margin: 0 16px; }
+    .mock-card { width: 100%; max-width: 320px; height: 200px; }
     
-    .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+    .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
   }
 </style>
 </head>
 <body>
+
+<!-- 绚丽背景光晕 -->
+<div class="bg-glow">
+  <div class="glow-orb glow-1"></div>
+  <div class="glow-orb glow-2"></div>
+  <div class="glow-orb glow-3"></div>
+</div>
 
 <div id="i18n-loader" style="display: none; position: fixed; inset: 0; z-index: 99999; background: #fff; place-items: center;">
   <div style="width: 30px; height: 30px; border: 3px solid #eee; border-top-color: #00f0ff; border-radius: 50%; animation: i18n-spin 1s linear infinite;"></div>
@@ -251,19 +404,16 @@
     </a>
     
     <div class="header-actions">
-      <!-- 语言切换 -->
       <div class="lang-switch-wrap">
         <div class="lang-switch-btn" onclick="toggleLangMenu(event)">🌏</div>
         <div class="lang-dropdown" id="langDropdown"></div>
       </div>
 
-      <!-- 未登录状态 -->
       <div class="auth-group" id="unauth-group">
         <span class="btn-auth" onclick="goAuth()">登录</span>
         <span class="btn-auth btn-register" onclick="goAuth()">注册</span>
       </div>
 
-      <!-- 已登录状态 -->
       <div class="user-avatar-wrap" id="auth-group">
         <div class="user-avatar">N</div>
         <div class="user-dropdown">
@@ -286,27 +436,46 @@
   </div>
 </section>
 
-<!-- 卡片区 -->
-<section class="section-greotpay">
+<!-- 横向滑动卡片区 (图3) -->
+<section class="section-greotpay" style="padding-bottom: 40px;">
   <div class="container-greotpay">
     <h2 class="section-title">享受日常权益</h2>
-    <div class="features-grid">
-      <div class="feature-card" onclick="goAuth()">
-        <h3>轻松获取稳定币</h3>
-        <p>通过 P2P 兑换和法币入金。</p>
+  </div>
+  <div class="horizontal-scroll-wrap">
+    <div class="scroll-track">
+      
+      <div class="glass-card" onclick="goAuth()">
+        <img src="swiper-1.webp" alt="轻松获取稳定币" onerror="this.style.display='none'">
+        <div class="card-content">
+          <h3>轻松获取稳定币</h3>
+          <p>通过 P2P 兑换和法币入金。</p>
+        </div>
       </div>
-      <div class="feature-card" onclick="goAuth()">
-        <h3>随时使用稳定币支付</h3>
-        <p>绑定卡片，随心支付。</p>
+
+      <div class="glass-card" onclick="goAuth()">
+        <img src="swiper-2.webp" alt="随时使用稳定币支付" onerror="this.style.display='none'">
+        <div class="card-content">
+          <h3>随时使用稳定币支付</h3>
+          <p>绑定卡片，随心支付。</p>
+        </div>
       </div>
-      <div class="feature-card" onclick="goAuth()">
-        <h3>快速安全地转移加密货币</h3>
-        <p>支持 100+ 国家/地区。</p>
+
+      <div class="glass-card" onclick="goAuth()">
+        <img src="swiper-3.webp" alt="快速安全地转移" onerror="this.style.display='none'">
+        <div class="card-content">
+          <h3>快速安全地转移加密货币</h3>
+          <p>支持 100+ 国家/地区。</p>
+        </div>
       </div>
-      <div class="feature-card" onclick="goAuth()">
-        <h3>多种货币，一个应用</h3>
-        <p>一站式管理加密资产。</p>
+
+      <div class="glass-card" onclick="goAuth()">
+        <img src="swiper-4.webp" alt="多种货币，一个应用" onerror="this.style.display='none'">
+        <div class="card-content">
+          <h3>多种货币，一个应用</h3>
+          <p>一站式管理加密资产。</p>
+        </div>
       </div>
+
     </div>
   </div>
 </section>
@@ -316,19 +485,19 @@
   <h2>数字支付，简单随行</h2>
   <p>轻松、安全地支付加密货币，随时随地。</p>
   <div class="mock-card" onclick="goAuth()" style="cursor:pointer;">
-    <div style="display:flex; justify-content:space-between; align-items:flex-start; color:#fff;">
-      <div style="font-weight:800; font-size:20px;">NEXAPAY</div>
-      <div style="font-size:12px; opacity:0.6;">Debit</div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; color:#fff; position:relative; z-index:2;">
+      <div style="font-weight:800; font-size:22px; letter-spacing:1px;">NEXAPAY</div>
+      <div style="font-size:14px; opacity:0.6;">Debit</div>
     </div>
-    <div style="color:#fff; font-family:monospace; font-size:18px;">5312 8048 4022 4821</div>
-    <div style="display:flex; justify-content:space-between; color:#fff; font-size:12px;">
-      <div>CARDHOLDER<br><span style="color:#fff;">ALEX</span></div>
-      <div>EXPIRES<br><span style="color:#fff;">09/29</span></div>
+    <div style="color:#fff; font-family:monospace; font-size:20px; letter-spacing:2px; position:relative; z-index:2;">5312 8048 4022 4821</div>
+    <div style="display:flex; justify-content:space-between; color:#fff; font-size:12px; position:relative; z-index:2;">
+      <div>CARDHOLDER<br><span style="color:#fff; font-size:14px; font-weight:600;">ALEX</span></div>
+      <div>EXPIRES<br><span style="color:#fff; font-size:14px; font-weight:600;">09/29</span></div>
     </div>
   </div>
 </section>
 
-<!-- 图文滑动区 -->
+<!-- 图文滑动区 (包含了之前的信用额度、应用内转账、P2P市场等) -->
 <section class="feature-slider-section">
   <div class="slider-container">
 
@@ -361,6 +530,7 @@
       </div>
     </div>
 
+    <!-- 恢复的板块：应用内转账 -->
     <div class="slide-block" data-index="1">
       <div class="slide-text">
         <span class="slider-tag">应用内转账</span>
@@ -412,6 +582,7 @@
       </div>
     </div>
 
+    <!-- 恢复的板块：信用额度 -->
     <div class="slide-block" data-index="3">
       <div class="slide-text">
         <span class="slider-tag">信用额度</span>
@@ -495,6 +666,7 @@
       </div>
     </div>
 
+    <!-- 恢复的板块：P2P 市场 -->
     <div class="slide-block" data-index="6">
       <div class="slide-text">
         <span class="slider-tag">P2P 市场</span>
@@ -555,28 +727,69 @@
   </div>
 </section>
 
-<!-- 社区心声 -->
-<section class="section-greotpay" style="background:#f8f9fa;">
+<!-- 社区心声 (重新设计，流光卡片滑动) -->
+<section class="testimonial-section">
   <div class="container-greotpay">
     <h2 class="section-title">聆听社区心声</h2>
-    <div class="testimonials">
-      <div class="test-card">
-        <p>“使用 NEXAPAY 的虚拟卡支付非常简单，直接从加密货币余额扣款，省去了很多麻烦。”</p>
-        <div class="author">Nick · 自由设计师</div>
-      </div>
-      <div class="test-card">
-        <p>“NEXAPAY 用起来真简便，从注册、入金到开始支付，一气呵成！”</p>
-        <div class="author">Mia · 远程工作者</div>
-      </div>
-      <div class="test-card">
-        <p>“NEXAPAY 的虚拟卡不仅在支付时方便，还能享受返现，非常棒。”</p>
-        <div class="author">Alex · 跨境电商</div>
+  </div>
+  <div class="testimonial-track">
+    
+    <!-- 卡片 1 -->
+    <div class="glow-test-card">
+      <p>“使用 NEXAPAY 的虚拟卡支付非常简单，直接从加密货币余额扣款，省去了很多麻烦。”</p>
+      <div class="glow-test-author">
+        <div class="glow-avatar">N</div>
+        <div class="glow-info">Nick<span>自由设计师</span></div>
       </div>
     </div>
+
+    <!-- 卡片 2 -->
+    <div class="glow-test-card">
+      <p>“NEXAPAY 用起来真简便，从注册、入金到开始支付，一气呵成！”</p>
+      <div class="glow-test-author">
+        <div class="glow-avatar" style="background: linear-gradient(135deg, #ff3366, #ff9933);">M</div>
+        <div class="glow-info">Mia<span>远程工作者</span></div>
+      </div>
+    </div>
+
+    <!-- 卡片 3 -->
+    <div class="glow-test-card">
+      <p>“NEXAPAY 的虚拟卡不仅在支付时方便，还能享受返现，非常棒。”</p>
+      <div class="glow-test-author">
+        <div class="glow-avatar" style="background: linear-gradient(135deg, #9933ff, #33ccff);">A</div>
+        <div class="glow-info">Alex<span>跨境电商</span></div>
+      </div>
+    </div>
+
+    <!-- 复制一份以实现无缝滚动 -->
+    <div class="glow-test-card">
+      <p>“使用 NEXAPAY 的虚拟卡支付非常简单，直接从加密货币余额扣款，省去了很多麻烦。”</p>
+      <div class="glow-test-author">
+        <div class="glow-avatar">N</div>
+        <div class="glow-info">Nick<span>自由设计师</span></div>
+      </div>
+    </div>
+
+    <div class="glow-test-card">
+      <p>“NEXAPAY 用起来真简便，从注册、入金到开始支付，一气呵成！”</p>
+      <div class="glow-test-author">
+        <div class="glow-avatar" style="background: linear-gradient(135deg, #ff3366, #ff9933);">M</div>
+        <div class="glow-info">Mia<span>远程工作者</span></div>
+      </div>
+    </div>
+
+    <div class="glow-test-card">
+      <p>“NEXAPAY 的虚拟卡不仅在支付时方便，还能享受返现，非常棒。”</p>
+      <div class="glow-test-author">
+        <div class="glow-avatar" style="background: linear-gradient(135deg, #9933ff, #33ccff);">A</div>
+        <div class="glow-info">Alex<span>跨境电商</span></div>
+      </div>
+    </div>
+
   </div>
 </section>
 
-<!-- FAQ (确保可以直接打开) -->
+<!-- FAQ -->
 <section class="section-greotpay">
   <div class="container-greotpay">
     <h2 class="section-title">常见问题</h2>
@@ -660,21 +873,19 @@
   });
 
   // =========================================
-  // FAQ 折叠 (使用更稳定的 DOM 操作)
+  // FAQ 折叠
   // =========================================
   document.querySelectorAll('.faq-q').forEach(btn => {
     btn.addEventListener('click', function() {
       const item = this.parentElement;
       const isOpen = item.classList.contains('open');
       
-      // 1. 先关闭所有
       document.querySelectorAll('.faq-item').forEach(otherItem => {
         otherItem.classList.remove('open');
         const otherPlus = otherItem.querySelector('.plus');
         if (otherPlus) otherPlus.textContent = '+';
       });
       
-      // 2. 如果之前是关闭的，则打开当前
       if (!isOpen) {
         item.classList.add('open');
         const icon = this.querySelector('.plus');
@@ -684,7 +895,7 @@
   });
 
   // =========================================
-  // PC 端轮播
+  // PC 端轮播 (图文区)
   // =========================================
   let currentSlide = 0;
   const totalSlides = 7;
@@ -714,13 +925,13 @@
         if (currentSlide < totalSlides - 1) {
           goToSlide(currentSlide + 1);
           isWheeling = true;
-          setTimeout(() => isWheeling = false, 500);
+          setTimeout(() => isWheeling = false, 600);
         }
       } else {
         if (currentSlide > 0) {
           goToSlide(currentSlide - 1);
           isWheeling = true;
-          setTimeout(() => isWheeling = false, 500);
+          setTimeout(() => isWheeling = false, 600);
         }
       }
     }
