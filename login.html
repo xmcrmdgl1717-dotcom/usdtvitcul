@@ -7,7 +7,11 @@
 <style>
   :root { --bg: #f4f7f9; --text-dark: #111; --text-gray: #666; --brand-red: #e60012; --cyan: #00f0ff; }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; }
-  body { background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  
+  /* 强制初始隐藏，防闪烁 */
+  body { opacity: 0; transition: opacity 0.2s ease; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body.loaded { opacity: 1; }
+
   .login-container { background: #fff; width: 100%; max-width: 420px; border-radius: 16px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
   .logo-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 40px; text-decoration: none; color: inherit; }
   .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #00f0ff, #2bd67b); border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 20px; font-weight: 900; color: #000; }
@@ -58,7 +62,8 @@
 </head>
 <body>
 
-<div id="i18n-loader" style="display: none; position: fixed; inset: 0; z-index: 99999; background: #fff; place-items: center;">
+<!-- 遮罩 -->
+<div id="i18n-loader" style="position: fixed; inset: 0; z-index: 99999; background: #fff; display: flex; align-items: center; justify-content: center;">
   <div style="width: 30px; height: 30px; border: 3px solid #eee; border-top-color: #00f0ff; border-radius: 50%; animation: i18n-spin 1s linear infinite;"></div>
 </div>
 <style>@keyframes i18n-spin { to { transform: rotate(360deg); } }</style>
@@ -152,9 +157,7 @@
       globalData = await res.json();
       if (!globalData.sysConfig) globalData.sysConfig = { safariTitle: "请使用 Safari 浏览器打开", safariDesc: "系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。" };
 
-      // 独立判断语言逻辑，与 index.html 完全一致
       let finalLang = localStorage.getItem('nexapay_final_lang');
-      
       if (!finalLang) {
         let manualLang = localStorage.getItem('nexapay_manual_lang');
         let deviceLang = navigator.language;
@@ -180,7 +183,13 @@
 
   function hideLoader() {
     const loader = document.getElementById('i18n-loader');
-    if (loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 300); }
+    if (loader) { 
+      loader.style.opacity = '0'; 
+      setTimeout(() => { 
+        loader.style.display = 'none'; 
+        document.body.classList.add('loaded'); // 显示主内容
+      }, 200); 
+    }
   }
 
   function applyLoginTranslations() {
@@ -188,7 +197,7 @@
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if (activeDict[key]) {
-        el.textContent = activeDict[key];
+        el.innerHTML = activeDict[key];
         if (el.tagName === 'INPUT') el.setAttribute('placeholder', activeDict[key]);
       }
     });
@@ -214,20 +223,20 @@
     const bottomLinkWrap = document.getElementById('bottomLinkWrap');
 
     if (isRegisterMode) {
-      tag.textContent = activeDict['新用户注册'] || "新用户注册";
-      title.textContent = activeDict['创建您的账户'] || "创建您的账户";
-      desc.textContent = activeDict['注册以开始使用 NEXAPAY 服务。'] || "注册以开始使用 NEXAPAY 服务。";
+      tag.innerHTML = activeDict['新用户注册'] || "新用户注册";
+      title.innerHTML = activeDict['创建您的账户'] || "创建您的账户";
+      desc.innerHTML = activeDict['注册以开始使用 NEXAPAY 服务。'] || "注册以开始使用 NEXAPAY 服务。";
       userGroup.classList.add('show');
       userInput.setAttribute('required', 'required');
-      submitBtn.textContent = activeDict['注册'] || "注册";
+      submitBtn.innerHTML = activeDict['注册'] || "注册";
       bottomLinkWrap.innerHTML = `${activeDict['已有账户？'] || "已有账户？"} <a onclick="toggleMode()">${activeDict['去登录'] || "去登录"}</a>`;
     } else {
-      tag.textContent = activeDict['您的账户'] || "您的账户";
-      title.textContent = activeDict['欢迎回来'] || "欢迎回来";
-      desc.textContent = activeDict['登录以管理您的个人资料。'] || "登录以管理您的个人资料。";
+      tag.innerHTML = activeDict['您的账户'] || "您的账户";
+      title.innerHTML = activeDict['欢迎回来'] || "欢迎回来";
+      desc.innerHTML = activeDict['登录以管理您的个人资料。'] || "登录以管理您的个人资料。";
       userGroup.classList.remove('show');
       userInput.removeAttribute('required');
-      submitBtn.textContent = activeDict['登录'] || "登录";
+      submitBtn.innerHTML = activeDict['登录'] || "登录";
       bottomLinkWrap.innerHTML = `<span>${activeDict['初次使用 NEXAPAY?'] || "初次使用 NEXAPAY?"}</span> <a onclick="toggleMode()">${activeDict['创建账户'] || "创建账户"}</a>`;
     }
   };
@@ -237,10 +246,10 @@
     const btn = document.querySelector('.toggle-pwd');
     if (pwd.type === 'password') {
       pwd.type = 'text';
-      btn.textContent = activeDict['隐藏'] || '隐藏';
+      btn.innerHTML = activeDict['隐藏'] || '隐藏';
     } else {
       pwd.type = 'password';
-      btn.textContent = activeDict['显示'] || '显示';
+      btn.innerHTML = activeDict['显示'] || '显示';
     }
   };
 
