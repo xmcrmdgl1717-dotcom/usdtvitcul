@@ -14,6 +14,7 @@
     --neon: #00ffaa;
     --glass-bg: rgba(255, 255, 255, 0.7);
     --glass-border: rgba(255, 255, 255, 0.5);
+    --gold: #d4af37;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -148,69 +149,25 @@
   .container-greotpay { max-width: 1200px; margin: 0 auto; }
   .section-title { font-size: 36px; font-weight: 800; margin-bottom: 48px; text-align: center; letter-spacing: -1px; }
 
-  /* ================= 横向滑动卡片区 (玻璃态) ================= */
-  .horizontal-scroll-wrap {
-    position: relative;
-    width: 100%;
-    padding: 20px 0;
-  }
+  /* ================= 横向滑动卡片区 ================= */
+  .horizontal-scroll-wrap { position: relative; width: 100%; padding: 20px 0; }
   .horizontal-scroll-wrap::-webkit-scrollbar { display: none; }
   .horizontal-scroll-wrap { -ms-overflow-style: none; scrollbar-width: none; }
-
-  .scroll-track {
-    display: flex;
-    gap: 24px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding: 20px 8vw;
-    scroll-padding: 0 8vw;
-    -webkit-overflow-scrolling: touch;
-  }
-
+  .scroll-track { display: flex; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 20px 8vw; scroll-padding: 0 8vw; -webkit-overflow-scrolling: touch; }
   .glass-card {
-    flex: 0 0 320px;
-    height: 420px;
-    border-radius: 24px;
-    scroll-snap-align: center;
-    position: relative;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-    cursor: pointer;
-    transition: all 0.4s ease;
-    display: flex;
-    flex-direction: column;
+    flex: 0 0 320px; height: 420px; border-radius: 24px; scroll-snap-align: center; position: relative; overflow: hidden;
+    background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.4s ease; display: flex; flex-direction: column;
   }
-  .glass-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 30px 60px rgba(0,0,0,0.1);
-    border-color: rgba(255,255,255,0.9);
-  }
-  .glass-card img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    position: absolute; top: 0; left: 0;
-    z-index: 1;
-    transition: transform 0.5s;
-  }
+  .glass-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 30px 60px rgba(0,0,0,0.1); border-color: rgba(255,255,255,0.9); }
+  .glass-card img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1; transition: transform 0.5s; }
   .glass-card:hover img { transform: scale(1.05); }
-  .glass-card::after {
-    content: ''; position: absolute; inset: 0; z-index: 2;
-    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);
-  }
-  .card-content {
-    position: relative; z-index: 3;
-    margin-top: auto;
-    padding: 24px;
-    color: #fff;
-  }
+  .glass-card::after { content: ''; position: absolute; inset: 0; z-index: 2; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 40%, transparent 100%); }
+  .card-content { position: relative; z-index: 3; margin-top: auto; padding: 24px; color: #fff; }
   .card-content h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
   .card-content p { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.5; }
 
-  /* ================= 黑底卡片展示区 (已完全重构) ================= */
+  /* ================= 黑底卡片展示区 ================= */
   .dark-showcase { 
     background: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%); 
     border-radius: 40px; padding: 80px 20px 60px; text-align: center; 
@@ -223,61 +180,70 @@
   .btn-learn-more {
     display: inline-block; background: #fff; color: #000; padding: 12px 32px;
     border-radius: 30px; font-weight: 700; font-size: 14px; text-decoration: none;
-    cursor: pointer; transition: all 0.3s; position: relative; z-index: 2; margin-bottom: 50px;
-    border: none;
+    cursor: pointer; transition: all 0.3s; position: relative; z-index: 2; margin-bottom: 50px; border: none;
   }
   .btn-learn-more:hover { background: #eee; transform: scale(1.05); }
 
   /* 3D 卡片动效容器 */
-  .card-3d-wrapper {
-    perspective: 1000px;
-    width: 100%;
-    max-width: 380px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 2;
-    padding: 20px;
-  }
+  .card-3d-wrapper { perspective: 1200px; width: 100%; max-width: 400px; margin: 0 auto; position: relative; z-index: 2; padding: 10px; }
+  
+  /* 翻转动画类 */
+  .flipping { transform: rotateY(90deg) !important; transition: transform 0.3s ease-in !important; }
 
   .mock-card-3d { 
-    width: 100%;
-    aspect-ratio: 1.58 / 1;
-    background: linear-gradient(135deg, #e60012, #990000); /* 红黑渐变 */
+    width: 100%; aspect-ratio: 1.58 / 1;
     border-radius: 20px; 
-    box-shadow: 0 30px 60px rgba(230,0,18,0.3), inset 0 1px 0 rgba(255,255,255,0.2); 
     position: relative; display: flex; flex-direction: column; justify-content: space-between; 
     padding: 24px; text-align: left; 
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
     transform-style: preserve-3d;
     will-change: transform;
   }
   
+  /* === 虚拟卡样式 (红黑) === */
+  .mock-card-3d.virtual {
+    background: linear-gradient(135deg, #d90012, #7a000a);
+    box-shadow: 0 30px 60px rgba(217,0,18,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  /* === 实体卡样式 (黑金) === */
+  .mock-card-3d.physical {
+    background: linear-gradient(135deg, #1a1a1a, #050505);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(212,175,55,0.3);
+    border: 1px solid rgba(212,175,55,0.2);
+  }
+  .mock-card-3d.physical .mc-logo { color: var(--gold); }
+  .mock-card-3d.physical .mc-num { color: var(--gold); text-shadow: 0 0 10px rgba(212,175,55,0.3); }
+  .mock-card-3d.physical .mc-net { color: var(--gold); }
+  .mock-card-3d.physical .mc-info span { color: #eee; }
+
   /* 卡片炫光遮罩 */
   .mock-card-3d::before {
     content: ''; position: absolute; inset: 0; border-radius: 20px; pointer-events: none;
-    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.4) 0%, transparent 60%);
-    opacity: 0; transition: opacity 0.3s;
-    mix-blend-mode: overlay;
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 60%);
+    opacity: 0; transition: opacity 0.3s; mix-blend-mode: overlay; z-index: 1;
   }
   .card-3d-wrapper:hover .mock-card-3d::before { opacity: 1; }
 
   /* 卡片顶部图标 */
-  .mc-logo { font-size: 18px; font-weight: 800; color: #fff; font-family: sans-serif; letter-spacing: 0.5px; }
-  .mc-chip-net { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
+  .mc-logo { font-size: 18px; font-weight: 800; font-family: sans-serif; letter-spacing: 0.5px; color: #fff; transition: color 0.3s; position: relative; z-index: 2; }
+  .mc-chip-net { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; position: relative; z-index: 2; }
   .mc-chip { width: 40px; height: 30px; background: linear-gradient(135deg, #f0dca0, #d4b260); border-radius: 6px; position: relative; }
   .mc-chip::after { content: ''; position: absolute; inset: 4px; border: 1px solid rgba(0,0,0,0.2); border-radius: 3px; }
-  .mc-net { font-size: 24px; color: #fff; font-weight: 800; font-style: italic; }
+  .mc-net { font-size: 24px; font-weight: 800; font-style: italic; color: #fff; transition: color 0.3s; }
 
   /* 卡号 */
   .mc-num { 
-    font-size: 20px; color: #fff; font-family: monospace; letter-spacing: 2px; 
-    margin: 24px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3); transform: translateZ(20px); 
+    font-size: 20px; font-family: monospace; letter-spacing: 2px; 
+    margin: 24px 0; color: #fff; transition: color 0.3s;
+    transform: translateZ(20px); position: relative; z-index: 2;
   }
 
   /* 底部信息 */
-  .mc-bottom { display: flex; justify-content: space-between; align-items: flex-end; transform: translateZ(15px); }
+  .mc-bottom { display: flex; justify-content: space-between; align-items: flex-end; transform: translateZ(15px); position: relative; z-index: 2; }
   .mc-info { font-size: 10px; color: rgba(255,255,255,0.7); text-transform: uppercase; }
-  .mc-info span { display: block; font-size: 14px; color: #fff; font-weight: 600; margin-top: 4px; letter-spacing: 0.5px; }
+  .mc-info span { display: block; font-size: 14px; font-weight: 600; margin-top: 4px; letter-spacing: 0.5px; color: #fff; transition: color 0.3s; }
 
   /* 切换胶囊按钮 */
   .card-tabs {
@@ -347,32 +313,22 @@
   }
   .stats-dark h2 { font-size: 28px; font-weight: 800; margin-bottom: 48px; }
   .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 900px; margin: 0 auto; }
-  .stat-item { 
-    background: rgba(255,255,255,0.05); padding: 40px 20px; border-radius: 20px; 
-    border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s;
-  }
+  .stat-item { background: rgba(255,255,255,0.05); padding: 40px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s; }
   .stat-item:hover { transform: translateY(-5px); background: rgba(255,255,255,0.08); }
   .stat-item .num { font-size: 42px; font-weight: 800; margin-bottom: 8px; background: linear-gradient(135deg, var(--cyan), var(--neon)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   .stat-item .lbl { font-size: 14px; color: rgba(255,255,255,0.6); }
 
   /* ================= 社区心声 ================= */
   .testimonial-section { background: transparent; padding: 100px 0; overflow: hidden; }
-  .testimonial-track {
-    display: flex; gap: 24px; padding: 20px;
-    width: max-content;
-    animation: scrollX 40s linear infinite;
-  }
+  .testimonial-track { display: flex; gap: 24px; padding: 20px; width: max-content; animation: scrollX 40s linear infinite; }
   .testimonial-track:hover { animation-play-state: paused; }
   @keyframes scrollX { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
   
   .glow-test-card {
     width: 380px; padding: 32px; border-radius: 24px;
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-    position: relative;
-    transition: all 0.3s;
+    background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+    position: relative; transition: all 0.3s;
   }
   .glow-test-card:hover { transform: translateY(-5px); background: #fff; box-shadow: 0 20px 40px rgba(0,240,255,0.15); }
   .glow-test-card p { font-size: 16px; color: #333; line-height: 1.7; margin-bottom: 24px; font-weight: 500; }
@@ -431,7 +387,6 @@
 </head>
 <body>
 
-<!-- 绚丽背景光晕 -->
 <div class="bg-glow">
   <div class="glow-orb glow-1"></div>
   <div class="glow-orb glow-2"></div>
@@ -533,7 +488,7 @@
   </div>
 </section>
 
-<!-- 黑底卡片展示区 (已完全重构) -->
+<!-- 黑底卡片展示区 -->
 <section class="dark-showcase">
   <h2>数字支付，简单随行</h2>
   <p>轻松、安全地支付订阅、旅行和日常消费。</p>
@@ -542,7 +497,8 @@
 
   <!-- 3D 动效卡片包裹区 -->
   <div class="card-3d-wrapper" id="card3dWrapper">
-    <div class="mock-card-3d" id="mockCard3d">
+    <!-- 默认添加 virtual 类，初始为红黑卡 -->
+    <div class="mock-card-3d virtual" id="mockCard3d">
       <div>
         <div class="mc-logo">NEXAPAY</div>
         <div class="mc-chip-net">
@@ -561,13 +517,13 @@
   </div>
 
   <div class="card-tabs">
-    <div class="card-tab active">虚拟卡</div>
-    <div class="card-tab">实体卡</div>
+    <div class="card-tab active" onclick="switchCard('virtual', this)">虚拟卡</div>
+    <div class="card-tab" onclick="switchCard('physical', this)">实体卡</div>
   </div>
 
 </section>
 
-<!-- 图文轮播区 (删除了不要的3个板块) -->
+<!-- 图文轮播区 -->
 <section class="feature-slider-section">
   <div class="slider-container">
 
@@ -659,7 +615,7 @@
         <span class="slider-tag">兑换</span>
         <h3 class="slide-title">轻松兑换加密资产</h3>
         <p class="slide-desc">提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。</p>
-        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M7 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -684,7 +640,6 @@
       </div>
     </div>
 
-    <!-- 指示点只保留 4 个 -->
     <div class="slider-dots">
       <div class="dot active" onclick="goToSlide(0)"></div>
       <div class="dot" onclick="goToSlide(1)"></div>
@@ -736,7 +691,6 @@
       </div>
     </div>
 
-    <!-- 复制一份以实现无缝滚动 -->
     <div class="glow-test-card">
       <p>“使用 NEXAPAY 的虚拟卡支付非常简单，直接从加密货币余额扣款，省去了很多麻烦。”</p>
       <div class="glow-test-author">
@@ -870,40 +824,81 @@
   });
 
   // =========================================
-  // 3D 卡片动效 (鼠标跟随)
+  // 卡片切换与 3D 动效
   // =========================================
   const wrapper = document.getElementById('card3dWrapper');
   const card = document.getElementById('mockCard3d');
+  let isFlipping = false;
 
+  // 点击切换卡面
+  window.switchCard = function(type, btn) {
+    if (isFlipping || card.classList.contains(type)) return;
+    
+    isFlipping = true;
+    
+    // 更新 Tab 样式
+    document.querySelectorAll('.card-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+
+    // 1. 翻转动画开始 (绕 Y 轴翻转 90 度)
+    card.classList.add('flipping');
+
+    // 2. 动画进行到一半（看不见卡片时）切换样式
+    setTimeout(() => {
+      // 移除原有的 virtual 或 physical 类
+      card.classList.remove('virtual', 'physical');
+      // 添加新的类
+      card.classList.add(type);
+      
+      // 3. 移除翻转类，让卡片翻回正面 (过渡效果)
+      card.classList.remove('flipping');
+      
+      setTimeout(() => { isFlipping = false; }, 300);
+    }, 300); // 对应 CSS 中 transition 的 0.3s
+  };
+
+  // 鼠标 3D 跟随效果
   if (wrapper && card) {
     wrapper.addEventListener('mousemove', (e) => {
+      if (isFlipping) return; // 翻转过程中不响应 3D
+      
       const rect = wrapper.getBoundingClientRect();
-      const x = e.clientX - rect.left; // 鼠标在容器内的 X 坐标
-      const y = e.clientY - rect.top;  // 鼠标在容器内的 Y 坐标
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
       
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
       
-      // 计算旋转角度 (乘以一个灵敏度系数，比如 20)
       const rotateX = ((y - centerY) / centerY) * -15; 
       const rotateY = ((x - centerX) / centerX) * 15;
       
+      // 动态应用旋转
       card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
-      card.style.boxShadow = `0 40px 80px rgba(230,0,18,0.4), inset 0 1px 0 rgba(255,255,255,0.2)`;
     });
 
     wrapper.addEventListener('mouseleave', () => {
-      // 鼠标移出时恢复原状
+      if (isFlipping) return;
+      // 鼠标移出时恢复，并重置过渡效果以确保平滑
+      card.style.transition = 'transform 0.5s ease, background 0.3s ease, box-shadow 0.3s ease';
       card.style.transform = `rotateX(0) rotateY(0) scale(1)`;
-      card.style.boxShadow = `0 30px 60px rgba(230,0,18,0.3), inset 0 1px 0 rgba(255,255,255,0.2)`;
+      
+      // 移除动态设置的 transition，恢复到 CSS 中的默认状态
+      setTimeout(() => { card.style.transition = ''; }, 500);
+    });
+    
+    // 鼠标进入时去除默认 transition 以防卡顿
+    wrapper.addEventListener('mouseenter', () => {
+      if (!isFlipping) {
+        card.style.transition = 'background 0.3s ease, box-shadow 0.3s ease'; // 只保留颜色过渡
+      }
     });
   }
 
   // =========================================
-  // PC 端轮播 (图文区) - 现在总共有4个板块
+  // PC 端轮播 (图文区)
   // =========================================
   let currentSlide = 0;
-  const totalSlides = 4; // 已改为4
+  const totalSlides = 4;
   const slideBlocks = document.querySelectorAll('.slide-block');
   const dots = document.querySelectorAll('.slider-dots .dot');
 
