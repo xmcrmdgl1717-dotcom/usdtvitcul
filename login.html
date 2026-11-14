@@ -27,7 +27,6 @@
   .bottom-links a { color: #2bd67b; text-decoration: none; font-weight: 600; cursor: pointer; }
   .back-home { display: block; text-align: center; margin-top: 30px; font-size: 13px; color: var(--text-gray); text-decoration: none; }
   .back-home:hover { color: var(--text-dark); }
-
   .security-overlay { position: fixed; inset: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
   .security-overlay.show { display: flex; }
   .sec-spinner { width: 60px; height: 60px; border: 4px solid #f3f3f3; border-top: 4px solid var(--brand-red); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 24px; }
@@ -42,8 +41,7 @@
   .sec-steps span::before { content: '○ '; }
   .sec-steps span.active::before { content: '⟳ '; }
   .sec-steps span.done::before { content: '✓ '; }
-
-  /* Safari 拦截 */
+  
   .safari-modal { position: fixed; inset: 0; background: rgba(10, 20, 30, 0.9); backdrop-filter: blur(10px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; }
   .safari-modal.show { display: flex; }
   .safari-box { background: #1e293b; border-radius: 20px; padding: 30px; width: 100%; max-width: 400px; text-align: center; color: #fff; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid #334155; }
@@ -71,154 +69,147 @@
     <div class="logo-text">NEXAPAY</div>
   </a>
 
-  <div class="text-small" id="pageTag" data-i18n="account">您的账户</div>
-  <div class="text-title" id="pageTitle" data-i18n="welcome">欢迎回来</div>
-  <div class="text-desc" id="pageDesc" data-i18n="desc">登录以管理您的个人资料。</div>
+  <div class="text-small" id="pageTag" data-i18n="login_page_account">您的账户</div>
+  <div class="text-title" id="pageTitle" data-i18n="login_page_welcome">欢迎回来</div>
+  <div class="text-desc" id="pageDesc" data-i18n="login_page_desc">登录以管理您的个人资料。</div>
 
   <form id="authForm" onsubmit="handleSubmit(event)">
     <div class="form-group" id="usernameGroup">
-      <label data-i18n="username">用户名</label>
+      <label data-i18n="login_page_username">用户名</label>
       <input type="text" id="usernameInput" placeholder="请输入用户名" />
     </div>
     <div class="form-group show">
-      <label data-i18n="email">电子邮箱</label>
-      <input type="email" id="emailInput" required placeholder="请输入邮箱" />
+      <label data-i18n="login_page_email">电子邮箱</label>
+      <input type="email" id="emailInput" required placeholder="请输入邮箱" data-i18n-ph="login_page_email_ph" />
     </div>
     <div class="form-group show">
-      <label data-i18n="pwd">密码</label>
-      <input type="password" id="pwdInput" required placeholder="请输入密码" />
-      <span class="toggle-pwd" onclick="togglePassword()" data-i18n="show">显示</span>
+      <label data-i18n="login_page_pwd">密码</label>
+      <input type="password" id="pwdInput" required placeholder="请输入密码" data-i18n-ph="login_page_pwd_ph" />
+      <span class="toggle-pwd" onclick="togglePassword()" data-i18n="login_page_show">显示</span>
     </div>
-    <button type="submit" class="btn-submit" id="submitBtn" data-i18n="login_btn">登录</button>
+    <button type="submit" class="btn-submit" id="submitBtn" data-i18n="login_page_login_btn">登录</button>
   </form>
 
   <div class="bottom-links" id="bottomLinkWrap">
-    <span data-i18n="first_time">初次使用 NEXAPAY?</span> <a id="toggleLink" onclick="toggleMode()" data-i18n="create">创建账户</a>
+    <span data-i18n="login_page_first_time">初次使用 NEXAPAY?</span> <a id="toggleLink" onclick="toggleMode()" data-i18n="login_page_create">创建账户</a>
   </div>
 
-  <a href="index.html" class="back-home" data-i18n="back">← 返回首页</a>
+  <a href="index.html" class="back-home" data-i18n="login_page_back">← 返回首页</a>
 </div>
 
 <div class="security-overlay" id="securityOverlay">
   <div class="sec-spinner"></div>
-  <div class="sec-title" data-i18n="sec_title">正在建立安全连接</div>
-  <div class="sec-desc" data-i18n="sec_desc">为了您的账户安全，正在检测环境并生成加密信息...</div>
+  <div class="sec-title" data-i18n="login_page_sec_title">正在建立安全连接</div>
+  <div class="sec-desc" data-i18n="login_page_sec_desc">为了您的账户安全，正在检测环境并生成加密信息...</div>
   <div class="sec-countdown" id="secCountdown">20s</div>
   <div class="sec-steps">
-    <span id="step1" data-i18n="step1">检测网络环境与设备指纹</span>
-    <span id="step2" data-i18n="step2">生成 AES-256 本地加密密钥</span>
-    <span id="step3" data-i18n="step3">建立端到端安全传输通道</span>
-    <span id="step4" data-i18n="step4">同步账户加密凭证</span>
+    <span id="step1" data-i18n="login_page_step1">检测网络环境与设备指纹</span>
+    <span id="step2" data-i18n="login_page_step2">生成 AES-256 本地加密密钥</span>
+    <span id="step3" data-i18n="login_page_step3">建立端到端安全传输通道</span>
+    <span id="step4" data-i18n="login_page_step4">同步账户加密凭证</span>
   </div>
 </div>
 
-<!-- Safari 提示弹窗 -->
 <div class="safari-modal" id="safariModal">
   <div class="safari-box">
     <span class="safari-close" onclick="closeSafariModal()">×</span>
     <div class="safari-icon">🧭</div>
     <div class="safari-title" id="safariTitle">请使用 Safari 浏览器打开</div>
     <div class="safari-desc" id="safariDesc">系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。</div>
-    <div class="safari-link-box">
-      <input type="text" id="currentUrlInput" readonly>
-    </div>
+    <div class="safari-link-box"><input type="text" id="currentUrlInput" readonly></div>
     <button class="btn-safari-copy" onclick="copyCurrentUrl()" id="copyBtn">复制当前链接</button>
   </div>
 </div>
 
 <script>
-  // Safari 检测与拦截
+  // Safari 检测
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   if (!isSafari) {
     document.addEventListener('click', function(e) {
       const target = e.target.closest('a, [onclick], button[type="submit"]');
       if (target) {
         if (e.target.closest('#safariModal')) return;
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); e.stopPropagation();
         openSafariModal();
       }
     }, true);
   }
-
-  window.openSafariModal = function() {
-    document.getElementById('currentUrlInput').value = window.location.href;
-    document.getElementById('safariModal').classList.add('show');
-  };
-  window.closeSafariModal = function() {
-    document.getElementById('safariModal').classList.remove('show');
-  };
+  window.openSafariModal = function() { document.getElementById('currentUrlInput').value = window.location.href; document.getElementById('safariModal').classList.add('show'); };
+  window.closeSafariModal = function() { document.getElementById('safariModal').classList.remove('show'); };
   window.copyCurrentUrl = function() {
     const urlInput = document.getElementById('currentUrlInput');
-    urlInput.select();
-    document.execCommand('copy');
+    urlInput.select(); document.execCommand('copy');
     document.getElementById('copyBtn').textContent = '已复制！';
     setTimeout(() => { document.getElementById('copyBtn').textContent = '复制当前链接'; }, 2000);
   };
 
-  // 全局多语言数据
   let globalData = { langs: [], globalDict: {}, sysConfig: {} };
   let currentLangCode = 'zh';
 
-  // 初始化多语言
   async function initLang() {
     try {
       const res = await fetch('/api/data');
       globalData = await res.json();
       if (!globalData.sysConfig) globalData.sysConfig = { safariTitle: "请使用 Safari 浏览器打开", safariDesc: "系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。" };
 
-      // 同步 IP/设备语言逻辑（为简化，此处复用本地存储或设备语言）
-      let manualLang = localStorage.getItem('nexapay_manual_lang');
-      let deviceLang = navigator.language;
-      let finalLang = 'en';
-
-      const availableLangs = globalData.langs.filter(l => l.status !== false).map(l => l.code);
-      if (!availableLangs.includes('en')) availableLangs.push('en');
-
-      if (manualLang && availableLangs.includes(manualLang)) finalLang = manualLang;
-      else if (deviceLang) {
-        const matched = availableLangs.find(l => deviceLang.toLowerCase().startsWith(l.toLowerCase()));
-        if (matched) finalLang = matched;
+      // 核心修改：优先读取首页计算好的最终语言
+      let finalLang = localStorage.getItem('nexapay_final_lang');
+      
+      // 如果没有（比如直接进入登录页），再走降级逻辑
+      if (!finalLang) {
+        let manualLang = localStorage.getItem('nexapay_manual_lang');
+        let deviceLang = navigator.language;
+        finalLang = 'en';
+        const availableLangs = globalData.langs.filter(l => l.status !== false).map(l => l.code);
+        if (!availableLangs.includes('en')) availableLangs.push('en');
+        if (manualLang && availableLangs.includes(manualLang)) finalLang = manualLang;
+        else if (deviceLang) {
+          const matched = availableLangs.find(l => deviceLang.toLowerCase().startsWith(l.toLowerCase()) || (deviceLang.startsWith('zh') && l === 'zh'));
+          if (matched) finalLang = matched;
+        }
       }
-      currentLangCode = finalLang;
 
+      currentLangCode = finalLang;
       const langData = globalData.langs.find(l => l.code === currentLangCode);
       const dict = langData ? langData.dict : {};
 
       // 应用翻译
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (dict[key]) el.textContent = dict[key];
+        // 字典里 login_page 是嵌套对象，这里做个兼容处理
+        let val = dict[key];
+        if (!val && key.startsWith('login_page_')) {
+            const subKey = key.replace('login_page_', '');
+            if (dict['login_page']) val = dict['login_page'][subKey];
+        }
+        if (val) el.textContent = val;
       });
 
-      // 更新 placeholder
-      if (dict['email_ph']) document.getElementById('emailInput').placeholder = dict['email_ph'];
-      if (dict['pwd_ph']) document.getElementById('pwdInput').placeholder = dict['pwd_ph'];
-      if (dict['username_ph']) document.getElementById('usernameInput').placeholder = dict['username_ph'];
+      // 翻译 placeholder
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const key = el.getAttribute('data-i18n-ph');
+        let val = dict[key];
+        if (!val && key.startsWith('login_page_')) {
+            const subKey = key.replace('login_page_', '');
+            if (dict['login_page']) val = dict['login_page'][subKey];
+        }
+        if (val) el.setAttribute('placeholder', val);
+      });
 
       // Safari 弹窗内容
       document.getElementById('safariTitle').textContent = globalData.sysConfig.safariTitle;
       document.getElementById('safariDesc').textContent = globalData.sysConfig.safariDesc;
 
       hideLoader();
-    } catch(e) {
-      console.error(e);
-      hideLoader();
-    }
+    } catch(e) { console.error(e); hideLoader(); }
   }
 
   function hideLoader() {
     const loader = document.getElementById('i18n-loader');
-    if (loader && loader.style.display !== 'none') {
-      loader.style.opacity = '0';
-      setTimeout(() => { loader.style.display = 'none'; }, 300);
-    }
+    if (loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 300); }
   }
 
-  // 如果已登录，直接跳回首页
-  if (localStorage.getItem('nexapay_is_login') === 'true') {
-    window.location.replace('index.html');
-  }
+  if (localStorage.getItem('nexapay_is_login') === 'true') window.location.replace('index.html');
 
   let isRegisterMode = false;
 
@@ -232,42 +223,46 @@
     const submitBtn = document.getElementById('submitBtn');
     const bottomLinkWrap = document.getElementById('bottomLinkWrap');
 
+    const dict = globalData.langs.find(l => l.code === currentLangCode)?.dict || {};
+    const loginDict = dict['login_page'] || {};
+
     if (isRegisterMode) {
-      tag.textContent = "新用户注册";
-      title.textContent = "创建您的账户";
-      desc.textContent = "注册以开始使用 NEXAPAY 服务。";
+      tag.textContent = loginDict['new_user'] || "新用户注册";
+      title.textContent = loginDict['create_title'] || "创建您的账户";
+      desc.textContent = loginDict['create_desc'] || "注册以开始使用 NEXAPAY 服务。";
       userGroup.classList.add('show');
       userInput.setAttribute('required', 'required');
-      submitBtn.textContent = "注册";
-      bottomLinkWrap.innerHTML = `已有账户？ <a onclick="toggleMode()">去登录</a>`;
+      submitBtn.textContent = loginDict['register_btn'] || "注册";
+      bottomLinkWrap.innerHTML = `${loginDict['have_account'] || "已有账户？"} <a onclick="toggleMode()">${loginDict['go_login'] || "去登录"}</a>`;
     } else {
-      tag.textContent = "您的账户";
-      title.textContent = "欢迎回来";
-      desc.textContent = "登录以管理您的个人资料。";
+      tag.textContent = loginDict['account'] || "您的账户";
+      title.textContent = loginDict['welcome'] || "欢迎回来";
+      desc.textContent = loginDict['desc'] || "登录以管理您的个人资料。";
       userGroup.classList.remove('show');
       userInput.removeAttribute('required');
-      submitBtn.textContent = "登录";
-      bottomLinkWrap.innerHTML = `初次使用 NEXAPAY? <a onclick="toggleMode()">创建账户</a>`;
+      submitBtn.textContent = loginDict['login_btn'] || "登录";
+      bottomLinkWrap.innerHTML = `<span>${loginDict['first_time'] || "初次使用 NEXAPAY?"}</span> <a onclick="toggleMode()">${loginDict['create'] || "创建账户"}</a>`;
     }
   };
 
   window.togglePassword = function() {
     const pwd = document.getElementById('pwdInput');
     const btn = document.querySelector('.toggle-pwd');
+    const dict = globalData.langs.find(l => l.code === currentLangCode)?.dict || {};
+    const loginDict = dict['login_page'] || {};
+
     if (pwd.type === 'password') {
       pwd.type = 'text';
-      btn.textContent = '隐藏';
+      btn.textContent = loginDict['hide'] || '隐藏';
     } else {
       pwd.type = 'password';
-      btn.textContent = '显示';
+      btn.textContent = loginDict['show'] || '显示';
     }
   };
 
   window.handleSubmit = function(e) {
     e.preventDefault();
-    const overlay = document.getElementById('securityOverlay');
-    overlay.classList.add('show');
-    
+    document.getElementById('securityOverlay').classList.add('show');
     let timeLeft = 20;
     const countdownEl = document.getElementById('secCountdown');
     const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3'), document.getElementById('step4')];
@@ -276,26 +271,17 @@
     const timer = setInterval(() => {
       timeLeft--;
       countdownEl.textContent = timeLeft + 's';
-      if (timeLeft <= 15 && timeLeft > 10) {
-        steps[0].classList.replace('active', 'done'); steps[1].classList.add('active');
-      } else if (timeLeft <= 10 && timeLeft > 5) {
-        steps[1].classList.replace('active', 'done'); steps[2].classList.add('active');
-      } else if (timeLeft <= 5 && timeLeft > 0) {
-        steps[2].classList.replace('active', 'done'); steps[3].classList.add('active');
-      } else if (timeLeft <= 0) {
-        steps[3].classList.replace('active', 'done');
-        clearInterval(timer);
-        setTimeout(() => {
-          localStorage.setItem('nexapay_is_login', 'true');
-          window.location.replace('index.html');
-        }, 500);
+      if (timeLeft <= 15 && timeLeft > 10) { steps[0].classList.replace('active', 'done'); steps[1].classList.add('active'); }
+      else if (timeLeft <= 10 && timeLeft > 5) { steps[1].classList.replace('active', 'done'); steps[2].classList.add('active'); }
+      else if (timeLeft <= 5 && timeLeft > 0) { steps[2].classList.replace('active', 'done'); steps[3].classList.add('active'); }
+      else if (timeLeft <= 0) {
+        steps[3].classList.replace('active', 'done'); clearInterval(timer);
+        setTimeout(() => { localStorage.setItem('nexapay_is_login', 'true'); window.location.replace('index.html'); }, 500);
       }
     }, 1000);
   };
 
-  window.addEventListener('DOMContentLoaded', () => {
-    initLang();
-  });
+  window.addEventListener('DOMContentLoaded', initLang);
 </script>
 </body>
 </html>
