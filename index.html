@@ -5,23 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>NEXAPAY — 让加密货币融入真实生活</title>
 <style>
-  :root {
-    --brand-red: #ff3333;
-    --bg-light: #f8f9fa;
-    --text-dark: #111;
-    --text-gray: #666;
-    --cyan: #00f0ff;
-    --neon: #00ffaa;
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.5);
-    --gold: #d4af37;
-  }
-
+  :root { --brand-red: #ff3333; --bg-light: #f8f9fa; --text-dark: #111; --text-gray: #666; --cyan: #00f0ff; --neon: #00ffaa; --glass-bg: rgba(255, 255, 255, 0.7); --glass-border: rgba(255, 255, 255, 0.5); }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body { background: #f0f4f8; color: var(--text-dark); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; overflow-x: hidden; }
-
-  /* 动态背景 */
+  
+  /* 背景 */
   .bg-glow { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden; background: #fff; }
   .glow-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4; animation: float 20s infinite alternate; }
   .glow-1 { width: 500px; height: 500px; background: #00f0ff; top: -10%; left: -10%; }
@@ -29,32 +18,32 @@
   .glow-3 { width: 400px; height: 400px; background: #00ffaa; top: 40%; left: 60%; animation-delay: -5s; }
   @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(100px, 100px) scale(1.2); } }
 
-  /* 顶部导航 */
+  /* 导航 */
   .topbar { position: fixed; top: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); z-index: 1000; padding: 16px 0; transition: all 0.3s; }
   .topbar-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
   .logo { display: flex; align-items: center; gap: 8px; font-size: 22px; font-weight: 800; color: #111; text-decoration: none; }
   .logo-mark { width: 36px; height: 36px; background: linear-gradient(135deg, var(--cyan), var(--neon)); color: #000; border-radius: 10px; display: grid; place-items: center; font-size: 18px; box-shadow: 0 4px 15px rgba(0,240,255,0.4); }
-
   .header-actions { display: flex; align-items: center; gap: 16px; margin-left: auto; }
+  
   .lang-switch-wrap { position: relative; display: inline-flex; align-items: center; }
   .lang-switch-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.5); border: 1px solid var(--glass-border); display: flex; justify-content: center; align-items: center; font-size: 16px; cursor: pointer; transition: all 0.3s; backdrop-filter: blur(10px); }
-  .lang-switch-btn:hover { background: #fff; transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  .lang-switch-btn:hover { background: #fff; transform: scale(1.05); }
   .lang-dropdown { position: absolute; top: 50px; right: 0; background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 8px 0; display: none; flex-direction: column; min-width: 140px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); z-index: 1001; }
   .lang-dropdown.show { display: flex; }
   .lang-dropdown a { padding: 10px 16px; font-size: 14px; color: #333; text-decoration: none; white-space: nowrap; cursor: pointer; }
   .lang-dropdown a:hover { background: #f8f9fa; color: var(--brand-red); }
 
   .auth-group { display: flex; align-items: center; gap: 20px; }
-  .btn-auth { font-size: 15px; font-weight: 600; color: #111; cursor: pointer; text-decoration: none; transition: color 0.2s; }
+  .btn-auth { font-size: 15px; font-weight: 600; color: #111; cursor: pointer; text-decoration: none; }
   .btn-auth:hover { color: var(--brand-red); }
-  .btn-register { background: #111; color: #fff; padding: 10px 24px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s; }
-  .btn-register:hover { background: #333; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); color: #fff; }
+  .btn-register { background: #111; color: #fff; padding: 10px 24px; border-radius: 30px; transition: all 0.3s; }
+  .btn-register:hover { background: #333; transform: translateY(-2px); color: #fff; }
 
   .user-avatar-wrap { position: relative; display: none; cursor: pointer; }
   .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--neon)); display: grid; place-items: center; font-weight: 800; color: #000; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
   .user-dropdown { position: absolute; top: 50px; right: 0; background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 8px 0; display: none; flex-direction: column; min-width: 140px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); z-index: 1001; }
   .user-avatar-wrap:hover .user-dropdown { display: flex; }
-  .user-dropdown a { padding: 10px 16px; font-size: 14px; color: #333; text-decoration: none; cursor: pointer; white-space: nowrap; }
+  .user-dropdown a { padding: 10px 16px; font-size: 14px; color: #333; text-decoration: none; cursor: pointer; }
   .user-dropdown a:hover { background: #f8f9fa; color: var(--brand-red); }
 
   /* Hero */
@@ -71,7 +60,7 @@
   .container-greotpay { max-width: 1200px; margin: 0 auto; }
   .section-title { font-size: 36px; font-weight: 800; margin-bottom: 48px; text-align: center; letter-spacing: -1px; }
 
-  /* 横向滑动卡片区 */
+  /* 卡片区 */
   .horizontal-scroll-wrap { position: relative; width: 100%; padding: 20px 0; }
   .horizontal-scroll-wrap::-webkit-scrollbar { display: none; }
   .horizontal-scroll-wrap { -ms-overflow-style: none; scrollbar-width: none; }
@@ -105,7 +94,6 @@
 
   .mock-card-3d::before { content: ''; position: absolute; inset: 0; border-radius: 20px; pointer-events: none; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s; mix-blend-mode: overlay; z-index: 1; }
   .card-3d-wrapper:hover .mock-card-3d::before { opacity: 1; }
-
   .mc-logo { font-size: 18px; font-weight: 800; font-family: sans-serif; letter-spacing: 0.5px; color: #fff; transition: color 0.3s; position: relative; z-index: 2; }
   .mc-chip-net { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; position: relative; z-index: 2; }
   .mc-chip { width: 40px; height: 30px; background: linear-gradient(135deg, #f0dca0, #d4b260); border-radius: 6px; position: relative; }
@@ -182,6 +170,7 @@
   .faq-q .plus { font-size: 24px; font-weight: 300; transition: transform 0.3s; color: var(--brand-red); }
   .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding-bottom 0.4s ease; font-size: 15px; color: var(--text-gray); line-height: 1.8; }
   .faq-item.open .faq-a { max-height: 300px; padding-bottom: 24px; }
+  .empty-state { text-align: center; color: #999; padding: 40px 0; font-size: 15px; }
 
   /* Footer */
   .footer-greotpay { background: #050505; color: #fff; padding: 60px 20px; text-align: center; position: relative; z-index: 10; }
@@ -193,7 +182,7 @@
   .footer-brand p span.slogan { color: #fff; font-weight: 800; font-size: 20px; margin-top: 10px; display: inline-block; background: linear-gradient(90deg, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; color: rgba(255,255,255,0.3); font-size: 13px; }
 
-  /* Safari 拦截弹窗 */
+  /* Safari 拦截 */
   .safari-modal { position: fixed; inset: 0; background: rgba(10, 20, 30, 0.9); backdrop-filter: blur(10px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; }
   .safari-modal.show { display: flex; }
   .safari-box { background: #1e293b; border-radius: 20px; padding: 30px; width: 100%; max-width: 400px; text-align: center; color: #fff; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid #334155; }
@@ -232,14 +221,12 @@
 </div>
 <style>@keyframes i18n-spin { to { transform: rotate(360deg); } }</style>
 
-<!-- 动态背景 -->
 <div class="bg-glow">
   <div class="glow-orb glow-1"></div>
   <div class="glow-orb glow-2"></div>
   <div class="glow-orb glow-3"></div>
 </div>
 
-<!-- 顶部导航 -->
 <header class="topbar">
   <div class="topbar-inner">
     <a href="#" class="logo">
@@ -254,21 +241,20 @@
       </div>
 
       <div class="auth-group" id="unauth-group">
-        <span class="btn-auth" onclick="goAuth()">登录</span>
-        <span class="btn-auth btn-register" onclick="goAuth()">注册</span>
+        <span class="btn-auth" onclick="goAuth()" data-i18n="nav_login">登录</span>
+        <span class="btn-auth btn-register" onclick="goAuth()" data-i18n="nav_register">注册</span>
       </div>
 
       <div class="user-avatar-wrap" id="auth-group">
         <div class="user-avatar">N</div>
         <div class="user-dropdown">
-          <a onclick="doLogout()">退出账号</a>
+          <a onclick="doLogout()" data-i18n="nav_logout">退出账号</a>
         </div>
       </div>
     </div>
   </div>
 </header>
 
-<!-- Hero -->
 <section class="hero-greotpay">
   <video class="hero-video" autoplay muted loop playsinline preload="auto">
     <source src="homeBg.3__npe53rz97a.webm" type="video/webm" />
@@ -280,7 +266,6 @@
   </div>
 </section>
 
-<!-- 横向滑动卡片区 -->
 <section class="section-greotpay" style="padding-bottom: 40px;">
   <div class="container-greotpay">
     <h2 class="section-title" data-i18n="feature_title">享受日常权益</h2>
@@ -319,7 +304,6 @@
   </div>
 </section>
 
-<!-- 黑底卡片展示区 -->
 <section class="dark-showcase">
   <h2 data-i18n="showcase_t">数字支付，简单随行</h2>
   <p data-i18n="showcase_d">轻松、安全地支付订阅、旅行和日常消费。</p>
@@ -345,11 +329,9 @@
   </div>
 </section>
 
-<!-- 图文轮播区 (已将赚币移至首位) -->
 <section class="feature-slider-section">
   <div class="slider-container">
-    
-    <!-- Slide 1: 赚币 (原全球扫码位置) -->
+    <!-- Slide 1: 赚币 -->
     <div class="slide-block active" data-index="0">
       <div class="slide-text">
         <span class="slider-tag" data-i18n="s1_tag">赚币</span>
@@ -404,7 +386,7 @@
         <span class="slider-tag" data-i18n="s3_tag">多币种钱包</span>
         <h3 class="slide-title" data-i18n="s3_title">连接加密货币与日常生活</h3>
         <p class="slide-desc" data-i18n="s3_desc">集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。</p>
-        <a onclick="goAuth()" class="btn-more" data-i18n="btn_more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M7 7H7M17 7V17"/></svg></a>
+        <a onclick="goAuth()" class="btn-more" data-i18n="btn_more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -463,7 +445,6 @@
   </div>
 </section>
 
-<!-- 数据区 -->
 <section class="stats-dark">
   <h2 data-i18n="stats_title">备受全球信赖</h2>
   <div class="stats-grid">
@@ -473,27 +454,24 @@
   </div>
 </section>
 
-<!-- 社区心声 (动态渲染) -->
 <section class="testimonial-section">
   <div class="container-greotpay">
     <h2 class="section-title" data-i18n="testi_title">聆听社区心声</h2>
   </div>
   <div class="testimonial-track" id="testimonialTrack">
-    <!-- JS 动态插入 -->
+    <!-- 由 JS 填充 -->
   </div>
 </section>
 
-<!-- FAQ (动态渲染) -->
 <section class="section-greotpay">
   <div class="container-greotpay">
     <h2 class="section-title" data-i18n="faq_title">常见问题</h2>
     <div class="faq-list" id="faqList">
-      <!-- JS 动态插入 -->
+      <!-- 由 JS 填充 -->
     </div>
   </div>
 </section>
 
-<!-- Footer -->
 <footer class="footer-greotpay">
   <div class="footer-brand">
     <div class="logo-box"><span>N</span><span>NEXAPAY</span></div>
@@ -510,96 +488,90 @@
   <div class="safari-box">
     <span class="safari-close" onclick="closeSafariModal()">×</span>
     <div class="safari-icon">🧭</div>
-    <div class="safari-title" id="safariTitle">请使用 Safari 浏览器打开</div>
-    <div class="safari-desc" id="safariDesc">系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。</div>
+    <div class="safari-title" id="safariTitle" data-i18n="safari_title">请使用 Safari 浏览器打开</div>
+    <div class="safari-desc" id="safariDesc" data-i18n="safari_desc">系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。</div>
     <div class="safari-link-box">
       <input type="text" id="currentUrlInput" readonly>
     </div>
-    <button class="btn-safari-copy" onclick="copyCurrentUrl()" id="copyBtn">复制当前链接</button>
+    <button class="btn-safari-copy" onclick="copyCurrentUrl()" id="copyBtn" data-i18n="safari_copy">复制当前链接</button>
   </div>
 </div>
 
 <script>
   // =========================================
-  // 1. 全局数据与语言初始化
+  // 1. Safari 检测与拦截
   // =========================================
-  let globalData = { langs: [], globalDict: {}, faqs: [], testimonials: [], sysConfig: {} };
-  let currentLangCode = 'zh';
-  let activeDict = null;
-
-  // Safari 检测与拦截
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  
   if (!isSafari) {
     document.addEventListener('click', function(e) {
-      const target = e.target.closest('a, [onclick]');
-      if (target && target.tagName !== 'BODY') {
-        // 如果是在 Safari 弹窗内部的点击，不拦截
+      const target = e.target.closest('a, [onclick], button[type="submit"]');
+      if (target) {
         if (e.target.closest('#safariModal')) return;
-        
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); e.stopPropagation();
         openSafariModal();
       }
-    }, true); // 使用捕获阶段拦截
+    }, true);
   }
 
   window.openSafariModal = function() {
     document.getElementById('currentUrlInput').value = window.location.href;
     document.getElementById('safariModal').classList.add('show');
-    if (globalData.sysConfig) {
-      document.getElementById('safariTitle').textContent = globalData.sysConfig.safariTitle || "请使用 Safari 浏览器打开";
-      document.getElementById('safariDesc').textContent = globalData.sysConfig.safariDesc || "系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。";
-    }
   };
-
-  window.closeSafariModal = function() {
-    document.getElementById('safariModal').classList.remove('show');
-  };
-
+  window.closeSafariModal = function() { document.getElementById('safariModal').classList.remove('show'); };
   window.copyCurrentUrl = function() {
     const urlInput = document.getElementById('currentUrlInput');
-    urlInput.select();
-    document.execCommand('copy');
+    urlInput.select(); document.execCommand('copy');
     const btn = document.getElementById('copyBtn');
     const orig = btn.textContent;
     btn.textContent = '已复制！';
     setTimeout(() => { btn.textContent = orig; }, 2000);
   };
 
-  // 异步获取数据并根据规则匹配语言
+  // =========================================
+  // 2. 语言与数据初始化
+  // =========================================
+  let globalData = { langs: [], globalDict: {}, faqs: [], testimonials: [], sysConfig: {} };
+  let currentLangCode = 'zh';
+  let activeDict = null;
+
   async function initApp() {
     try {
       const res = await fetch('/api/data');
       globalData = await res.json();
-      
-      // 如果老数据没有新结构，补全
       if (!globalData.faqs) globalData.faqs = [];
       if (!globalData.testimonials) globalData.testimonials = [];
-      if (!globalData.sysConfig) globalData.sysConfig = { safariTitle: "请使用 Safari 浏览器打开", safariDesc: "系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。" };
 
-      // 决定语言
+      // 获取用户的 IP 所在国家代码
+      let ipCountry = '';
+      try {
+        const ipRes = await fetch('https://ipapi.co/json/');
+        const ipData = await ipRes.json();
+        ipCountry = ipData.country_code ? ipData.country_code.toLowerCase() : '';
+      } catch (e) { console.warn('IP 获取失败，跳过 IP 判断'); }
+
       let manualLang = localStorage.getItem('nexapay_manual_lang');
       let deviceLang = navigator.language || navigator.userLanguage;
       
-      // 注意：真实项目建议在这里调用 IP 定位 API，由于前端限制，此处模拟根据设备语言和后台语言列表匹配
-      let finalLang = 'en'; // 兜底
-
+      let finalLang = 'en'; // 兜底英文
       const availableLangs = globalData.langs.filter(l => l.status !== false).map(l => l.code);
-      if (!availableLangs.includes('en')) availableLangs.push('en'); // 确保有en兜底
+      if (!availableLangs.includes('en')) availableLangs.push('en');
 
-      // 优先级：手动选择 > 设备语言 > 默认英语
+      // 优先级：手动 > IP > 设备 > 英语
       if (manualLang && availableLangs.includes(manualLang)) {
         finalLang = manualLang;
+      } else if (ipCountry) {
+        // IP 匹配（如 ipCountry 为 cn, 匹配 zh）
+        const ipMatch = availableLangs.find(l => ipCountry.startsWith(l.toLowerCase()) || (ipCountry === 'cn' && l === 'zh'));
+        if (ipMatch) finalLang = ipMatch;
       } else if (deviceLang) {
-        // 模糊匹配，例如 zh-CN 匹配 zh
-        const matched = availableLangs.find(l => deviceLang.toLowerCase().startsWith(l.toLowerCase()));
-        if (matched) finalLang = matched;
+        const deviceMatch = availableLangs.find(l => deviceLang.toLowerCase().startsWith(l.toLowerCase()) || (deviceLang.startsWith('zh') && l === 'zh'));
+        if (deviceMatch) finalLang = deviceMatch;
       }
       
       currentLangCode = finalLang;
+      // 存入 localStorage 供 login.html 等页面使用，保证一致性
+      localStorage.setItem('nexapay_final_lang', currentLangCode);
 
-      // 提取字典
       const langData = globalData.langs.find(l => l.code === currentLangCode);
       activeDict = langData ? langData.dict : {};
 
@@ -623,64 +595,53 @@
     }
   }
 
-  // 基础文本翻译
   function applyTranslations() {
     if (!activeDict) return;
-    // 1. 根据 data-i18n 属性翻译
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if (activeDict[key]) {
         if (el.children.length > 0) {
-           // 如果包含子元素（比如 <span>），简单替换整个 innerHTML 会丢样式，这里采用替换第一个文本节点的方式
-           if(el.childNodes[0].nodeType === 3) {
-               el.childNodes[0].nodeValue = activeDict[key] + " ";
-           } else {
-               el.innerHTML = activeDict[key];
-           }
+           if(el.childNodes[0].nodeType === 3) el.childNodes[0].nodeValue = activeDict[key] + " ";
+           else el.innerHTML = activeDict[key];
         } else {
            el.textContent = activeDict[key];
         }
       }
     });
 
-    // 2. 扫描剩余无法用属性标记的文本（为了容错）
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     let node;
     while (node = walker.nextNode()) {
       if (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE') continue;
       const rawTxt = node.nodeValue;
       const txt = rawTxt.trim();
-      if (txt && activeDict[txt]) {
-        node.nodeValue = rawTxt.replace(txt, activeDict[txt]);
-      }
+      if (txt && activeDict[txt]) node.nodeValue = rawTxt.replace(txt, activeDict[txt]);
     }
   }
 
-  // 渲染 FAQ
   function renderFAQ() {
     const list = document.getElementById('faqList');
     list.innerHTML = '';
     if (!globalData.faqs || globalData.faqs.length === 0) {
-        list.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">暂无常见问题</div>';
+        const msg = (activeDict && activeDict['no_faq']) ? activeDict['no_faq'] : '暂无常见问题';
+        list.innerHTML = `<div class="empty-state">${msg}</div>`;
         return;
     }
 
     globalData.faqs.forEach(faq => {
       if (!faq.translations) return;
-      // 获取当前语言的翻译，如果没有，回退到中文或英文
       const trans = faq.translations[currentLangCode] || faq.translations['zh'] || faq.translations['en'];
       if (!trans) return;
 
       const item = document.createElement('div');
       item.className = 'faq-item';
       item.innerHTML = `
-        <button class="faq-q"><span>${trans.q || 'Question'}</span><span class="plus">+</span></button>
-        <div class="faq-a"><p>${trans.a || 'Answer'}</p></div>
+        <button class="faq-q"><span>${trans.q || ''}</span><span class="plus">+</span></button>
+        <div class="faq-a"><p>${trans.a || ''}</p></div>
       `;
       list.appendChild(item);
     });
 
-    // 重新绑定折叠事件
     document.querySelectorAll('.faq-q').forEach(btn => {
       btn.addEventListener('click', function() {
         const item = this.parentElement;
@@ -697,45 +658,40 @@
     });
   }
 
-  // 渲染评论
   function renderTestimonials() {
     const track = document.getElementById('testimonialTrack');
     track.innerHTML = '';
-    if (!globalData.testimonials || globalData.testimonials.length === 0) return;
+    if (!globalData.testimonials || globalData.testimonials.length === 0) {
+        const msg = (activeDict && activeDict['no_review']) ? activeDict['no_review'] : '暂无评论';
+        track.innerHTML = `<div class="empty-state" style="width:100%;">${msg}</div>`;
+        return;
+    }
 
-    // 渲染两遍以实现无缝滚动
     const renderList = [...globalData.testimonials, ...globalData.testimonials];
-
     renderList.forEach((t, i) => {
       if (!t.translations) return;
       const trans = t.translations[currentLangCode] || t.translations['zh'] || t.translations['en'];
       if (!trans) return;
 
-      // 随机颜色
       const colors = ['linear-gradient(135deg, #00f0ff, #00ffaa)', 'linear-gradient(135deg, #ff3366, #ff9933)', 'linear-gradient(135deg, #9933ff, #33ccff)'];
       const bg = colors[i % colors.length];
 
       const card = document.createElement('div');
       card.className = 'glow-test-card';
       card.innerHTML = `
-        <p>“${trans.content || 'Content'}”</p>
+        <p>“${trans.content || ''}”</p>
         <div class="glow-test-author">
           <div class="glow-avatar" style="background: ${bg}">${(trans.name || 'U').charAt(0)}</div>
-          <div class="glow-info">${trans.name || 'User'}<span>${trans.tag || 'User'}</span></div>
+          <div class="glow-info">${trans.name || ''}<span>${trans.tag || ''}</span></div>
         </div>
       `;
       track.appendChild(card);
     });
   }
 
-  // 语言下拉菜单
   function updateLangMenu() {
     const dropdown = document.getElementById('langDropdown');
-    let html = '';
-    
-    // 加入中文
-    html += `<a href="#" onclick="changeLang('zh', event)">简体中文</a>`;
-    
+    let html = `<a href="#" onclick="changeLang('zh', event)">简体中文</a>`;
     globalData.langs.forEach(l => {
       if (l.code !== 'zh' && l.status !== false) {
         html += `<a href="#" onclick="changeLang('${l.code}', event)">${l.name}</a>`;
@@ -747,43 +703,26 @@
   window.changeLang = function(code, e) {
     if (e) e.preventDefault();
     localStorage.setItem('nexapay_manual_lang', code);
-    window.location.reload(); // 简单粗暴，直接刷新重新渲染
+    window.location.reload();
   };
-
-  window.toggleLangMenu = function(e) {
-    e.stopPropagation();
-    document.getElementById('langDropdown').classList.toggle('show');
-  };
-
+  window.toggleLangMenu = function(e) { e.stopPropagation(); document.getElementById('langDropdown').classList.toggle('show'); };
   document.addEventListener('click', (e) => {
     const dropdown = document.getElementById('langDropdown');
-    if (dropdown && dropdown.classList.contains('show')) {
-      if (!e.target.closest('.lang-switch-wrap')) dropdown.classList.remove('show');
-    }
+    if (dropdown && dropdown.classList.contains('show') && !e.target.closest('.lang-switch-wrap')) dropdown.classList.remove('show');
   });
 
-  // 登录状态与跳转
-  window.goAuth = function() {
-    window.location.href = 'login.html'; // 不再判断状态，直接跳 login
-  };
-
+  // =========================================
+  // 3. 其他交互
+  // =========================================
+  window.goAuth = function() { window.location.href = 'login.html'; };
+  
   function checkLoginState() {
     const isLoggedIn = localStorage.getItem('nexapay_is_login') === 'true';
-    const unauthGroup = document.getElementById('unauth-group');
-    const authGroup = document.getElementById('auth-group');
-    if (isLoggedIn) {
-      unauthGroup.style.display = 'none';
-      authGroup.style.display = 'block';
-    } else {
-      unauthGroup.style.display = 'flex';
-      authGroup.style.display = 'none';
-    }
+    document.getElementById('unauth-group').style.display = isLoggedIn ? 'none' : 'flex';
+    document.getElementById('auth-group').style.display = isLoggedIn ? 'block' : 'none';
   }
-
-  window.doLogout = function() {
-    localStorage.removeItem('nexapay_is_login');
-    checkLoginState();
-  };
+  window.doLogout = function() { localStorage.removeItem('nexapay_is_login'); checkLoginState(); };
+  checkLoginState();
 
   // 3D 卡片动效
   const wrapper = document.getElementById('card3dWrapper');
@@ -808,13 +747,9 @@
     wrapper.addEventListener('mousemove', (e) => {
       if (isFlipping) return;
       const rect = wrapper.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      const rotateX = ((y - centerY) / centerY) * -15; 
-      const rotateY = ((x - centerX) / centerX) * 15;
-      card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+      const x = e.clientX - rect.left, y = e.clientY - rect.top;
+      const centerX = rect.width / 2, centerY = rect.height / 2;
+      card.style.transform = `rotateX(${((y - centerY) / centerY) * -15}deg) rotateY(${((x - centerX) / centerX) * 15}deg) scale(1.05)`;
     });
     wrapper.addEventListener('mouseleave', () => {
       if (isFlipping) return;
@@ -822,27 +757,15 @@
       card.style.transform = `rotateX(0) rotateY(0) scale(1)`;
       setTimeout(() => { card.style.transition = ''; }, 500);
     });
-    wrapper.addEventListener('mouseenter', () => {
-      if (!isFlipping) card.style.transition = 'background 0.3s ease, box-shadow 0.3s ease';
-    });
   }
 
-  // 轮播控制
+  // 轮播
   let currentSlide = 0;
   const totalSlides = 4;
-  const slideBlocks = document.querySelectorAll('.slide-block');
-  const dots = document.querySelectorAll('.slider-dots .dot');
-
   window.goToSlide = function(index) {
     if (window.innerWidth > 960) {
-      slideBlocks.forEach((el, i) => {
-        if (i === index) el.classList.add('active');
-        else el.classList.remove('active');
-      });
-      dots.forEach((el, i) => {
-        if (i === index) el.classList.add('active');
-        else el.classList.remove('active');
-      });
+      document.querySelectorAll('.slide-block').forEach((el, i) => el.classList.toggle('active', i === index));
+      document.querySelectorAll('.slider-dots .dot').forEach((el, i) => el.classList.toggle('active', i === index));
       currentSlide = index;
     }
   };
@@ -852,23 +775,12 @@
   sliderSection.addEventListener('wheel', (e) => {
     if (window.innerWidth > 960) {
       if (isWheeling) return;
-      if (e.deltaY > 0 && currentSlide < totalSlides - 1) {
-        goToSlide(currentSlide + 1);
-        isWheeling = true;
-        setTimeout(() => isWheeling = false, 600);
-      } else if (e.deltaY < 0 && currentSlide > 0) {
-        goToSlide(currentSlide - 1);
-        isWheeling = true;
-        setTimeout(() => isWheeling = false, 600);
-      }
+      if (e.deltaY > 0 && currentSlide < totalSlides - 1) { goToSlide(currentSlide + 1); isWheeling = true; setTimeout(() => isWheeling = false, 600); }
+      else if (e.deltaY < 0 && currentSlide > 0) { goToSlide(currentSlide - 1); isWheeling = true; setTimeout(() => isWheeling = false, 600); }
     }
   }, { passive: false });
 
-  // 初始化
-  window.addEventListener('DOMContentLoaded', () => {
-    checkLoginState();
-    initApp();
-  });
+  window.addEventListener('DOMContentLoaded', initApp);
 </script>
 </body>
 </html>
