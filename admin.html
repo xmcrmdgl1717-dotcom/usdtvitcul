@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXA - 后台管理</title>
+<title>NEXAPAY - 后台管理</title>
 <style>
   :root {
     --bg: #f4f7f9; --surface: #ffffff; --text: #333; --text-light: #777;
@@ -91,7 +91,7 @@
 
 <div id="login-screen">
   <div class="login-box">
-    <h2>NEXA 管理后台</h2>
+    <h2>NEXAPAY 管理后台</h2>
     <div class="err-msg" id="login-err">密码错误，请重试</div>
     <input type="password" id="login-pwd" placeholder="请输入后台密码 (默认 admin888)" onkeydown="if(event.key==='Enter') doLogin()">
     <button onclick="doLogin()">登录系统</button>
@@ -99,7 +99,7 @@
 </div>
 
 <div class="sidebar" style="display:none;" id="sidebar">
-  <div class="sidebar-logo">NEXA Admin</div>
+  <div class="sidebar-logo">NEXAPAY Admin</div>
   <div class="menu-item has-sub" onclick="toggleSubMenu(this)">多语言管理 <span>▼</span></div>
   <div class="sub-menu" id="sub-lang">
     <div class="sub-item active" onclick="switchTab('lang-list')">语言列表</div>
@@ -184,6 +184,11 @@
         <input type="text" id="set-deepl-key" placeholder="输入 DeepL API Key">
         <p style="font-size:12px; color:var(--text-light); margin-top:5px;">必填项。免费版 Key 一般以 :fx 结尾，请确保填写正确，否则翻译将无法调用。</p>
       </div>
+      <div class="form-group">
+        <label>翻译并发数（同时发送的请求数量）</label>
+        <input type="number" id="set-concurrency" min="1" max="10" value="3">
+        <p style="font-size:12px; color:var(--text-light); margin-top:5px;">建议 1-3（免费版 API 有严格频率限制，太高容易报错）；专业版可设 5-10。</p>
+      </div>
       <button class="btn btn-primary" onclick="saveSettings()">保存配置</button>
     </div>
   </div>
@@ -243,7 +248,7 @@ const DEFAULT_DICT = {
   "fee": { "eyebrow": "费用，写在明面上", "title1": "你会在开卡前", "title2": "就知道每一笔花多少。", "desc": "没有“低费率”这种说法，只有具体数字。", "t1": "资金由持牌金融机构托管，支付清算账户与资金严格隔离。", "t2": "支付服务由持牌第三方提供，平台只做展示与路由，不触碰资产所有权。", "t3": "每笔授权与清算均可在账户内追溯到原始记录。", "r1": "年费 / 开卡费 / 销卡费", "r2": "交易手续费", "r3": "非 USD 跨境交易附加费", "r4": "本地 P2P 入金通道费", "r5": "账户管理费", "r6": "消费返现", "r6_v": "按等级 2% – 12%" },
   "security": { "eyebrow": "安全，是默认设置", "title": "你的资产安全，不需要你额外操心。", "desc": "从密钥生成到每一笔授权，安全防护贯穿全链路。不是让你“小心一点”，而是让风险从一开始就无处发生。", "s1_t": "硬件级密钥", "s1_d": "私钥在设备的安全芯片内生成和保管，永远不会以明文形式出现在网络中。自托管意味着——只有你能动用你的资产。", "s2_t": "用户保护基金", "s2_d": "由独立托管方保管的 $7 亿用户保护基金，链上地址公开可查。当极端事件发生时，用户的第一时间损失由基金覆盖。", "s3_t": "实时风控 + 客服", "s3_d": "交易实时监控，异常地址自动拦截；钓鱼网站数据库持续更新。任何时区、任何时间，都能找到真人客服。" },
   "partners": { "title": "与全球顶尖的金融机构与加密生态同行" },
-  "community": { "eyebrow": "100M+ 用户的选择", "title": "来自新加坡、曼谷、吉隆坡、圣保罗的声音。", "desc": "自由职业者、远程工作者、跨境卖家、长期持有者——他们选择 NEXA 的理由，都不太一样。" },
+  "community": { "eyebrow": "100M+ 用户的选择", "title": "来自新加坡、曼谷、吉隆坡、圣保罗的声音。", "desc": "自由职业者、远程工作者、跨境卖家、长期持有者——他们选择 NEXAPAY 的理由，都不太一样。" },
   "quotes": { 
     "eyebrow": "已经有人在用", "title": "他们说清楚的，不是产品多好，而是省掉了什么。", 
     "q1": "“以前扫码付款要等半天确认，现在不到 3 秒就提示支付成功，体验太顺滑了。”", "q1_a": "自由职业者 · 新加坡", 
@@ -258,20 +263,20 @@ const DEFAULT_DICT = {
     "c7": "虚拟卡 20 秒出，绑定 Apple Pay 后，抬腕扫一下就付好了。", "a7": "产品经理 · 东京", 
     "c8": "扫码支付遇到问题，客服秒回，这在币圈支付里真的少见。", "a8": "内容创作者 · 悉尼" 
   },
-  "faq": { "eyebrow": "还有疑问？", "title": "你可能会问的几个问题。", "q1": "NEXA 和普通的加密卡有什么区别？", "a1": "普通加密卡要求你先卖出资产才能消费，NEXA 让你直接扫码支付。刷卡瞬间才从账户清算所需金额。其余部分继续保留，清算后差额自动回到账户。", "q2": "我的 USDC 放在 NEXA，安全吗？", "a2": "资金由持牌金融机构托管，支付清算账户与资金严格隔离。支付服务由持牌第三方提供，平台只做展示与路由，不触碰你的资产所有权。同时共享 $7 亿用户保护基金。", "q3": "支付收益怎么算？会随时停止吗？", "a3": "支付按日结算，资金自动复投。没有锁定期，随存随取。收益率会根据市场状况浮动，但不会因为单笔消费而中断——只有实际支付金额才离开账户。", "q4": "虚拟卡可以在哪些地方使用？", "a4": "NEXA 虚拟卡由 Visa 网络签发，全球 1.5 亿+ 受理商户可用。支持线上订阅、线下感应支付、Apple Pay、Google Pay，以及绑定支付宝、微信支付。", "q5": "开卡需要多久？有年费吗？", "a5": "完成身份验证后，虚拟卡在 20 秒内生成并激活。年费 $0、开卡费 $0、销卡费 $0，仅在消费时收取 0.90% 交易手续费（非 USD 跨境交易另加 1%）。", "q6": "如果卡片丢失或被盗刷怎么办？", "a6": "卡片可在 App 内一键冻结或注销，冻结后所有新交易立即停止，余额不受影响。每笔交易默认开启生物识别二次确认，非本人操作会自动拦截。若发生盗刷，24/7 客服可协助追溯和追回。" },
+  "faq": { "eyebrow": "还有疑问？", "title": "你可能会问的几个问题。", "q1": "NEXAPAY 和普通的加密卡有什么区别？", "a1": "普通加密卡要求你先卖出资产才能消费，NEXAPAY 让你直接扫码支付。刷卡瞬间才从账户清算所需金额。其余部分继续保留，清算后差额自动回到账户。", "q2": "我的 USDC 放在 NEXAPAY，安全吗？", "a2": "资金由持牌金融机构托管，支付清算账户与资金严格隔离。支付服务由持牌第三方提供，平台只做展示与路由，不触碰你的资产所有权。同时共享 $7 亿用户保护基金。", "q3": "支付收益怎么算？会随时停止吗？", "a3": "支付按日结算，资金自动复投。没有锁定期，随存随取。收益率会根据市场状况浮动，但不会因为单笔消费而中断——只有实际支付金额才离开账户。", "q4": "虚拟卡可以在哪些地方使用？", "a4": "NEXAPAY 虚拟卡由 Visa 网络签发，全球 1.5 亿+ 受理商户可用。支持线上订阅、线下感应支付、Apple Pay、Google Pay，以及绑定支付宝、微信支付。", "q5": "开卡需要多久？有年费吗？", "a5": "完成身份验证后，虚拟卡在 20 秒内生成并激活。年费 $0、开卡费 $0、销卡费 $0，仅在消费时收取 0.90% 交易手续费（非 USD 跨境交易另加 1%）。", "q6": "如果卡片丢失或被盗刷怎么办？", "a6": "卡片可在 App 内一键冻结或注销，冻结后所有新交易立即停止，余额不受影响。每笔交易默认开启生物识别二次确认，非本人操作会自动拦截。若发生盗刷，24/7 客服可协助追溯和追回。" },
   "final": { "title": "现在领卡，体验一秒扫码支付的快感。", "desc": "开卡免费，虚拟卡即时发放。首笔消费后才产生交易费用，随时可以停用。", "cta": "领取虚拟卡 · 免年费", "n1": "本期名额剩余", "n2": "个 · 无需充值即可提交申请" },
-  "footer": { "copy": "© 2026 NEXA. All rights reserved.", "l1": "服务条款", "l2": "隐私政策", "l3": "风险披露", "l4": "牌照信息", "disc": "风险提示：加密资产价格波动剧烈，本产品提供的支付服务不构成任何形式的投资回报承诺。本服务仅在支持该服务的司法管辖区提供，具体可用性以申请时的地区判定为准。支付卡由合作持牌机构发行，NEXA 提供前端技术服务。请在充分了解相关风险后使用。" },
+  "footer": { "copy": "© 2026 NEXAPAY. All rights reserved.", "l1": "服务条款", "l2": "隐私政策", "l3": "风险披露", "l4": "牌照信息", "disc": "风险提示：加密资产价格波动剧烈，本产品提供的支付服务不构成任何形式的投资回报承诺。本服务仅在支持该服务的司法管辖区提供，具体可用性以申请时的地区判定为准。支付卡由合作持牌机构发行，NEXAPAY 提供前端技术服务。请在充分了解相关风险后使用。" },
   "ui": {
     "gen": "正在生成…", "done": "卡片已生成", "copied": "已复制", "show": "显示", "hide": "隐藏", "copy": "复制", "today": "Today, "
   },
   "apply": {
-    "m_title": "领取你的 NEXA Visa 虚拟卡", "m_desc": "30 秒完成，开卡免费。这不是一张普通的卡——它让你的稳定币在消费前持续生息。",
+    "m_title": "领取你的 NEXAPAY Visa 虚拟卡", "m_desc": "30 秒完成，开卡免费。这不是一张普通的卡——它让你的稳定币在消费前持续生息。",
     "m_li1": "0 年费 · 0 开卡费", "m_li1_d": "，仅 0.90% 交易手续费", "m_li2": "2% 消费返现", "m_li2_d": "，可选 BTC、黄金或 USDC 发放", "m_li3": "消费前持续生息", "m_li3_d": "，年化 4% – 8%",
     "m_cta": "开始领取", "m_foot": "已服务 1.5 亿 Visa 商户 · $700M 用户保护基金",
-    "s1_t": "创建你的 NEXA 账户", "s1_d": "注册后即可领取 Visa 虚拟卡。开卡免费、无需充值，首笔消费后才产生交易费。",
+    "s1_t": "创建你的 NEXAPAY 账户", "s1_d": "注册后即可领取 Visa 虚拟卡。开卡免费、无需充值，首笔消费后才产生交易费。",
     "s1_div": "或使用邮箱注册", "s1_email": "邮箱地址", "s1_email_e": "请输入有效的邮箱地址", "s1_pwd": "设置密码（至少 8 位，含字母与数字）", "s1_pwd_e": "密码至少 8 位，且需包含字母与数字", "s1_ref": "邀请码（选填）", "s1_btn": "创建账户",
     "s1_t1": "密码 AES-256 加密", "s1_t2": "不存储明文密码", "s1_t3": "符合 KYC 与 AML 标准",
-    "s2_t": "你正在一个被验证过的网络里", "s2_d": "NEXA 的清算、托管与发卡能力，由以下机构共同支撑。你的资金与卡片，不会孤立存在。",
+    "s2_t": "你正在一个被验证过的网络里", "s2_d": "NEXAPAY 的清算、托管与发卡能力，由以下机构共同支撑。你的资金与卡片，不会孤立存在。",
     "s2_tab1": "币圈生态", "s2_tab2": "银行与支付", "s2_tab3": "全球商家", 
     "s2_stat1": "1.5 亿+", "s2_stat2": "Visa 全球受理商户", "s2_stat3": "$700M+", "s2_stat4": "用户保护基金", "s2_stat5": "130+", "s2_stat6": "支持的区块链网络", "s2_stat7": "50+", "s2_stat8": "可申请发卡的国家与地区", "s2_btn": "继续领取虚拟卡",
     "s3_t": "你的虚拟卡正在生成", "s3_d": "卡片由 Visa 网络签发，激活后可在全球 1.5 亿商户使用，支持 Apple Pay 与 Google Pay。",
@@ -285,7 +290,7 @@ const DEFAULT_DICT = {
     "cn": "中国大陆", "hk": "中国香港", "tw": "中国台湾", "sg": "新加坡", "my": "马来西亚", "th": "泰国", "vn": "越南", "jp": "日本", "kr": "韩国", "au": "澳大利亚", "uk": "英国", "other": "其他",
     "s5_idtype": "证件类型", "s5_idtype_e": "请选择证件类型", "id_card": "身份证", "passport": "护照", "license": "驾驶证", "residence": "居留证",
     "s5_idnum": "证件号码", "s5_idnum_e": "请输入证件号码", "s5_btn": "完成身份绑定",
-    "s6_t": "卡片已激活", "s6_d": "你的 NEXA Visa 虚拟卡已经可以使用。绑定 Apple Pay 或 Google Pay 后，即可在全球商户消费。", "s6_email": "卡片已绑定至",
+    "s6_t": "卡片已激活", "s6_d": "你的 NEXAPAY Visa 虚拟卡已经可以使用。绑定 Apple Pay 或 Google Pay 后，即可在全球商户消费。", "s6_email": "卡片已绑定至",
     "s6_b1": "2% 基础返现", "s6_b1_d": " · 消费后以 BTC、黄金或 USDC 发放", "s6_b2": "0 年费、0 开卡费", "s6_b2_d": " · 仅收取 0.90% 交易手续费", "s6_b3": "实时到账", "s6_b3_d": " · 支付瞬间资金即时到账",
     "s6_btn1": "进入我的账户", "s6_btn2": "返回查看卡片信息", "s6_back": "返回上一步"
   }
@@ -333,10 +338,10 @@ async function saveData() {
 
 function doLogin() {
   const pwd = document.getElementById('login-pwd').value;
-  const savedPwd = localStorage.getItem('nexa_admin_pwd') || 'admin888';
+  const savedPwd = localStorage.getItem('nexapay_admin_pwd') || 'admin888';
   
   if (pwd === savedPwd) {
-    localStorage.setItem('nexa_admin_logged', 'true');
+    localStorage.setItem('nexapay_admin_logged', 'true');
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('sidebar').style.display = 'flex';
     document.getElementById('main-content').style.display = 'block';
@@ -347,12 +352,13 @@ function doLogin() {
 }
 
 function logout() {
-  localStorage.removeItem('nexa_admin_logged');
+  localStorage.removeItem('nexapay_admin_logged');
   location.reload();
 }
 
 async function initData() {
-    document.getElementById('set-deepl-key').value = localStorage.getItem('nexa_deepl_key') || '';
+    document.getElementById('set-deepl-key').value = localStorage.getItem('nexapay_deepl_key') || '';
+    document.getElementById('set-concurrency').value = localStorage.getItem('nexapay_concurrency') || '3';
 
     const data = await fetchData();
     if (!data.langs || data.langs.length === 0) {
@@ -376,7 +382,7 @@ async function initData() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('nexa_admin_logged') === 'true') {
+    if (localStorage.getItem('nexapay_admin_logged') === 'true') {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('sidebar').style.display = 'flex';
         document.getElementById('main-content').style.display = 'block';
@@ -532,7 +538,7 @@ function flattenValues(obj, result = []) {
 // 请求后端代理去调用 DeepL API
 async function fetchTranslation(text, targetLang) {
   if (!text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return text;
-  const deeplKey = localStorage.getItem('nexa_deepl_key');
+  const deeplKey = localStorage.getItem('nexapay_deepl_key');
   
   if (!deeplKey) {
     throw new Error("请先在「API 配置」中填写 DeepL API Key");
@@ -597,13 +603,13 @@ async function translateSingleLang(code) {
   const loading = document.getElementById('translate-loading');
   loading.classList.add('show');
 
-  // 【关键修改】修改为 1，串行请求
-  const CONCURRENCY = 1;
+  // 从配置中读取并发数
+  const CONCURRENCY = parseInt(localStorage.getItem('nexapay_concurrency') || '3', 10);
   
   try {
     for (let i = 0; i < missingTexts.length; i += CONCURRENCY) {
       const chunk = missingTexts.slice(i, i + CONCURRENCY);
-      document.getElementById('edit-json-textarea').value = `正在逐条补齐缺失的文案 (${i+1}/${missingTexts.length})...\n\n当前翻译: \n${chunk.join('\n')}`;
+      document.getElementById('edit-json-textarea').value = `正在并发补齐缺失的文案 (${i+1}/${missingTexts.length})...\n\n当前批次翻译: \n${chunk.join('\n')}`;
       
       const promises = chunk.map(async (text) => {
         const translated = await fetchTranslation(text, tLang);
@@ -612,7 +618,7 @@ async function translateSingleLang(code) {
       const results = await Promise.all(promises);
       results.forEach(r => { translatedDict[r.text] = r.translated; });
       
-      // 【关键修改】每次请求后延迟 1.5 秒，避免触发 DeepL 限流
+      // 每次请求后延迟 1.5 秒，避免触发 DeepL 限流
       await new Promise(r => setTimeout(r, 1500));
     }
 
@@ -643,8 +649,8 @@ async function performTranslate(lang) {
 
   if (missingTexts.length === 0) return false;
 
-  // 【关键修改】修改为 1，串行请求
-  const CONCURRENCY = 1;
+  // 从配置中读取并发数
+  const CONCURRENCY = parseInt(localStorage.getItem('nexapay_concurrency') || '3', 10);
   let completed = 0;
 
   for (let i = 0; i < missingTexts.length; i += CONCURRENCY) {
@@ -661,7 +667,7 @@ async function performTranslate(lang) {
     
     updateProgress(completed, missingTexts.length);
     
-    // 【关键修改】每次请求后延迟 1.5 秒，避免触发 DeepL 限流
+    // 每次请求后延迟 1.5 秒，避免触发 DeepL 限流
     await new Promise(r => setTimeout(r, 1500));
   }
 
@@ -672,7 +678,7 @@ async function performTranslate(lang) {
 async function globalTranslate() {
   if (isGlobalTranslating) return;
   
-  const deeplKey = localStorage.getItem('nexa_deepl_key');
+  const deeplKey = localStorage.getItem('nexapay_deepl_key');
   if (!deeplKey) {
     return alert('请先在「API 配置」中填写并保存 DeepL API Key！');
   }
@@ -721,18 +727,24 @@ async function globalTranslate() {
 function saveSettings() {
   const newPwd = document.getElementById('set-admin-pwd').value;
   const deeplKey = document.getElementById('set-deepl-key').value;
+  const concurrency = document.getElementById('set-concurrency').value;
 
   if (newPwd) {
     if(newPwd.length < 6) return alert('密码长度至少6位');
-    localStorage.setItem('nexa_admin_pwd', newPwd);
+    localStorage.setItem('nexapay_admin_pwd', newPwd);
     alert('后台密码已更新');
     document.getElementById('set-admin-pwd').value = '';
   }
   
   if (deeplKey !== null) {
-    localStorage.setItem('nexa_deepl_key', deeplKey.trim());
-    alert('API 配置已保存');
+    localStorage.setItem('nexapay_deepl_key', deeplKey.trim());
   }
+
+  if (concurrency !== null) {
+    localStorage.setItem('nexapay_concurrency', concurrency);
+  }
+  
+  alert('API 配置及并发数已保存');
 }
 
 async function saveGlobalDict() {
