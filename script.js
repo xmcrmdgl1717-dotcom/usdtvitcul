@@ -3,7 +3,6 @@
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ============ 全局翻译函数供动态代码调用 ============ */
   window.t = function(text) {
     if (window.activeDict && window.activeDict[text]) return window.activeDict[text];
     return text;
@@ -79,7 +78,6 @@
     });
   }
 
-  // 【已更新】扫码支付相关的社区评价
   const communityCards = [
     { q: "扫码直接扣 USDC，不用每次先去交易所卖币，秒级到账太爽了。", name: "Alex", tag: "自由设计师 · 新加坡", accent: "rgba(0, 240, 255, 0.2)" },
     { q: "以前每次收 USDT 都要等半天，现在扫一扫直接买咖啡，一点不卡顿。", name: "Mia", tag: "远程工程师 · 曼谷", accent: "rgba(43, 214, 123, 0.2)" },
@@ -139,7 +137,7 @@
   }
 
   /* =========================================
-     2. 国际化 (i18n) - 终极容错匹配版
+     2. 国际化 (i18n)
      ========================================= */
   let currentLangs = [];
   window.activeDict = null;
@@ -274,7 +272,7 @@
   window.changeLang = function(lang, e) {
     if (e) e.preventDefault();
     document.getElementById("langDropdown").classList.remove("show");
-    localStorage.setItem('nexa_manual_lang', lang);
+    localStorage.setItem('nexapay_manual_lang', lang);
     
     if (lang === 'zh') {
       location.reload();
@@ -303,7 +301,7 @@
   });
 
   fetchLangsFromServer().then(() => {
-    let lang = localStorage.getItem('nexa_manual_lang');
+    let lang = localStorage.getItem('nexapay_manual_lang');
     if (lang && lang !== 'zh') {
       const target = currentLangs.find(l => l.code === lang);
       if (target && target.dict) {
