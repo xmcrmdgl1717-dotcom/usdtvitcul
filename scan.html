@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXAPAY - 扫码支付</title>
+<style>
+  :root { --brand-red: #e60012; --text-dark: #111; --text-gray: #666; --bg-gray: #f8f9fa; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; }
+  body { background: #fff; color: var(--text-dark); line-height: 1.6; }
+  
+  /* 顶部导航 */
+  .header { position: fixed; top: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid #eee; }
+  .nav-container { max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+  .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #111; font-weight: 800; font-size: 20px; }
+  .logo-icon { width: 32px; height: 32px; background: #00f0ff; color: #000; border-radius: 8px; display: grid; place-items: center; }
+  
+  .nav-actions { display: flex; align-items: center; gap: 20px; }
+  .lang-btn { font-size: 14px; cursor: pointer; color: #333; display: flex; align-items: center; gap: 4px; }
+  .user-btn { font-size: 14px; cursor: pointer; color: #333; text-decoration: none; }
+  
+  /* 汉堡菜单 */
+  .hamburger { cursor: pointer; display: flex; flex-direction: column; gap: 5px; z-index: 1001; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: #111; transition: 0.3s; }
+  
+  .mobile-menu { position: fixed; top: 0; right: -300px; width: 300px; height: 100vh; background: #fff; box-shadow: -10px 0 30px rgba(0,0,0,0.1); z-index: 999; padding: 80px 24px 24px; transition: right 0.3s ease; display: flex; flex-direction: column; gap: 16px; }
+  .mobile-menu.active { right: 0; }
+  .mobile-menu a { text-decoration: none; color: #333; font-size: 16px; font-weight: 600; padding: 12px 0; border-bottom: 1px solid #eee; cursor: pointer; }
+  .mobile-menu a:hover { color: var(--brand-red); }
+  .menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 998; display: none; }
+  .menu-overlay.active { display: block; }
+
+  /* 主体内容 */
+  .hero { padding: 120px 24px 60px; max-width: 800px; margin: 0 auto; text-align: center; }
+  .hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; margin-bottom: 16px; letter-spacing: -1px; line-height: 1.2; }
+  .hero p { font-size: 16px; color: var(--text-gray); margin-bottom: 32px; }
+  .btn-primary { display: inline-block; padding: 14px 32px; background: var(--brand-red); color: #fff; text-decoration: none; border-radius: 30px; font-weight: 700; font-size: 16px; transition: 0.3s; }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
+  
+  .hero-image { width: 100%; height: 400px; background: linear-gradient(135deg, #f0f0f0, #e0e0e0); border-radius: 24px; margin-top: 40px; display: grid; place-items: center; font-weight: 600; color: #aaa; }
+
+  /* 黑底区块 */
+  .dark-section { background: #0f0f0f; color: #fff; padding: 80px 24px; text-align: center; border-radius: 32px; margin: 40px 24px; }
+  .dark-section h2 { font-size: 32px; margin-bottom: 16px; font-weight: 800; }
+  .dark-section p { color: #aaa; margin-bottom: 40px; }
+  .phone-mockup { width: 280px; height: 560px; background: #222; border-radius: 40px; border: 8px solid #333; margin: 0 auto; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  
+  /* 卡片网格 */
+  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+  .feature-card { background: var(--bg-gray); border-radius: 24px; overflow: hidden; display: flex; flex-direction: column; }
+  .card-img { height: 220px; background: #ddd; }
+  .card-content { padding: 24px; }
+  .card-content h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+  .card-content p { font-size: 14px; color: var(--text-gray); }
+
+  /* FAQ */
+  .faq-section { max-width: 800px; margin: 80px auto; padding: 0 24px; }
+  .faq-section h2 { text-align: center; font-size: 32px; margin-bottom: 40px; font-weight: 800; }
+  .faq-item { border-bottom: 1px solid #eee; }
+  .faq-q { width: 100%; text-align: left; background: none; border: none; padding: 24px 0; font-size: 16px; font-weight: 600; display: flex; justify-content: space-between; cursor: pointer; color: var(--text-dark); }
+  .faq-q .icon { font-weight: 300; font-size: 24px; }
+  .faq-a { display: none; padding-bottom: 24px; color: var(--text-gray); font-size: 14px; line-height: 1.8; }
+  .faq-item.open .faq-a { display: block; }
+
+  /* 底部 */
+  .cta-bottom { text-align: center; padding: 80px 24px; background: #f8f9fa; }
+  .cta-bottom h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; margin-bottom: 16px; line-height: 1.2; }
+  .cta-bottom p { color: var(--text-gray); margin-bottom: 32px; }
+
+  @media (max-width: 768px) {
+    .feature-grid { grid-template-columns: 1fr; }
+    .nav-container { padding: 12px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 全局顶部导航 -->
+<header class="header">
+  <div class="nav-container">
+    <a href="index.html" class="logo"><span class="logo-icon">N</span> NEXAPAY</a>
+    <div class="nav-actions">
+      <div class="lang-btn">🌐 简中</div>
+      <a href="login.html" class="user-btn" id="navUser">您的账户</a>
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- 侧边折叠菜单 -->
+<div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <a onclick="navTo('scan.html')">扫码支付</a>
+  <a onclick="navTo('credit.html')">信用额度</a>
+  <a onclick="navTo('remittance.html')">即时汇款</a>
+  <a onclick="navTo('p2p.html')">P2P 市场</a>
+  <a href="index.html" style="margin-top: auto; border: none; color: #999;">返回首页</a>
+</div>
+
+<!-- 页面主体 -->
+<section class="hero">
+  <h1>使用加密资产，即刻扫码付款</h1>
+  <p>扫码购买咖啡、打车、采购日用品，满足各种日常所需。</p>
+  <a href="#" class="btn-primary">开始扫码</a>
+  <div class="hero-image">[扫码支付产品展示图]</div>
+</section>
+
+<section class="dark-section">
+  <h2>为日常消费而生</h2>
+  <p>在商户处扫描二维码即可快速结账，无需预先兑换。</p>
+  <div class="phone-mockup">
+    <div style="color:#fff; font-weight:600; font-size:18px;">Scan to pay</div>
+    <div style="width: 150px; height: 150px; background: #fff; border-radius: 12px; margin: 20px 0;"></div>
+    <div style="background: var(--brand-red); color: #fff; padding: 10px 20px; border-radius: 20px; font-size:12px;">Scan now</div>
+  </div>
+</section>
+
+<section class="feature-grid">
+  <div class="feature-card">
+    <div class="card-img" style="background: #e0e0e0;"></div>
+    <div class="card-content">
+      <h3>兼容本地二维码系统</h3>
+      <p>在任何接受本地二维码网络的商户处付款，与本地银行和电子钱包使用同一网络。</p>
+    </div>
+  </div>
+  <div class="feature-card">
+    <div class="card-img" style="background: #d5d5d5;"></div>
+    <div class="card-content">
+      <h3>每次都是快速付款</h3>
+      <p>扫描支持的二维码，使用稳定币在几秒内完成付款。</p>
+    </div>
+  </div>
+  <div class="feature-card">
+    <div class="card-img" style="background: #c5c5c5;"></div>
+    <div class="card-content">
+      <h3>每次都是透明定价</h3>
+      <p>付款前即可查看汇率和所有费用，明明白白，无意外。</p>
+    </div>
+  </div>
+</section>
+
+<section class="faq-section">
+  <h2>常见问题</h2>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">什么是国家二维码标准？<span class="icon">+</span></button>
+    <div class="faq-a">国家二维码标准是指本地通用的支付二维码系统，允许不同银行和钱包之间互通。NEXAPAY 兼容这些系统，让您的加密资产可以直接扫码支付。</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">如何扫码付款？<span class="icon">+</span></button>
+    <div class="faq-a">打开 NEXAPAY 应用，点击“扫码”，对准商户的收款码扫描即可。系统会自动完成汇率转换和加密资产扣款。</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">静态二维码和动态二维码有什么区别？<span class="icon">+</span></button>
+    <div class="faq-a">静态二维码固定不变，通常用于商户展示；动态二维码每次生成不同的信息，常用于个人收款，安全性更高。</div>
+  </div>
+</section>
+
+<section class="cta-bottom">
+  <h2>加入 800 多万用户，用加密资产进行日常支付</h2>
+  <p>直接在 NEXAPAY 应用中使用二维码付款，在支持的商户处消费。</p>
+  <a href="login.html" class="btn-primary">立即下载应用</a>
+</section>
+
+<script>
+  // 登录验证逻辑
+  function navTo(url) {
+    if (localStorage.getItem('nexapay_is_login') === 'true') {
+      window.location.href = url;
+    } else {
+      window.location.href = 'login.html';
+    }
+  }
+
+  // 菜单折叠
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('active');
+    document.getElementById('menuOverlay').classList.toggle('active');
+  }
+
+  // FAQ 折叠
+  function toggleFaq(btn) {
+    const item = btn.parentElement;
+    item.classList.toggle('open');
+    btn.querySelector('.icon').textContent = item.classList.contains('open') ? '×' : '+';
+  }
+
+  // 检查登录状态并更新导航
+  if (localStorage.getItem('nexapay_is_login') === 'true') {
+    document.getElementById('navUser').textContent = '我的账户';
+    document.getElementById('navUser').href = '#';
+  }
+</script>
+</body>
+</html>
