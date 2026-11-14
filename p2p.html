@@ -1,4 +1,3 @@
-<!-- 头部、样式、菜单、FAQ 脚本与之前完全相同 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -6,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXAPAY - P2P 市场</title>
 <style>
-  /* 请将 credit.html 里的 <style> 完整复制到这里 */
+  /* 请完全复制 scan.html 的 <style> 到这里 */
   :root { --brand-red: #e60012; --text-dark: #111; --text-gray: #666; --bg-gray: #f8f9fa; }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; }
   body { background: #fff; color: var(--text-dark); line-height: 1.6; }
   .header { position: fixed; top: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid #eee; }
-  .nav-container { max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+  .nav-container { max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; width: 100%; }
   .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #111; font-weight: 800; font-size: 20px; }
   .logo-icon { width: 32px; height: 32px; background: #00f0ff; color: #000; border-radius: 8px; display: grid; place-items: center; }
-  .nav-actions { display: flex; align-items: center; gap: 20px; }
+  .nav-actions { display: flex; align-items: center; gap: 16px; margin-left: auto; }
   .lang-btn { font-size: 14px; cursor: pointer; color: #333; display: flex; align-items: center; gap: 4px; }
-  .user-btn { font-size: 14px; cursor: pointer; color: #333; text-decoration: none; }
-  .hamburger { cursor: pointer; display: flex; flex-direction: column; gap: 5px; z-index: 1001; }
+  .user-btn { font-size: 14px; cursor: pointer; color: #333; text-decoration: none; white-space: nowrap; }
+  .hamburger { cursor: pointer; display: flex; flex-direction: column; gap: 5px; z-index: 1001; padding-left: 8px; }
   .hamburger span { display: block; width: 24px; height: 2px; background: #111; transition: 0.3s; }
   .mobile-menu { position: fixed; top: 0; right: -300px; width: 300px; height: 100vh; background: #fff; box-shadow: -10px 0 30px rgba(0,0,0,0.1); z-index: 999; padding: 80px 24px 24px; transition: right 0.3s ease; display: flex; flex-direction: column; gap: 16px; }
   .mobile-menu.active { right: 0; }
@@ -29,7 +28,7 @@
   .hero { padding: 120px 24px 60px; max-width: 800px; margin: 0 auto; text-align: center; }
   .hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; margin-bottom: 16px; letter-spacing: -1px; line-height: 1.2; }
   .hero p { font-size: 16px; color: var(--text-gray); margin-bottom: 32px; }
-  .btn-primary { display: inline-block; padding: 14px 32px; background: var(--brand-red); color: #fff; text-decoration: none; border-radius: 30px; font-weight: 700; font-size: 16px; transition: 0.3s; }
+  .btn-primary { display: inline-block; padding: 14px 32px; background: var(--brand-red); color: #fff; text-decoration: none; border-radius: 30px; font-weight: 700; font-size: 16px; transition: 0.3s; cursor: pointer; }
   .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
   .hero-image { width: 100%; height: 400px; background: linear-gradient(135deg, #f5f5f5, #e0e0e0); border-radius: 24px; margin-top: 40px; display: grid; place-items: center; font-weight: 600; color: #aaa; }
   
