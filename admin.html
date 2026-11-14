@@ -234,7 +234,7 @@
 <div class="toast" id="globalToast"></div>
 
 <script>
-// 完整的默认字典，包含首页、登录页和所有新词条
+// 完整的默认字典，包含了登录页动态切换的新增词条
 const DEFAULT_DICT = {
   "nav": {
     "personal": "个人", "business": "企业", "company": "公司", "earn": "赚币", "explore": "探索"
@@ -306,7 +306,18 @@ const DEFAULT_DICT = {
     "step1": "检测网络环境与设备指纹",
     "step2": "生成 AES-256 本地加密密钥",
     "step3": "建立端到端安全传输通道",
-    "step4": "同步账户加密凭证"
+    "step4": "同步账户加密凭证",
+    
+    "new_user": "新用户注册",
+    "create_title": "创建您的账户",
+    "create_desc": "注册以开始使用 NEXAPAY 服务。",
+    "username": "用户名",
+    "username_ph": "请输入用户名",
+    "register_btn": "注册",
+    "have_account": "已有账户？",
+    "go_login": "去登录",
+    "email_ph": "请输入邮箱",
+    "pwd_ph": "请输入密码"
   }
 };
 
@@ -387,8 +398,8 @@ async function initData() {
         currentLangs.forEach(l => { if (l.status === undefined) l.status = true; });
         globalDict = data.globalDict || DEFAULT_DICT;
         
-        // 自动检测：如果没有 login_page 字段，说明是旧版字典，强制覆盖
-        if (!globalDict.login_page) {
+        // 自动检测：如果没有新加的 new_user 字段，说明是旧版，直接强制覆盖
+        if (!globalDict.login_page || !globalDict.login_page.new_user) {
            globalDict = DEFAULT_DICT;
            await saveData();
         }
