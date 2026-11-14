@@ -8,7 +8,7 @@
   :root {
     --bg: #f4f7f9; --surface: #ffffff; --text: #333; --text-light: #777;
     --primary: #2563eb; --primary-hover: #1d4ed8; --border: #e2e8f0;
-    --success: #10b981; --success-bg: #d1fae5; --danger: #ef4444;
+    --success: #10b981; --success-bg: #d1fae5; --danger: #ef4444; --warn: #f59e0b;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
@@ -21,28 +21,30 @@
   .login-box button:hover { background: var(--primary-hover); }
   .err-msg { color: var(--danger); font-size: 13px; margin-bottom: 10px; display: none; }
 
-  .sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+  .sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
   .sidebar-logo { padding: 20px; font-size: 18px; font-weight: 800; border-bottom: 1px solid var(--border); color: var(--primary); }
-  .menu-item { padding: 15px 20px; cursor: pointer; font-weight: 500; color: var(--text-light); transition: 0.2s; }
+  .menu-item { padding: 15px 20px; cursor: pointer; font-weight: 500; color: var(--text-light); transition: 0.2s; display: flex; justify-content: space-between; align-items: center; }
   .menu-item:hover, .menu-item.active { background: #eff6ff; color: var(--primary); border-right: 3px solid var(--primary); }
-  .menu-item.has-sub { display: flex; justify-content: space-between; align-items: center; }
   .sub-menu { display: none; background: #f8fafc; }
   .sub-menu.open { display: block; }
   .sub-item { padding: 12px 20px 12px 40px; cursor: pointer; font-size: 14px; color: var(--text-light); }
-  .sub-item:hover, .sub-item.active { color: var(--primary); }
+  .sub-item:hover, .sub-item.active { color: var(--primary); font-weight: 500; }
 
   .main-content { flex: 1; overflow-y: auto; padding: 30px; }
   .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
   .header h1 { font-size: 22px; }
-  .btn { padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 14px; transition: 0.2s; }
+  .btn { padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 14px; transition: 0.2s; white-space: nowrap; }
   .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
   .btn-primary:hover { background: var(--primary-hover); }
   .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; border-color: #93c5fd; }
+  .btn-danger { background: var(--danger); color: white; border-color: var(--danger); }
+  .btn-danger:hover { background: #dc2626; }
   
   .card { background: var(--surface); border-radius: 10px; padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; }
   .form-group { margin-bottom: 15px; }
   .form-group label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; }
-  .form-group input { width: 100%; max-width: 400px; padding: 10px; border: 1px solid var(--border); border-radius: 6px; outline: none; font-family: monospace; }
+  .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; outline: none; font-family: inherit; }
+  .form-group textarea { resize: vertical; min-height: 80px; }
   
   table { width: 100%; border-collapse: collapse; margin-top: 15px; }
   th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
@@ -74,7 +76,7 @@
   .actions span:hover { text-decoration: underline; }
   .actions span.del-btn { color: var(--danger); }
   
-  .loading-overlay { display: none; align-items: center; justify-content: center; flex-direction: column; }
+  .loading-overlay { display: none; align-items: center; justify-content: center; flex-direction: column; background: rgba(255,255,255,0.9); position: absolute; inset: 0; z-index: 10; }
   .loading-overlay.show { display: flex; }
   .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 15px; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -85,6 +87,27 @@
   .progress-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; font-weight: 600; }
   .progress-track { width: 100%; height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden; }
   .progress-fill { width: 0%; height: 100%; background: var(--primary); transition: width 0.3s ease; }
+
+  /* 分栏布局 */
+  .split-layout { display: flex; gap: 24px; height: calc(100vh - 120px); }
+  .split-left { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; background: var(--surface); border-radius: 10px; border: 1px solid var(--border); overflow: hidden; }
+  .split-right { flex: 1; background: var(--surface); border-radius: 10px; border: 1px solid var(--border); overflow-y: auto; padding: 24px; position: relative; }
+  
+  .list-header { padding: 16px 20px; border-bottom: 1px solid var(--border); font-weight: 600; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
+  .list-items { flex: 1; overflow-y: auto; }
+  .list-item { padding: 16px 20px; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; position: relative; }
+  .list-item:hover { background: #f8fafc; }
+  .list-item.active { background: #eff6ff; border-left: 3px solid var(--primary); }
+  .list-item-text { font-weight: 500; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px;}
+  .list-item-status { font-size: 12px; color: var(--text-light); display: flex; gap: 8px; }
+  .tag-warn { color: #b45309; background: #fef3c7; padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+  .tag-ok { color: #047857; background: #d1fae5; padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+  
+  .lang-select-bar { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+  .lang-tab-btn { padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border); background: #fff; cursor: pointer; font-size: 13px; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+  .lang-tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .lang-tab-btn.warn { border-color: var(--warn); color: var(--warn); background: #fffbeb; }
+  .lang-tab-btn.warn.active { background: var(--warn); color: #fff; }
 </style>
 </head>
 <body>
@@ -100,37 +123,41 @@
 
 <div class="sidebar" style="display:none;" id="sidebar">
   <div class="sidebar-logo">NEXAPAY Admin</div>
-  <div class="menu-item has-sub" onclick="toggleSubMenu(this)">多语言管理 <span>▼</span></div>
+  
+  <div class="menu-item" onclick="toggleSubMenu('sub-lang')">多语言管理 <span>▼</span></div>
   <div class="sub-menu" id="sub-lang">
-    <div class="sub-item active" onclick="switchTab('lang-list')">语言列表</div>
-    <div class="sub-item" onclick="switchTab('dict-list')">字典全量编辑</div>
+    <div class="sub-item" onclick="switchTab('lang-list', this)">语言列表</div>
+    <div class="sub-item" onclick="switchTab('dict-list', this)">字典全量编辑</div>
   </div>
-  <div class="menu-item" onclick="switchTab('settings')">API 配置</div>
+
+  <div class="menu-item" onclick="switchTab('faq', this)">常见问题管理</div>
+  <div class="menu-item" onclick="switchTab('review', this)">评论管理</div>
+  
+  <div class="menu-item" onclick="toggleSubMenu('sub-sys')">系统配置 <span>▼</span></div>
+  <div class="sub-menu" id="sub-sys">
+    <div class="sub-item" onclick="switchTab('sys-settings', this)">全局系统配置</div>
+    <div class="sub-item" onclick="switchTab('api-settings', this)">API 配置</div>
+  </div>
+
   <div style="flex:1"></div>
   <div class="menu-item" onclick="logout()">退出登录</div>
 </div>
 
 <div class="main-content" style="display:none;" id="main-content">
   
-  <div id="tab-lang-list">
+  <!-- 语言列表 -->
+  <div id="tab-lang-list" style="display:none;">
     <div class="header">
       <h1>多语言管理</h1>
       <div style="display:flex; gap:10px;">
         <button class="btn" onclick="openBatchLangModal()">🌐 添加常用语言</button>
-        <button class="btn btn-primary" id="globalTransBtn" onclick="globalTranslate()">⚡ 一键全局翻译</button>
+        <button class="btn btn-primary" id="globalTransBtn" onclick="globalTranslateAll()">⚡ 一键全局翻译 (包含字典与内容)</button>
       </div>
     </div>
-
     <div class="progress-wrap" id="trans-progress-wrap">
-      <div class="progress-info">
-        <span id="trans-status-text">正在准备翻译...</span>
-        <span id="trans-percent">0%</span>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="trans-progress-bar"></div>
-      </div>
+      <div class="progress-info"><span id="trans-status-text">正在准备翻译...</span><span id="trans-percent">0%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="trans-progress-bar"></div></div>
     </div>
-    
     <div class="card">
       <h3 style="margin-bottom: 15px; font-size:16px;">添加新语言</h3>
       <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
@@ -139,23 +166,15 @@
         <button class="btn btn-primary" onclick="addSingleLang()">添加</button>
       </div>
     </div>
-
     <div class="card">
       <table>
-        <thead>
-          <tr>
-            <th>代码</th>
-            <th>名称</th>
-            <th>状态开关</th>
-            <th>字典状态</th>
-            <th>操作</th>
-          </tr>
-        </thead>
+        <thead><tr><th>代码</th><th>名称</th><th>状态开关</th><th>字典状态</th><th>操作</th></tr></thead>
         <tbody id="lang-tbody"></tbody>
       </table>
     </div>
   </div>
 
+  <!-- 字典编辑 -->
   <div id="tab-dict-list" style="display:none;">
     <div class="header">
       <h1>字典管理</h1>
@@ -170,7 +189,92 @@
     </div>
   </div>
 
-  <div id="tab-settings" style="display:none;">
+  <!-- 常见问题 -->
+  <div id="tab-faq" style="display:none;">
+    <div class="split-layout">
+      <div class="split-left">
+        <div class="list-header">
+          <span>问题列表</span>
+          <button class="btn btn-primary" style="padding: 4px 10px; font-size:12px;" onclick="createItem('faq')">+ 新建</button>
+        </div>
+        <div class="list-items" id="faq-list-items"></div>
+      </div>
+      <div class="split-right">
+        <div class="loading-overlay" id="faq-loading"><div class="spinner"></div>加载中...</div>
+        <div id="faq-editor" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="font-size:18px;">编辑问答</h2>
+            <div>
+              <button class="btn btn-danger" onclick="deleteItem('faq')">删除</button>
+              <button class="btn btn-primary" onclick="saveItem('faq')">保存发布</button>
+            </div>
+          </div>
+          <div class="lang-select-bar" id="faq-lang-tabs"></div>
+          
+          <div class="form-group">
+            <label>问题 (Question)</label>
+            <input type="text" id="faq-input-q" placeholder="请输入问题..." />
+          </div>
+          <div class="form-group">
+            <label>回答 (Answer)</label>
+            <textarea id="faq-input-a" placeholder="请输入回答..."></textarea>
+          </div>
+          
+          <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:20px; display:flex; justify-content:space-between; align-items:center;">
+             <p style="font-size:13px; color:var(--text-light);">将当前中文内容翻译并填充到其他缺失的语言。</p>
+             <button class="btn" onclick="translateItem('faq')" id="faq-trans-btn">⚡ 补齐当前条目的其他语言</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 评论管理 -->
+  <div id="tab-review" style="display:none;">
+    <div class="split-layout">
+      <div class="split-left">
+        <div class="list-header">
+          <span>评论列表</span>
+          <button class="btn btn-primary" style="padding: 4px 10px; font-size:12px;" onclick="createItem('review')">+ 新建</button>
+        </div>
+        <div class="list-items" id="review-list-items"></div>
+      </div>
+      <div class="split-right">
+        <div class="loading-overlay" id="review-loading"><div class="spinner"></div>加载中...</div>
+        <div id="review-editor" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="font-size:18px;">编辑评论</h2>
+            <div>
+              <button class="btn btn-danger" onclick="deleteItem('review')">删除</button>
+              <button class="btn btn-primary" onclick="saveItem('review')">保存发布</button>
+            </div>
+          </div>
+          <div class="lang-select-bar" id="review-lang-tabs"></div>
+
+          <div class="form-group">
+            <label>评论内容 (Content)</label>
+            <textarea id="review-input-content" style="min-height:100px;" placeholder="请输入评价内容..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>用户名字 (Name)</label>
+            <input type="text" id="review-input-name" placeholder="如: Nick" />
+          </div>
+          <div class="form-group">
+            <label>用户标签/身份 (Tag)</label>
+            <input type="text" id="review-input-tag" placeholder="如: 自由设计师" />
+          </div>
+
+          <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:20px; display:flex; justify-content:space-between; align-items:center;">
+             <p style="font-size:13px; color:var(--text-light);">将当前中文内容翻译并填充到其他缺失的语言。</p>
+             <button class="btn" onclick="translateItem('review')" id="review-trans-btn">⚡ 补齐当前条目的其他语言</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- API配置 -->
+  <div id="tab-api-settings" style="display:none;">
     <div class="header"><h1>API 配置</h1></div>
     <div class="card">
       <div class="form-group">
@@ -181,146 +285,56 @@
       <div class="form-group">
         <label>DeepL API Key (免费版或专业版)</label>
         <input type="text" id="set-deepl-key" placeholder="输入 DeepL API Key">
-        <p style="font-size:12px; color:var(--text-light); margin-top:5px;">必填项。免费版 Key 一般以 :fx 结尾，请确保填写正确，否则翻译将无法调用。</p>
+        <p style="font-size:12px; color:var(--text-light); margin-top:5px;">必填项。免费版 Key 一般以 :fx 结尾。</p>
       </div>
       <div class="form-group">
-        <label>翻译并发数（同时发送的请求数量）</label>
+        <label>翻译并发数</label>
         <input type="number" id="set-concurrency" min="1" max="10" value="3">
-        <p style="font-size:12px; color:var(--text-light); margin-top:5px;">建议 1-3（免费版 API 有严格频率限制，太高容易报错）；专业版可设 5-10。</p>
+        <p style="font-size:12px; color:var(--text-light); margin-top:5px;">建议 1-3（免费版）。</p>
       </div>
-      <button class="btn btn-primary" onclick="saveSettings()">保存配置</button>
+      <button class="btn btn-primary" onclick="saveApiSettings()">保存配置</button>
+    </div>
+  </div>
+
+  <!-- 系统配置 -->
+  <div id="tab-sys-settings" style="display:none;">
+    <div class="header"><h1>全局系统配置</h1></div>
+    <div class="card">
+      <div class="form-group">
+        <label>Safari 浏览器拦截提示 - 标题</label>
+        <input type="text" id="set-safari-title" placeholder="如: 请使用 Safari 浏览器打开">
+      </div>
+      <div class="form-group">
+        <label>Safari 浏览器拦截提示 - 内容</label>
+        <textarea id="set-safari-desc" placeholder="系统检测到您正在使用非苹果官方 Safari 访问..."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="saveSysSettings()">保存配置</button>
     </div>
   </div>
 
 </div>
 
+<!-- 弹窗 -->
 <div class="modal-overlay" id="modal-batch-lang">
   <div class="modal">
-    <div class="modal-header">
-      <h2>添加常用国家语言</h2>
-      <span class="close-btn" onclick="closeModal('modal-batch-lang')">×</span>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:14px; color:var(--text-light); margin-bottom:10px;">勾选需要添加的语言。</p>
-      <div class="lang-grid" id="common-lang-grid"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('modal-batch-lang')">取消</button>
-      <button class="btn btn-primary" onclick="confirmBatchLang()">添加选中语言</button>
-    </div>
+    <div class="modal-header"><h2>添加常用国家语言</h2><span class="close-btn" onclick="closeModal('modal-batch-lang')">×</span></div>
+    <div class="modal-body"><div class="lang-grid" id="common-lang-grid"></div></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-batch-lang')">取消</button><button class="btn btn-primary" onclick="confirmBatchLang()">添加选中语言</button></div>
   </div>
 </div>
-
 <div class="modal-overlay" id="modal-edit-json">
   <div class="modal">
-    <div class="modal-header">
-      <h2 id="edit-modal-title">编辑字典</h2>
-      <span class="close-btn" onclick="closeModal('modal-edit-json')">×</span>
-    </div>
-    <div class="modal-body" style="position:relative;">
-      <textarea class="json-editor" id="edit-json-textarea"></textarea>
-      <div class="loading-overlay" id="translate-loading" style="position:absolute; inset:0; background:rgba(255,255,255,0.9);">
-        <div class="spinner"></div>
-        <div style="font-weight:600; color:var(--primary);">正在请求翻译引擎，补齐缺失文案...</div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('modal-edit-json')">取消</button>
-      <button class="btn btn-primary" onclick="saveLangJson()">保存字典</button>
-    </div>
+    <div class="modal-header"><h2 id="edit-modal-title">编辑字典</h2><span class="close-btn" onclick="closeModal('modal-edit-json')">×</span></div>
+    <div class="modal-body" style="position:relative;"><textarea class="json-editor" id="edit-json-textarea"></textarea></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modal-edit-json')">取消</button><button class="btn btn-primary" onclick="saveLangJson()">保存字典</button></div>
   </div>
 </div>
-
 <div class="toast" id="globalToast"></div>
 
 <script>
-// 完整的默认字典，包含了登录页动态切换的新增词条
-const DEFAULT_DICT = {
-  "nav": {
-    "personal": "个人", "business": "企业", "company": "公司", "earn": "赚币", "explore": "探索"
-  },
-  "hero": {
-    "title": "让加密货币融入真实生活", "subtitle": "向稳定币支付敞开大门", "start": "立即开始支付"
-  },
-  "features": {
-    "title": "享受日常权益",
-    "c1_t": "轻松获取稳定币", "c1_d": "通过 P2P 兑换和法币入金。",
-    "c2_t": "随时使用稳定币支付", "c2_d": "绑定卡片，随心支付。",
-    "c3_t": "快速安全地转移加密货币", "c3_d": "支持 100+ 国家/地区。",
-    "c4_t": "多种货币，一个应用", "c4_d": "一站式管理加密资产。"
-  },
-  "showcase": {
-    "title": "数字支付，简单随行", "subtitle": "轻松、安全地支付加密货币，随时随地。"
-  },
-  "slider": {
-    "btn": "了解更多",
-    "tag1": "全球转账", "title1": "发送加密货币，收取本地货币", "desc1": "轻松转账，每笔交易都有保障，让收款人更快收到资金。",
-    "tag2": "应用内转账", "title2": "向任何 NEXAPAY 用户发送加密货币", "desc2": "无论何时何地，只需对方 NEXAPAY ID、手机号，即发即达。",
-    "tag3": "多币种钱包", "title3": "连接加密货币与日常生活", "desc3": "集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。",
-    "tag4": "信用额度", "title4": "持有加密货币，使用信用额度", "desc4": "使用加密货币作为抵押获取资金，并灵活选择还款方式。",
-    "tag5": "赚币", "title5": "轻松增值您的加密资产", "desc5": "让加密货币为您工作，获得每日奖励。",
-    "tag6": "兑换", "title6": "轻松兑换加密资产", "desc6": "提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。",
-    "tag7": "P2P 市场", "title7": "点对点交易，由您驱动", "desc7": "可通过多种法币和支付方式买卖加密货币，直接与交易对手进行，安全高效。"
-  },
-  "stats": {
-    "title": "备受全球信赖", "s1": "全球用户", "s2": "国家", "s3": "年度支付交易额"
-  },
-  "logos": {
-    "invest": "我们的投资者", "partner": "我们的商业伙伴"
-  },
-  "testimonials": {
-    "title": "聆听社区心声",
-    "t1": "“使用 NEXAPAY 的虚拟卡支付非常简单，直接从加密货币余额扣款，省去了很多麻烦。”", "a1": "Nick · 自由设计师",
-    "t2": "“NEXAPAY 用起来真简便，从注册、入金到开始支付，一气呵成！”", "a2": "Mia · 远程工作者",
-    "t3": "“NEXAPAY 的虚拟卡不仅在支付时方便，还能享受返现，非常棒。”", "a3": "Alex · 跨境电商"
-  },
-  "faq": {
-    "title": "常见问题",
-    "q1": "为什么加密货币还没普及使用？", "a1": "尽管加密货币越来越受欢迎，但其在日常支付中的普及仍面临挑战。NEXAPAY 正在解决这些问题，让支付变得无缝且合规。",
-    "q2": "如何使用 NEXAPAY 支付？", "a2": "只需注册 NEXAPAY 账户，绑定您的加密资产，即可在全球任何支持 Visa 的商户使用虚拟卡进行支付。",
-    "q3": "NEXAPAY 安全吗？", "a3": "安全是我们的首要任务。我们采用银行级加密技术，并由持牌金融机构托管资金，确保您的资产安全无虞。"
-  },
-  "footer": {
-    "desc": "与 NEXAPAY 开启稳定币支付之旅", "slogan": "快速。流畅。安全。",
-    "c1": "个人", "c2": "商业", "c3": "资源", "c4": "帮助与支持",
-    "c1_1": "卡片", "c1_2": "扫码支付", "c1_3": "全球转账", "c1_4": "多币种钱包", "c1_5": "赚币",
-    "c2_1": "关于我们", "c2_2": "联系我们", "c2_3": "加入我们", "c2_4": "新闻中心",
-    "c3_1": "帮助中心", "c3_2": "API 文档", "c3_3": "博客", "c3_4": "费率标准",
-    "c4_1": "服务条款", "c4_2": "隐私政策", "c4_3": "风险披露", "c4_4": "牌照信息",
-    "copy": "© 2026 NEXAPAY. All rights reserved.", "lang": "简体中文"
-  },
-  "login_page": {
-    "account": "您的账户",
-    "welcome": "欢迎回来",
-    "desc": "登录以管理您的个人资料。",
-    "email": "电子邮箱",
-    "pwd": "密码",
-    "show": "显示",
-    "hide": "隐藏",
-    "login_btn": "登录",
-    "first_time": "初次使用 NEXAPAY?",
-    "create": "创建账户",
-    "back": "返回首页",
-    "sec_title": "正在建立安全连接",
-    "sec_desc": "为了您的账户安全，正在检测环境并生成加密信息...",
-    "step1": "检测网络环境与设备指纹",
-    "step2": "生成 AES-256 本地加密密钥",
-    "step3": "建立端到端安全传输通道",
-    "step4": "同步账户加密凭证",
-    
-    "new_user": "新用户注册",
-    "create_title": "创建您的账户",
-    "create_desc": "注册以开始使用 NEXAPAY 服务。",
-    "username": "用户名",
-    "username_ph": "请输入用户名",
-    "register_btn": "注册",
-    "have_account": "已有账户？",
-    "go_login": "去登录",
-    "email_ph": "请输入邮箱",
-    "pwd_ph": "请输入密码"
-  }
-};
-
+// ================= 全局数据 =================
+let appData = { langs: [], globalDict: {}, faqs: [], testimonials: [], sysConfig: {} };
+let currentEditLangCode = "";
 const COMMON_LANGS = [
   { code: "en", name: "English" }, { code: "zh-TW", name: "繁體中文" },
   { code: "ja", name: "日本語" }, { code: "ko", name: "한국어" },
@@ -330,83 +344,94 @@ const COMMON_LANGS = [
   { code: "id", name: "Bahasa Indonesia" }, { code: "ar", name: "العربية" }
 ];
 
-let currentLangs = [];
-let currentEditLangCode = "";
-let globalDict = {};
-let isGlobalTranslating = false;
+const DEFAULT_DICT = {
+  "nav": { "personal": "个人", "business": "企业", "company": "公司", "earn": "赚币", "explore": "探索" },
+  "hero_title": "让加密货币融入真实生活", "hero_sub": "向稳定币支付敞开大门", "hero_btn": "立即开始支付",
+  "feature_title": "享受日常权益",
+  "f1_t": "轻松获取稳定币", "f1_d": "通过 P2P 兑换和法币入金。",
+  "f2_t": "随时使用稳定币支付", "f2_d": "绑定卡片，随心支付。",
+  "f3_t": "快速安全地转移加密货币", "f3_d": "支持 100+ 国家/地区。",
+  "f4_t": "多种货币，一个应用", "f4_d": "一站式管理加密资产。",
+  "showcase_t": "数字支付，简单随行", "showcase_d": "轻松、安全地支付订阅、旅行和日常消费。",
+  "showcase_btn": "了解更多", "tab_virtual": "虚拟卡", "tab_physical": "实体卡",
+  "card_holder": "持卡人", "card_exp": "有效期",
+  "s1_tag": "赚币", "s1_title": "轻松增值您的加密资产", "s1_desc": "让加密货币为您工作，获得每日奖励。",
+  "s2_tag": "全球转账", "s2_title": "发送加密货币，收取本地货币", "s2_desc": "轻松转账，每笔交易都有保障，让收款人更快收到资金。",
+  "s3_tag": "多币种钱包", "s3_title": "连接加密货币与日常生活", "s3_desc": "集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。",
+  "s4_tag": "兑换", "s4_title": "轻松兑换加密资产", "s4_desc": "提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。",
+  "btn_more": "了解更多",
+  "stats_title": "备受全球信赖", "stats_1": "全球用户", "stats_2": "国家", "stats_3": "年度支付交易额",
+  "testi_title": "聆听社区心声", "faq_title": "常见问题",
+  "footer_desc": "与 NEXAPAY 开启稳定币支付之旅", "footer_slogan": "快速。流畅。安全。",
+  "footer_copy": "© 2026 NEXAPAY. All rights reserved.", "footer_lang": "简体中文",
+  "login_page": {
+    "account": "您的账户", "welcome": "欢迎回来", "desc": "登录以管理您的个人资料。",
+    "email": "电子邮箱", "pwd": "密码", "show": "显示", "hide": "隐藏", "login_btn": "登录",
+    "first_time": "初次使用 NEXAPAY?", "create": "创建账户", "back": "返回首页",
+    "sec_title": "正在建立安全连接", "sec_desc": "为了您的账户安全，正在检测环境并生成加密信息...",
+    "step1": "检测网络环境与设备指纹", "step2": "生成 AES-256 本地加密密钥",
+    "step3": "建立端到端安全传输通道", "step4": "同步账户加密凭证",
+    "new_user": "新用户注册", "create_title": "创建您的账户", "create_desc": "注册以开始使用 NEXAPAY 服务。",
+    "username": "用户名", "username_ph": "请输入用户名", "register_btn": "注册",
+    "have_account": "已有账户？", "go_login": "去登录", "email_ph": "请输入邮箱", "pwd_ph": "请输入密码"
+  }
+};
 
+// ================= 工具方法 =================
 function showToast(msg) {
   const toast = document.getElementById('globalToast');
   toast.textContent = msg;
   toast.style.display = 'block';
   setTimeout(() => { toast.style.display = 'none'; }, 3000);
 }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
 async function fetchData() {
     try {
         const res = await fetch('/api/data');
-        return await res.json();
-    } catch (e) {
-        alert('无法连接后端，请确保运行了 node server.js');
-        return { langs: [], globalDict: DEFAULT_DICT };
-    }
+        appData = await res.json();
+        if (!appData.faqs) appData.faqs = [];
+        if (!appData.testimonials) appData.testimonials = [];
+        if (!appData.sysConfig) appData.sysConfig = { safariTitle: "请使用 Safari 浏览器打开", safariDesc: "系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。" };
+        if (!appData.globalDict || Object.keys(appData.globalDict).length === 0) appData.globalDict = DEFAULT_DICT;
+    } catch (e) { alert('无法连接后端，请运行 node server.js'); }
 }
 
 async function saveData() {
-    await fetch('/api/data', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ langs: currentLangs, globalDict: globalDict })
-    });
+    await fetch('/api/data', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(appData) });
     renderLangTable();
 }
 
 function doLogin() {
   const pwd = document.getElementById('login-pwd').value;
   const savedPwd = localStorage.getItem('nexapay_admin_pwd') || 'admin888';
-  
   if (pwd === savedPwd) {
     localStorage.setItem('nexapay_admin_logged', 'true');
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('sidebar').style.display = 'flex';
     document.getElementById('main-content').style.display = 'block';
-    initData();
-  } else {
-    document.getElementById('login-err').style.display = 'block';
-  }
+    initAdmin();
+  } else { document.getElementById('login-err').style.display = 'block'; }
 }
 
-function logout() {
-  localStorage.removeItem('nexapay_admin_logged');
-  location.reload();
-}
+function logout() { localStorage.removeItem('nexapay_admin_logged'); location.reload(); }
 
-async function initData() {
+async function initAdmin() {
+    await fetchData();
     document.getElementById('set-deepl-key').value = localStorage.getItem('nexapay_deepl_key') || '';
     document.getElementById('set-concurrency').value = localStorage.getItem('nexapay_concurrency') || '3';
+    document.getElementById('set-safari-title').value = appData.sysConfig.safariTitle;
+    document.getElementById('set-safari-desc').value = appData.sysConfig.safariDesc;
 
-    const data = await fetchData();
-    if (!data.langs || data.langs.length === 0) {
-        currentLangs = [
-            { code: "zh", name: "简体中文", status: true, dict: {} },
-            { code: "en", name: "English", status: true, dict: {} }
-        ];
-        globalDict = DEFAULT_DICT;
-        await saveData();
-    } else {
-        currentLangs = data.langs;
-        currentLangs.forEach(l => { if (l.status === undefined) l.status = true; });
-        globalDict = data.globalDict || DEFAULT_DICT;
-        
-        // 自动检测：如果没有新加的 new_user 字段，说明是旧版，直接强制覆盖
-        if (!globalDict.login_page || !globalDict.login_page.new_user) {
-           globalDict = DEFAULT_DICT;
-           await saveData();
-        }
-    }
-    
     renderLangTable();
-    document.getElementById('global-dict-editor').value = JSON.stringify(globalDict, null, 2);
+    document.getElementById('global-dict-editor').value = JSON.stringify(appData.globalDict, null, 2);
+    
+    // 默认显示语言列表
+    switchTab('lang-list', document.querySelector('#sub-lang .sub-item'));
+    
+    // 初始化列表
+    renderItemList('faq');
+    renderItemList('review');
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -414,63 +439,42 @@ window.addEventListener('DOMContentLoaded', () => {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('sidebar').style.display = 'flex';
         document.getElementById('main-content').style.display = 'block';
-        initData();
+        initAdmin();
     }
 });
 
-function toggleSubMenu(el) { document.getElementById('sub-lang').classList.toggle('open'); }
-function switchTab(tabId) {
-  document.querySelectorAll('.main-content > div').forEach(el => el.style.display = 'none');
-  document.getElementById('tab-' + tabId).style.display = 'block';
-  document.querySelectorAll('.sub-item, .menu-item').forEach(el => el.classList.remove('active'));
-  event.target.classList.add('active');
+function toggleSubMenu(id) { document.getElementById(id).classList.toggle('open'); }
+
+function switchTab(tabId, el) {
+  document.querySelectorAll('.main-content > div').forEach(div => div.style.display = 'none');
+  const target = document.getElementById('tab-' + tabId);
+  if (target) target.style.display = 'block';
+  
+  document.querySelectorAll('.sub-item, .menu-item').forEach(item => item.classList.remove('active'));
+  if (el) el.classList.add('active');
 }
 
+// ================= 语言管理 =================
 function renderLangTable() {
   const tbody = document.getElementById('lang-tbody');
   tbody.innerHTML = '';
-  
-  const uniqueTexts = [...new Set(flattenValues(globalDict))];
+  const uniqueTexts = [...new Set(flattenValues(appData.globalDict))];
   const totalTexts = uniqueTexts.length;
 
-  currentLangs.forEach((lang) => {
-    const validDictCount = Object.keys(lang.dict || {}).filter(k => {
-        const val = lang.dict[k];
-        return val && val.trim() !== "" && val !== k;
-    }).length;
-    
+  appData.langs.forEach((lang) => {
+    const validDictCount = Object.keys(lang.dict || {}).filter(k => lang.dict[k] && lang.dict[k].trim() !== "" && lang.dict[k] !== k).length;
     const coverage = totalTexts > 0 ? Math.round((validDictCount / totalTexts) * 100) : 0;
-    
-    let statusHtml = "";
-    if (lang.code === 'zh') {
-      statusHtml = `<span style="color:var(--success)">默认语言</span>`;
-    } else if (coverage >= 100) {
-      statusHtml = `<span style="color:var(--success)">已全部翻译</span>`;
-    } else {
-      statusHtml = `<span style="color:var(--danger)">已翻译 ${coverage}%</span>`;
-    }
-
+    let statusHtml = lang.code === 'zh' ? '<span style="color:var(--success)">默认语言</span>' : coverage >= 100 ? '<span style="color:var(--success)">已全部翻译</span>' : `<span style="color:var(--danger)">已翻译 ${coverage}%</span>`;
     const isChecked = lang.status !== false ? 'checked' : '';
     const isDisabled = lang.code === 'zh' ? 'disabled' : '';
-    const switchHtml = `
-      <label class="switch">
-        <input type="checkbox" onchange="toggleLangStatus('${lang.code}', this.checked)" ${isChecked} ${isDisabled}>
-        <span class="slider"></span>
-      </label>
-    `;
-
+    const switchHtml = `<label class="switch"><input type="checkbox" onchange="toggleLangStatus('${lang.code}', this.checked)" ${isChecked} ${isDisabled}><span class="slider"></span></label>`;
+    
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${lang.code}</td>
-      <td>${lang.name}</td>
-      <td>${switchHtml}</td>
-      <td>${statusHtml}</td>
+      <td>${lang.code}</td><td>${lang.name}</td><td>${switchHtml}</td><td>${statusHtml}</td>
       <td class="actions">
         <span onclick="editLangJson('${lang.code}')">编辑字典</span>
-        ${lang.code !== 'zh' ? `
-          <span onclick="translateSingleLang('${lang.code}')">补齐翻译</span>
-          <span onclick="deleteLang('${lang.code}')" class="del-btn">删除</span>
-        ` : ''}
+        ${lang.code !== 'zh' ? `<span onclick="translateSingleLang('${lang.code}')">补齐翻译</span><span onclick="deleteLang('${lang.code}')" class="del-btn">删除</span>` : ''}
       </td>
     `;
     tbody.appendChild(tr);
@@ -478,27 +482,23 @@ function renderLangTable() {
 }
 
 async function deleteLang(code) {
-  if (!confirm(`确定要删除语言 [${code}] 及其所有翻译数据吗？此操作不可恢复。`)) return;
-  currentLangs = currentLangs.filter(l => l.code !== code);
+  if (!confirm(`确定要删除语言 [${code}] 吗？`)) return;
+  appData.langs = appData.langs.filter(l => l.code !== code);
   await saveData();
-  showToast('✅ 语言已删除');
+  showToast('✅ 已删除');
 }
 
 async function toggleLangStatus(code, isChecked) {
-  const lang = currentLangs.find(l => l.code === code);
-  if (lang) {
-    lang.status = isChecked;
-    await saveData();
-  }
+  const lang = appData.langs.find(l => l.code === code);
+  if (lang) { lang.status = isChecked; await saveData(); }
 }
 
 async function addSingleLang() {
   const code = document.getElementById('new-lang-code').value.trim();
   const name = document.getElementById('new-lang-name').value.trim();
-  if (!code || !name) return alert('请填写代码和名称');
-  if (currentLangs.find(l => l.code === code)) return alert('语言已存在');
-  
-  currentLangs.push({ code, name, status: true, dict: {} });
+  if (!code || !name) return alert('请填写完整');
+  if (appData.langs.find(l => l.code === code)) return alert('语言已存在');
+  appData.langs.push({ code, name, status: true, dict: {} });
   await saveData();
   document.getElementById('new-lang-code').value = '';
   document.getElementById('new-lang-name').value = '';
@@ -508,7 +508,7 @@ function openBatchLangModal() {
   const grid = document.getElementById('common-lang-grid');
   grid.innerHTML = '';
   COMMON_LANGS.forEach(lang => {
-    const exists = currentLangs.find(l => l.code === lang.code);
+    const exists = appData.langs.find(l => l.code === lang.code);
     grid.innerHTML += `<label class="lang-checkbox"><input type="checkbox" value="${lang.code}" data-name="${lang.name}" ${exists ? 'disabled checked' : ''}> ${lang.name}</label>`;
   });
   document.getElementById('modal-batch-lang').classList.add('show');
@@ -517,25 +517,23 @@ function openBatchLangModal() {
 async function confirmBatchLang() {
   const checked = document.querySelectorAll('#common-lang-grid input:checked:not(:disabled)');
   checked.forEach(cb => {
-    currentLangs.push({ code: cb.value, name: cb.dataset.name, status: true, dict: {} });
+    appData.langs.push({ code: cb.value, name: cb.dataset.name, status: true, dict: {} });
   });
   await saveData();
   closeModal('modal-batch-lang');
 }
 
 function editLangJson(code) {
-  const lang = currentLangs.find(l => l.code === code);
+  const lang = appData.langs.find(l => l.code === code);
   currentEditLangCode = code;
-  document.getElementById('edit-modal-title').innerText = `编辑字典: ${lang.name} (${lang.code})`;
-  
+  document.getElementById('edit-modal-title').innerText = `编辑字典: ${lang.name}`;
   let dictToEdit = lang.dict;
   if (!dictToEdit || Object.keys(dictToEdit).length === 0) {
-    dictToEdit = flattenValues(globalDict);
+    dictToEdit = flattenValues(appData.globalDict);
     let emptyDict = {};
     dictToEdit.forEach(t => emptyDict[t] = "");
     dictToEdit = emptyDict;
   }
-      
   document.getElementById('edit-json-textarea').value = JSON.stringify(dictToEdit, null, 2);
   document.getElementById('modal-edit-json').classList.add('show');
 }
@@ -543,251 +541,314 @@ function editLangJson(code) {
 async function saveLangJson() {
   try {
     const json = JSON.parse(document.getElementById('edit-json-textarea').value);
-    const lang = currentLangs.find(l => l.code === currentEditLangCode);
+    const lang = appData.langs.find(l => l.code === currentEditLangCode);
     lang.dict = json;
     await saveData();
     closeModal('modal-edit-json');
-  } catch (e) {
-    alert('JSON 格式错误，请检查');
-  }
+  } catch (e) { alert('JSON 格式错误'); }
 }
 
 function flattenValues(obj, result = []) {
   for (let k in obj) {
-    if (typeof obj[k] === 'object' && obj[k] !== null) {
-      flattenValues(obj[k], result);
-    } else if (typeof obj[k] === 'string' && obj[k].trim()) {
-      result.push(obj[k]);
-    }
+    if (typeof obj[k] === 'object' && obj[k] !== null) flattenValues(obj[k], result);
+    else if (typeof obj[k] === 'string' && obj[k].trim()) result.push(obj[k]);
   }
   return result;
 }
 
-async function fetchTranslation(text, targetLang) {
-  if (!text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return text;
-  const deeplKey = localStorage.getItem('nexapay_deepl_key');
-  
-  if (!deeplKey) {
-    throw new Error("请先在「API 配置」中填写 DeepL API Key");
-  }
-
-  const res = await fetch('/api/translate', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, targetLang, deeplKey })
-  });
-  
-  if (res.ok) {
-    const data = await res.json();
-    return data.translatedText;
-  } else {
-    const errData = await res.json();
-    throw new Error(errData.error || "翻译失败");
-  }
-}
-
-function updateProgress(current, total) {
-  const wrap = document.getElementById('trans-progress-wrap');
-  const bar = document.getElementById('trans-progress-bar');
-  const percent = document.getElementById('trans-percent');
-  const status = document.getElementById('trans-status-text');
-
-  if (current === null) {
-    wrap.style.display = 'none';
-    return;
-  }
-
-  wrap.style.display = 'block';
-  const p = Math.round((current / total) * 100);
-  bar.style.width = p + '%';
-  percent.textContent = p + '%';
-  status.textContent = `正在请求 DeepL 翻译... (${current}/${total})`;
-}
-
-async function translateSingleLang(code) {
-  const lang = currentLangs.find(l => l.code === code);
-  currentEditLangCode = code;
-  
-  const textsToTranslate = [...new Set(flattenValues(globalDict))];
-  let translatedDict = lang.dict || {};
-  const tLang = code.split('-')[0];
-
-  const missingTexts = textsToTranslate.filter(text => {
-    if (!text || !text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return false;
-    const val = translatedDict[text];
-    if (val && val.trim() !== "" && val !== text) return false;
-    return true;
-  });
-
-  if (missingTexts.length === 0) {
-    alert(`${lang.name} 已经是全量翻译状态，无需更新。`);
-    return; 
-  }
-
-  document.getElementById('edit-modal-title').innerText = `翻译中: ${lang.name} (${lang.code})`;
-  document.getElementById('modal-edit-json').classList.add('show');
-  
-  const loading = document.getElementById('translate-loading');
-  loading.classList.add('show');
-
-  const CONCURRENCY = parseInt(localStorage.getItem('nexapay_concurrency') || '3', 10);
-  
-  try {
-    for (let i = 0; i < missingTexts.length; i += CONCURRENCY) {
-      const chunk = missingTexts.slice(i, i + CONCURRENCY);
-      document.getElementById('edit-json-textarea').value = `正在并发补齐缺失的文案 (${i+1}/${missingTexts.length})...\n\n当前批次翻译: \n${chunk.join('\n')}`;
-      
-      const promises = chunk.map(async (text) => {
-        const translated = await fetchTranslation(text, tLang);
-        return { text, translated };
-      });
-      const results = await Promise.all(promises);
-      results.forEach(r => { translatedDict[r.text] = r.translated; });
-      
-      await new Promise(r => setTimeout(r, 1500));
-    }
-
-    lang.dict = translatedDict;
-    await saveData();
-    
-    loading.classList.remove('show');
-    document.getElementById('edit-json-textarea').value = JSON.stringify(lang.dict, null, 2);
-    document.getElementById('edit-modal-title').innerText = `翻译完成: ${lang.name}`;
-  } catch (err) {
-    loading.classList.remove('show');
-    closeModal('modal-edit-json');
-    alert('❌ 翻译中断：' + err.message);
-  }
-}
-
-async function performTranslate(lang) {
-  const textsToTranslate = [...new Set(flattenValues(globalDict))];
-  let translatedDict = lang.dict || {};
-  const tLang = lang.code.split('-')[0];
-
-  const missingTexts = textsToTranslate.filter(text => {
-    if (!text || !text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return false;
-    const val = translatedDict[text];
-    if (val && val.trim() !== "" && val !== text) return false;
-    return true;
-  });
-
-  if (missingTexts.length === 0) return false;
-
-  const CONCURRENCY = parseInt(localStorage.getItem('nexapay_concurrency') || '3', 10);
-  let completed = 0;
-
-  for (let i = 0; i < missingTexts.length; i += CONCURRENCY) {
-    const chunk = missingTexts.slice(i, i + CONCURRENCY);
-    const promises = chunk.map(async (text) => {
-      const translated = await fetchTranslation(text, tLang);
-      return { text, translated };
-    });
-    const results = await Promise.all(promises);
-    results.forEach(r => {
-      translatedDict[r.text] = r.translated;
-      completed++;
-    });
-    
-    updateProgress(completed, missingTexts.length);
-    await new Promise(r => setTimeout(r, 1500));
-  }
-
-  lang.dict = translatedDict;
-  return true;
-}
-
-async function globalTranslate() {
-  if (isGlobalTranslating) return;
-  
-  const deeplKey = localStorage.getItem('nexapay_deepl_key');
-  if (!deeplKey) {
-    return alert('请先在「API 配置」中填写并保存 DeepL API Key！');
-  }
-
-  if(!confirm('确定要自动补齐所有语言的缺失翻译吗？')) return;
-  
-  isGlobalTranslating = true;
-  const btn = document.getElementById('globalTransBtn');
-  const origText = btn.innerHTML;
-  btn.innerHTML = '⏳ 正在后台翻译...';
-  btn.disabled = true;
-
-  let translatedAny = false;
-  updateProgress(0, 1);
-  
-  try {
-    for (let i = 0; i < currentLangs.length; i++) {
-      const lang = currentLangs[i];
-      if (lang.code === 'zh') continue;
-
-      showToast(`正在翻译: ${lang.name}...`);
-      const didTranslate = await performTranslate(lang);
-      
-      if (didTranslate) {
-        translatedAny = true;
-        await saveData();
-      }
-    }
-
-    if (translatedAny) {
-      showToast('✅ 所有缺失语言已自动补齐翻译！');
-    } else {
-      showToast('✅ 所有语言均已全量翻译，无需更新！');
-    }
-  } catch (e) {
-    console.error(e);
-    alert('❌ 翻译出错：' + e.message);
-  } finally {
-    isGlobalTranslating = false;
-    btn.innerHTML = origText;
-    btn.disabled = false;
-    updateProgress(null);
-  }
-}
-
-function saveSettings() {
-  const newPwd = document.getElementById('set-admin-pwd').value;
-  const deeplKey = document.getElementById('set-deepl-key').value;
-  const concurrency = document.getElementById('set-concurrency').value;
-
-  if (newPwd) {
-    if(newPwd.length < 6) return alert('密码长度至少6位');
-    localStorage.setItem('nexapay_admin_pwd', newPwd);
-    alert('后台密码已更新');
-    document.getElementById('set-admin-pwd').value = '';
-  }
-  
-  if (deeplKey !== null) {
-    localStorage.setItem('nexapay_deepl_key', deeplKey.trim());
-  }
-
-  if (concurrency !== null) {
-    localStorage.setItem('nexapay_concurrency', concurrency);
-  }
-  
-  alert('API 配置及并发数已保存');
-}
-
 async function saveGlobalDict() {
   try {
-    globalDict = JSON.parse(document.getElementById('global-dict-editor').value);
+    appData.globalDict = JSON.parse(document.getElementById('global-dict-editor').value);
     await saveData();
-    alert('全局中文源字典已保存，现在你可以点击“一键全局翻译”补齐新的词汇。');
+    alert('全局字典已保存');
   } catch(e) { alert('JSON 格式错误'); }
 }
 
 function resetDefaultDict() {
-  if (confirm("确定要恢复为最新的默认中文字典吗？这会覆盖你当前的修改！")) {
-    globalDict = DEFAULT_DICT;
-    document.getElementById('global-dict-editor').value = JSON.stringify(globalDict, null, 2);
+  if (confirm("确定要恢复为默认中文字典吗？")) {
+    appData.globalDict = DEFAULT_DICT;
+    document.getElementById('global-dict-editor').value = JSON.stringify(appData.globalDict, null, 2);
     saveData();
-    alert("已重置，请点击一键全局翻译补齐翻译。");
   }
 }
 
-function closeModal(id) {
-  document.getElementById(id).classList.remove('show');
+function saveApiSettings() {
+  const pwd = document.getElementById('set-admin-pwd').value;
+  if (pwd) { localStorage.setItem('nexapay_admin_pwd', pwd); alert('密码已更新'); }
+  localStorage.setItem('nexapay_deepl_key', document.getElementById('set-deepl-key').value.trim());
+  localStorage.setItem('nexapay_concurrency', document.getElementById('set-concurrency').value);
+  alert('API 配置已保存');
+}
+
+async function saveSysSettings() {
+  appData.sysConfig.safariTitle = document.getElementById('set-safari-title').value;
+  appData.sysConfig.safariDesc = document.getElementById('set-safari-desc').value;
+  await saveData();
+  alert('系统配置已保存');
+}
+
+// ================= 翻译引擎 =================
+async function fetchTranslation(text, targetLang) {
+  if (!text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return text;
+  const deeplKey = localStorage.getItem('nexapay_deepl_key');
+  if (!deeplKey) throw new Error("请先在 API 配置中填写 DeepL API Key");
+  const res = await fetch('/api/translate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, targetLang, deeplKey }) });
+  if (res.ok) return (await res.json()).translatedText;
+  throw new Error("翻译失败");
+}
+
+function updateProgress(cur, total) {
+  const wrap = document.getElementById('trans-progress-wrap');
+  if (cur === null) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  const p = Math.round((cur / total) * 100);
+  document.getElementById('trans-progress-bar').style.width = p + '%';
+  document.getElementById('trans-percent').textContent = p + '%';
+  document.getElementById('trans-status-text').textContent = `正在翻译... (${cur}/${total})`;
+}
+
+async function translateSingleLang(code) {
+  const lang = appData.langs.find(l => l.code === code);
+  const texts = [...new Set(flattenValues(appData.globalDict))];
+  let dict = lang.dict || {};
+  const tLang = code.split('-')[0];
+  const missing = texts.filter(t => t.trim() && /[\u4e00-\u9fa5]/.test(t) && (!dict[t] || dict[t] === t));
+  if (missing.length === 0) return alert('无需翻译');
+  
+  document.getElementById('edit-modal-title').innerText = `翻译字典: ${lang.name}`;
+  document.getElementById('modal-edit-json').classList.add('show');
+  const C = parseInt(localStorage.getItem('nexapay_concurrency') || '3', 10);
+  try {
+    for (let i = 0; i < missing.length; i += C) {
+      const chunk = missing.slice(i, i + C);
+      const res = await Promise.all(chunk.map(async t => ({ text: t, trans: await fetchTranslation(t, tLang) })));
+      res.forEach(r => { dict[r.text] = r.trans; });
+      await new Promise(r => setTimeout(r, 1000));
+    }
+    lang.dict = dict; await saveData(); closeModal('modal-edit-json');
+  } catch(e) { alert(e.message); }
+}
+
+async function globalTranslateAll() {
+  const btn = document.getElementById('globalTransBtn');
+  if (!localStorage.getItem('nexapay_deepl_key')) return alert('请先配置 DeepL API Key');
+  btn.disabled = true; btn.textContent = '⏳ 翻译中...';
+  const langs = appData.langs.filter(l => l.code !== 'zh' && l.status !== false);
+  
+  try {
+    // 1. 翻译字典
+    for (let l of langs) {
+      const texts = [...new Set(flattenValues(appData.globalDict))];
+      let dict = l.dict || {};
+      const tLang = l.code.split('-')[0];
+      const missing = texts.filter(t => t.trim() && /[\u4e00-\u9fa5]/.test(t) && (!dict[t] || dict[t] === t));
+      if (missing.length > 0) {
+        const C = parseInt(localStorage.getItem('nexapay_concurrency') || '3', 10);
+        for (let i = 0; i < missing.length; i += C) {
+          const chunk = missing.slice(i, i + C);
+          const res = await Promise.all(chunk.map(async t => ({ text: t, trans: await fetchTranslation(t, tLang) })));
+          res.forEach(r => { dict[r.text] = r.trans; });
+          updateProgress(i + chunk.length, missing.length);
+          await new Promise(r => setTimeout(r, 1000));
+        }
+        l.dict = dict; await saveData();
+      }
+    }
+    // 2. 翻译 FAQ 和 评论
+    for (let l of langs) {
+      const tLang = l.code.split('-')[0];
+      // FAQ
+      for (let f of appData.faqs) {
+        if (!f.translations[l.code] || !f.translations[l.code].q) {
+          const source = f.translations['zh'] || f.translations['en'];
+          if (source && source.q) {
+            const q = await fetchTranslation(source.q, tLang);
+            const a = await fetchTranslation(source.a, tLang);
+            f.translations[l.code] = { q, a };
+            await saveData();
+          }
+        }
+      }
+      // 评论
+      for (let t of appData.testimonials) {
+         if (!t.translations[l.code] || !t.translations[l.code].content) {
+            const source = t.translations['zh'] || t.translations['en'];
+            if (source && source.content) {
+               const content = await fetchTranslation(source.content, tLang);
+               const name = await fetchTranslation(source.name, tLang);
+               const tag = await fetchTranslation(source.tag, tLang);
+               t.translations[l.code] = { content, name, tag };
+               await saveData();
+            }
+         }
+      }
+    }
+    renderItemList('faq');
+    renderItemList('review');
+    alert('一键全局翻译完成！');
+  } catch(e) { alert(e.message); }
+  finally {
+    btn.disabled = false; btn.textContent = '⚡ 一键全局翻译 (包含字典与内容)';
+    updateProgress(null);
+  }
+}
+
+// ================= FAQ & 评论 管理 =================
+let activeType = ''; // 'faq' 或 'review'
+let activeId = null;
+let activeEditLang = 'zh';
+
+function renderItemList(type) {
+  const listEl = document.getElementById(type === 'faq' ? 'faq-list-items' : 'review-list-items');
+  const data = type === 'faq' ? appData.faqs : appData.testimonials;
+  listEl.innerHTML = '';
+  const activeLangs = appData.langs.filter(l => l.status !== false).map(l => l.code);
+
+  data.forEach(item => {
+    const defaultTrans = item.translations['zh'] || item.translations['en'] || Object.values(item.translations)[0] || {};
+    const title = type === 'faq' ? (defaultTrans.q || '新问题') : (defaultTrans.content || '新评论');
+    let missing = activeLangs.filter(l => l !== 'zh' && (!item.translations[l] || (type === 'faq' && !item.translations[l].q) || (type === 'review' && !item.translations[l].content))).length;
+    
+    const div = document.createElement('div');
+    div.className = `list-item ${activeId === item.id && activeType === type ? 'active' : ''}`;
+    div.innerHTML = `
+      <div class="list-item-text">${title}</div>
+      <div class="list-item-status">${missing > 0 ? `<span class="tag-warn">缺失 ${missing} 个语言</span>` : `<span class="tag-ok">已发布</span>`}</div>
+    `;
+    div.onclick = () => openEditor(type, item.id);
+    listEl.appendChild(div);
+  });
+}
+
+function createItem(type) {
+  const newItem = { id: 'id_' + Date.now(), translations: { zh: type === 'faq' ? { q: '', a: '' } : { content: '', name: '', tag: '' } } };
+  if (type === 'faq') appData.faqs.unshift(newItem);
+  else appData.testimonials.unshift(newItem);
+  saveData();
+  renderItemList(type);
+  openEditor(type, newItem.id);
+}
+
+function openEditor(type, id) {
+  activeType = type; activeId = id; activeEditLang = 'zh';
+  
+  const editor = document.getElementById(type === 'faq' ? 'faq-editor' : 'review-editor');
+  editor.style.display = 'block';
+  
+  renderLangTabs();
+  loadItemDataToForm();
+  renderItemList(type); // 更新左侧高亮
+}
+
+function renderLangTabs() {
+  const bar = document.getElementById(activeType === 'faq' ? 'faq-lang-tabs' : 'review-lang-tabs');
+  bar.innerHTML = '';
+  const item = (activeType === 'faq' ? appData.faqs : appData.testimonials).find(i => i.id === activeId);
+  if (!item) return;
+
+  const langs = appData.langs.filter(l => l.status !== false);
+  langs.forEach(l => {
+    const isTranslated = item.translations[l.code] && (activeType === 'faq' ? item.translations[l.code].q : item.translations[l.code].content);
+    const btn = document.createElement('button');
+    btn.className = `lang-tab-btn ${activeEditLang === l.code ? 'active' : ''} ${!isTranslated && l.code !== 'zh' ? 'warn' : ''}`;
+    btn.innerHTML = `${l.name} ${!isTranslated && l.code !== 'zh' ? '⚠️' : ''}`;
+    btn.onclick = () => {
+      // 先保存当前输入
+      saveItemToMemory();
+      activeEditLang = l.code;
+      renderLangTabs();
+      loadItemDataToForm();
+    };
+    bar.appendChild(btn);
+  });
+}
+
+function loadItemDataToForm() {
+  const item = (activeType === 'faq' ? appData.faqs : appData.testimonials).find(i => i.id === activeId);
+  if (!item) return;
+  const trans = item.translations[activeEditLang] || (activeType === 'faq' ? { q: '', a: '' } : { content: '', name: '', tag: '' });
+  
+  if (activeType === 'faq') {
+    document.getElementById('faq-input-q').value = trans.q || '';
+    document.getElementById('faq-input-a').value = trans.a || '';
+  } else {
+    document.getElementById('review-input-content').value = trans.content || '';
+    document.getElementById('review-input-name').value = trans.name || '';
+    document.getElementById('review-input-tag').value = trans.tag || '';
+  }
+}
+
+function saveItemToMemory() {
+  const item = (activeType === 'faq' ? appData.faqs : appData.testimonials).find(i => i.id === activeId);
+  if (!item) return;
+  if (!item.translations[activeEditLang]) item.translations[activeEditLang] = {};
+  
+  if (activeType === 'faq') {
+    item.translations[activeEditLang].q = document.getElementById('faq-input-q').value;
+    item.translations[activeEditLang].a = document.getElementById('faq-input-a').value;
+  } else {
+    item.translations[activeEditLang].content = document.getElementById('review-input-content').value;
+    item.translations[activeEditLang].name = document.getElementById('review-input-name').value;
+    item.translations[activeEditLang].tag = document.getElementById('review-input-tag').value;
+  }
+}
+
+async function saveItem(type) {
+  saveItemToMemory();
+  await saveData();
+  renderItemList(type);
+  renderLangTabs();
+  showToast('✅ 内容已保存');
+}
+
+async function deleteItem(type) {
+  if (!confirm('确定删除吗？此操作不可恢复。')) return;
+  if (type === 'faq') appData.faqs = appData.faqs.filter(i => i.id !== activeId);
+  else appData.testimonials = appData.testimonials.filter(i => i.id !== activeId);
+  await saveData();
+  document.getElementById(type === 'faq' ? 'faq-editor' : 'review-editor').style.display = 'none';
+  activeId = null;
+  renderItemList(type);
+}
+
+async function translateItem(type) {
+  saveItemToMemory();
+  const item = (type === 'faq' ? appData.faqs : appData.testimonials).find(i => i.id === activeId);
+  if (!item) return;
+  
+  const source = item.translations['zh'];
+  if (!source || (type === 'faq' && !source.q) || (type === 'review' && !source.content)) {
+    return alert('请先填写中文内容再翻译。');
+  }
+
+  const btn = document.getElementById(type === 'faq' ? 'faq-trans-btn' : 'review-trans-btn');
+  btn.disabled = true; btn.textContent = '翻译中...';
+  
+  try {
+    const langs = appData.langs.filter(l => l.code !== 'zh' && l.status !== false);
+    for (let l of langs) {
+      const tLang = l.code.split('-')[0];
+      if (!item.translations[l.code] || (type === 'faq' && !item.translations[l.code].q) || (type === 'review' && !item.translations[l.code].content)) {
+         if (type === 'faq') {
+            const q = await fetchTranslation(source.q, tLang);
+            const a = await fetchTranslation(source.a, tLang);
+            item.translations[l.code] = { q, a };
+         } else {
+            const content = await fetchTranslation(source.content, tLang);
+            const name = await fetchTranslation(source.name, tLang);
+            const tag = await fetchTranslation(source.tag, tLang);
+            item.translations[l.code] = { content, name, tag };
+         }
+         await saveData();
+      }
+    }
+    renderLangTabs();
+    renderItemList(type);
+    alert('当前条目翻译完成！');
+  } catch(e) { alert(e.message); }
+  finally {
+    btn.disabled = false; btn.textContent = '⚡ 补齐当前条目的其他语言';
+  }
 }
 </script>
 </body>
