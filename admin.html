@@ -144,7 +144,6 @@
 
 <div class="main-content" style="display:none;" id="main-content">
   
-  <!-- 语言列表 -->
   <div id="tab-lang-list" style="display:none;">
     <div class="header">
       <h1>多语言管理</h1>
@@ -173,7 +172,6 @@
     </div>
   </div>
 
-  <!-- 字典编辑 -->
   <div id="tab-dict-list" style="display:none;">
     <div class="header">
       <h1>字典管理</h1>
@@ -188,7 +186,6 @@
     </div>
   </div>
 
-  <!-- 常见问题 -->
   <div id="tab-faq" style="display:none;">
     <div class="split-layout">
       <div class="split-left">
@@ -213,7 +210,6 @@
             </div>
           </div>
           
-          <!-- 新增：多选发布语言 -->
           <div class="lang-publish-box">
             <h4>选择需要同步翻译并发布的语言：</h4>
             <div class="lang-checkbox-group" id="faq-publish-langs"></div>
@@ -232,7 +228,6 @@
     </div>
   </div>
 
-  <!-- 评论管理 -->
   <div id="tab-review" style="display:none;">
     <div class="split-layout">
       <div class="split-left">
@@ -257,7 +252,6 @@
             </div>
           </div>
 
-          <!-- 新增：多选发布语言 -->
           <div class="lang-publish-box">
             <h4>选择需要同步翻译并发布的语言：</h4>
             <div class="lang-checkbox-group" id="review-publish-langs"></div>
@@ -280,7 +274,6 @@
     </div>
   </div>
 
-  <!-- API配置 -->
   <div id="tab-api-settings" style="display:none;">
     <div class="header"><h1>API 配置</h1></div>
     <div class="card">
@@ -301,7 +294,6 @@
     </div>
   </div>
 
-  <!-- 系统配置 -->
   <div id="tab-sys-settings" style="display:none;">
     <div class="header"><h1>全局系统配置</h1></div>
     <div class="card">
@@ -319,7 +311,6 @@
 
 </div>
 
-<!-- 弹窗 -->
 <div class="modal-overlay" id="modal-batch-lang">
   <div class="modal">
     <div class="modal-header"><h2>添加常用国家语言</h2><span class="close-btn" onclick="closeModal('modal-batch-lang')">×</span></div>
@@ -337,7 +328,6 @@
 <div class="toast" id="globalToast"></div>
 
 <script>
-// ================= 全局数据 =================
 let appData = { langs: [], globalDict: {}, faqs: [], testimonials: [], sysConfig: {} };
 let currentEditLangCode = "";
 const COMMON_LANGS = [
@@ -349,46 +339,45 @@ const COMMON_LANGS = [
   { code: "id", name: "Bahasa Indonesia" }, { code: "ar", name: "العربية" }
 ];
 
-// 最全字典 (包含空状态、placeholder、Safari弹窗)
 const DEFAULT_DICT = {
   "nav": { "personal": "个人", "business": "企业", "company": "公司", "earn": "赚币", "explore": "探索" },
-  "nav_login": "登录", "nav_register": "注册", "nav_logout": "退出账号",
-  "hero_title": "让加密货币融入真实生活", "hero_sub": "向稳定币支付敞开大门", "hero_btn": "立即开始支付",
-  "feature_title": "享受日常权益",
-  "f1_t": "轻松获取稳定币", "f1_d": "通过 P2P 兑换和法币入金。",
-  "f2_t": "随时使用稳定币支付", "f2_d": "绑定卡片，随心支付。",
-  "f3_t": "快速安全地转移加密货币", "f3_d": "支持 100+ 国家/地区。",
-  "f4_t": "多种货币，一个应用", "f4_d": "一站式管理加密资产。",
-  "showcase_t": "数字支付，简单随行", "showcase_d": "轻松、安全地支付订阅、旅行和日常消费。",
-  "showcase_btn": "了解更多", "tab_virtual": "虚拟卡", "tab_physical": "实体卡",
-  "card_holder": "持卡人", "card_exp": "有效期",
-  "s1_tag": "扫码支付", 
-  "s1_title": "随时随地，扫一扫秒级支付", 
-  "s1_desc": "无需繁琐兑换，直接使用加密资产扫码消费，资金秒级清算。",
-  "s2_tag": "全球转账", "s2_title": "发送加密货币，收取本地货币", "s2_desc": "轻松转账，每笔交易都有保障，让收款人更快收到资金。",
-  "s3_tag": "多币种钱包", "s3_title": "连接加密货币与日常生活", "s3_desc": "集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。",
-  "s4_tag": "兑换", "s4_title": "轻松兑换加密资产", "s4_desc": "提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。",
-  "btn_more": "了解更多",
-  "stats_title": "备受全球信赖", "stats_1": "全球用户", "stats_2": "国家", "stats_3": "年度支付交易额",
-  "testi_title": "聆听社区心声", "faq_title": "常见问题",
-  "no_faq": "暂无常见问题", "no_review": "暂无评论",
-  "footer_desc": "与 NEXAPAY 开启稳定币支付之旅", "footer_slogan": "快速。流畅。安全。",
-  "footer_copy": "© 2026 NEXAPAY. All rights reserved.", "footer_lang": "简体中文",
-  "safari_title": "请使用 Safari 浏览器打开", "safari_desc": "系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。", "safari_copy": "复制当前链接",
-  "login_page": {
-    "account": "您的账户", "welcome": "欢迎回来", "desc": "登录以管理您的个人资料。",
-    "email": "电子邮箱", "pwd": "密码", "show": "显示", "hide": "隐藏", "login_btn": "登录",
-    "first_time": "初次使用 NEXAPAY?", "create": "创建账户", "back": "返回首页",
-    "sec_title": "正在建立安全连接", "sec_desc": "为了您的账户安全，正在检测环境并生成加密信息...",
-    "step1": "检测网络环境与设备指纹", "step2": "生成 AES-256 本地加密密钥",
-    "step3": "建立端到端安全传输通道", "step4": "同步账户加密凭证",
-    "new_user": "新用户注册", "create_title": "创建您的账户", "create_desc": "注册以开始使用 NEXAPAY 服务。",
-    "username": "用户名", "username_ph": "请输入用户名", "register_btn": "注册",
-    "have_account": "已有账户？", "go_login": "去登录", "email_ph": "请输入邮箱", "pwd_ph": "请输入密码"
-  }
+  "登录": "登录", "注册": "注册", "退出账号": "退出账号",
+  "让加密货币融入真实生活": "让加密货币融入真实生活",
+  "向稳定币支付敞开大门": "向稳定币支付敞开大门",
+  "立即开始支付": "立即开始支付",
+  "享受日常权益": "享受日常权益",
+  "轻松获取稳定币": "轻松获取稳定币", "通过 P2P 兑换和法币入金。": "通过 P2P 兑换和法币入金。",
+  "随时使用稳定币支付": "随时使用稳定币支付", "绑定卡片，随心支付。": "绑定卡片，随心支付。",
+  "快速安全地转移加密货币": "快速安全地转移加密货币", "支持 100+ 国家/地区。": "支持 100+ 国家/地区。",
+  "多种货币，一个应用": "多种货币，一个应用", "一站式管理加密资产。": "一站式管理加密资产。",
+  "数字支付，简单随行": "数字支付，简单随行",
+  "轻松、安全地支付订阅、旅行和日常消费。": "轻松、安全地支付订阅、旅行和日常消费。",
+  "了解更多": "了解更多", "虚拟卡": "虚拟卡", "实体卡": "实体卡",
+  "持卡人": "持卡人", "有效期": "有效期",
+  "扫码支付": "扫码支付",
+  "随时随地，扫一扫秒级支付": "随时随地，扫一扫秒级支付",
+  "无需繁琐兑换，直接使用加密资产扫码消费，资金秒级清算。": "无需繁琐兑换，直接使用加密资产扫码消费，资金秒级清算。",
+  "发现 NEXAPAY 收款码": "发现 NEXAPAY 收款码", "立即支付": "立即支付", "扫一扫": "扫一扫",
+  "全球转账": "全球转账", "发送加密货币，收取本地货币": "发送加密货币，收取本地货币", "轻松转账，每笔交易都有保障，让收款人更快收到资金。": "轻松转账，每笔交易都有保障，让收款人更快收到资金。",
+  "多币种钱包": "多币种钱包", "连接加密货币与日常生活": "连接加密货币与日常生活", "集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。": "集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。",
+  "兑换": "兑换", "轻松兑换加密资产": "轻松兑换加密资产", "提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。": "提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。",
+  "备受全球信赖": "备受全球信赖", "全球用户": "全球用户", "国家": "国家", "年度支付交易额": "年度支付交易额",
+  "聆听社区心声": "聆听社区心声", "常见问题": "常见问题",
+  "暂无常见问题": "暂无常见问题", "暂无评论": "暂无评论",
+  "与 NEXAPAY 开启稳定币支付之旅": "与 NEXAPAY 开启稳定币支付之旅", "快速。流畅。安全。": "快速。流畅。安全。",
+  "© 2026 NEXAPAY. All rights reserved.": "© 2026 NEXAPAY. All rights reserved.", "简体中文": "简体中文",
+  "请使用 Safari 浏览器打开": "请使用 Safari 浏览器打开", "系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。": "系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。", "复制当前链接": "复制当前链接",
+  "您的账户": "您的账户", "欢迎回来": "欢迎回来", "登录以管理您的个人资料。": "登录以管理您的个人资料。",
+  "电子邮箱": "电子邮箱", "密码": "密码", "显示": "显示", "隐藏": "隐藏",
+  "初次使用 NEXAPAY?": "初次使用 NEXAPAY?", "创建账户": "创建账户", "返回首页": "返回首页",
+  "正在建立安全连接": "正在建立安全连接", "为了您的账户安全，正在检测环境并生成加密信息...": "为了您的账户安全，正在检测环境并生成加密信息...",
+  "检测网络环境与设备指纹": "检测网络环境与设备指纹", "生成 AES-256 本地加密密钥": "生成 AES-256 本地加密密钥",
+  "建立端到端安全传输通道": "建立端到端安全传输通道", "同步账户加密凭证": "同步账户加密凭证",
+  "新用户注册": "新用户注册", "创建您的账户": "创建您的账户", "注册以开始使用 NEXAPAY 服务。": "注册以开始使用 NEXAPAY 服务。",
+  "用户名": "用户名", "请输入用户名": "请输入用户名", "注册": "注册",
+  "已有账户？": "已有账户？", "去登录": "去登录", "请输入邮箱": "请输入邮箱", "请输入密码": "请输入密码"
 };
 
-// ================= 工具方法 =================
 function showToast(msg) {
   const toast = document.getElementById('globalToast');
   toast.textContent = msg;
@@ -404,12 +393,17 @@ async function fetchData() {
         if (!appData.faqs) appData.faqs = [];
         if (!appData.testimonials) appData.testimonials = [];
         if (!appData.sysConfig) appData.sysConfig = { safariTitle: "请使用 Safari 浏览器打开", safariDesc: "系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。" };
-        if (!appData.globalDict || Object.keys(appData.globalDict).length === 0) appData.globalDict = DEFAULT_DICT;
+        
+        // 自动检测与修复：如果字典中没有“暂无常见问题”或者“扫码支付”，说明是老版本，强制重置
+        if (!appData.globalDict || !appData.globalDict['暂无常见问题'] || !appData.globalDict['扫码支付']) {
+            appData.globalDict = DEFAULT_DICT;
+            await saveData(); 
+        }
         
         let hasZh = appData.langs.find(l => l.code === 'zh');
         if (!hasZh) {
             appData.langs.unshift({ code: "zh", name: "简体中文", status: true, dict: {} });
-            await fetch('/api/data', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(appData) });
+            await saveData();
         }
     } catch (e) { alert('无法连接后端，请运行 node server.js'); }
 }
@@ -466,7 +460,6 @@ function switchTab(tabId, el) {
   if (el) el.classList.add('active');
 }
 
-// ================= 语言管理 =================
 function renderLangTable() {
   const tbody = document.getElementById('lang-tbody');
   tbody.innerHTML = '';
@@ -599,7 +592,6 @@ async function saveSysSettings() {
   alert('系统配置已保存');
 }
 
-// ================= 翻译引擎 =================
 async function fetchTranslation(text, targetLang) {
   if (!text.trim() || !/[\u4e00-\u9fa5]/.test(text)) return text;
   const deeplKey = localStorage.getItem('nexapay_deepl_key');
@@ -648,7 +640,6 @@ async function globalTranslateAll() {
   const langs = appData.langs.filter(l => l.code !== 'zh' && l.status !== false);
   
   try {
-    // 1. 翻译字典
     for (let l of langs) {
       const texts = [...new Set(flattenValues(appData.globalDict))];
       let dict = l.dict || {};
@@ -666,7 +657,6 @@ async function globalTranslateAll() {
         l.dict = dict; await saveData();
       }
     }
-    // 2. 翻译 FAQ 和 评论
     for (let l of langs) {
       const tLang = l.code.split('-')[0];
       for (let f of appData.faqs) {
@@ -703,7 +693,6 @@ async function globalTranslateAll() {
   }
 }
 
-// ================= FAQ & 评论 管理 =================
 let activeType = '';
 let activeId = null;
 
@@ -740,16 +729,13 @@ function createItem(type) {
 
 function openEditor(type, id) {
   activeType = type; activeId = id;
-  
   const editor = document.getElementById(type === 'faq' ? 'faq-editor' : 'review-editor');
   editor.style.display = 'block';
-  
   renderPublishLangCheckboxes();
   loadItemDataToForm();
   renderItemList(type);
 }
 
-// 渲染多选语言复选框
 function renderPublishLangCheckboxes() {
   const box = document.getElementById(activeType === 'faq' ? 'faq-publish-langs' : 'review-publish-langs');
   box.innerHTML = '';
@@ -765,7 +751,6 @@ function renderPublishLangCheckboxes() {
     const isTranslated = item.translations[l.code] && (activeType === 'faq' ? item.translations[l.code].q : item.translations[l.code].content);
     const label = document.createElement('label');
     label.className = 'lang-cb-item';
-    // 默认勾选：如果已经翻译过，默认勾选；如果没翻译，默认不勾选（让用户自己决定要不要今天发布这个语言）
     label.innerHTML = `<input type="checkbox" value="${l.code}" ${isTranslated ? 'checked' : ''}> ${l.name} ${!isTranslated ? '⚠️' : ''}`;
     box.appendChild(label);
   });
@@ -790,7 +775,6 @@ async function saveItem(type) {
   const item = (type === 'faq' ? appData.faqs : appData.testimonials).find(i => i.id === activeId);
   if (!item) return;
 
-  // 1. 保存中文
   if (!item.translations['zh']) item.translations['zh'] = {};
   if (type === 'faq') {
     item.translations['zh'].q = document.getElementById('faq-input-q').value;
@@ -801,7 +785,6 @@ async function saveItem(type) {
     item.translations['zh'].tag = document.getElementById('review-input-tag').value;
   }
 
-  // 2. 获取勾选的语言并自动翻译
   const checkboxes = document.querySelectorAll(`#${type}-publish-langs input[type="checkbox"]:checked`);
   const selectedLangs = Array.from(checkboxes).map(cb => cb.value);
   
@@ -813,7 +796,6 @@ async function saveItem(type) {
     const source = item.translations['zh'];
     for (let lCode of selectedLangs) {
       const tLang = lCode.split('-')[0];
-      // 如果这个语言还没翻译过，或者中文有更新，这里简单处理为重新翻译覆盖
       if (!item.translations[lCode] || !item.translations[lCode].q) {
          if (type === 'faq') {
             const q = await fetchTranslation(source.q, tLang);
@@ -828,23 +810,17 @@ async function saveItem(type) {
       }
     }
     
-    // 3. 处理取消勾选的语言（删除这些语言的翻译）
     const allLangs = appData.langs.filter(l => l.code !== 'zh').map(l => l.code);
     for (let lCode of allLangs) {
-        if (!selectedLangs.includes(lCode)) {
-            delete item.translations[lCode];
-        }
+        if (!selectedLangs.includes(lCode)) delete item.translations[lCode];
     }
     
     await saveData();
     renderItemList(type);
-    renderPublishLangCheckboxes(); // 刷新状态标记
+    renderPublishLangCheckboxes();
     showToast('✅ 已保存并发布到勾选语言');
-  } catch(e) {
-    alert('翻译出错：' + e.message);
-  } finally {
-    btn.disabled = false; btn.textContent = origText;
-  }
+  } catch(e) { alert('翻译出错：' + e.message); }
+  finally { btn.disabled = false; btn.textContent = origText; }
 }
 
 async function deleteItem(type) {
