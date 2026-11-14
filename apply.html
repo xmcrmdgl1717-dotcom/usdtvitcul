@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>NEXA — 领取虚拟卡</title>
+<title>NEXAPAY — 领取虚拟卡</title>
 <link rel="stylesheet" href="style.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -778,7 +778,7 @@
 </style>
 <script>
   (function() {
-    var lang = localStorage.getItem('nexa_manual_lang');
+    var lang = localStorage.getItem('nexapay_manual_lang');
     if (lang && lang !== 'zh') {
       var loader = document.getElementById('i18n-loader');
       if (loader) loader.style.display = 'grid';
@@ -792,13 +792,11 @@
   <div class="orb orb-3"></div>
 </div>
 
-<!-- 悬浮语言切换器 -->
 <div class="lang-switch-wrap">
   <div class="lang-switch-btn" onclick="toggleLangMenu(event)">🌏</div>
   <div class="lang-dropdown" id="langDropdown"></div>
 </div>
 
-<!-- ============ 进入时的弹框 ============ -->
 <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-box">
     <div class="modal-sheen" aria-hidden="true"></div>
@@ -806,7 +804,7 @@
       <div class="modal-card-stage">
         <div class="modal-card">
           <div class="mc-top">
-            <span class="mc-brand">NEXA</span>
+            <span class="mc-brand">NEXAPAY</span>
             <span class="mc-chip"></span>
           </div>
           <div class="mc-mid">
@@ -826,7 +824,7 @@
         </div>
       </div>
 
-      <h2 class="modal-title" id="modalTitle">领取你的 NEXA Visa 虚拟卡</h2>
+      <h2 class="modal-title" id="modalTitle">领取你的 NEXAPAY Visa 虚拟卡</h2>
       <p class="modal-desc">30 秒完成，开卡免费。这不是一张普通的卡——它让你的稳定币在消费前持续生息。</p>
 
       <ul class="modal-list">
@@ -845,19 +843,17 @@
   </div>
 </div>
 
-<!-- ============ 顶栏 ============ -->
 <header class="topbar">
   <div class="topbar-inner">
     <a class="brand" href="index.html">
       <span class="brand-mark">N</span>
-      <span>NEXA</span>
+      <span>NEXAPAY</span>
     </a>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-label"><strong id="stepNow">1</strong> / 5</div>
   </div>
 </header>
 
-<!-- 返回按钮 -->
 <div class="back-row" id="backRow">
   <button class="back-btn" type="button" onclick="backStep()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
@@ -867,10 +863,9 @@
 
 <main class="main">
 
-  <!-- Step 1: 注册 -->
   <section class="step active" data-step="1">
     <div class="eyebrow"><span class="dot"></span>Step 1 / 5</div>
-    <h2>创建你的 NEXA 账户</h2>
+    <h2>创建你的 NEXAPAY 账户</h2>
     <p class="desc">注册后即可领取 Visa 虚拟卡。开卡免费、无需充值，首笔消费后才产生交易费。</p>
 
     <div class="social">
@@ -911,11 +906,10 @@
     </div>
   </section>
 
-  <!-- Step 2: 合作伙伴 -->
   <section class="step" data-step="2">
     <div class="eyebrow"><span class="dot"></span>Step 2 / 5</div>
     <h2>你正在一个被验证过的网络里</h2>
-    <p class="desc">NEXA 的清算、托管与发卡能力，由以下机构共同支撑。你的资金与卡片，不会孤立存在。</p>
+    <p class="desc">NEXAPAY 的清算、托管与发卡能力，由以下机构共同支撑。你的资金与卡片，不会孤立存在。</p>
 
     <div class="partners-tabs">
       <button class="tab active" data-tab="crypto" type="button">币圈生态</button>
@@ -951,7 +945,6 @@
     </button>
   </section>
 
-  <!-- Step 3: 卡片生成 -->
   <section class="step" data-step="3">
     <div class="eyebrow"><span class="dot"></span>Step 3 / 5</div>
     <h2>你的虚拟卡正在生成</h2>
@@ -962,7 +955,7 @@
       <div class="vcard masked" id="genCard">
         <div class="scanline"></div>
         <div class="vc-top">
-          <span class="vc-brand">NEXA</span>
+          <span class="vc-brand">NEXAPAY</span>
           <span class="vc-chip"></span>
         </div>
         <div class="vc-middle">
@@ -994,7 +987,6 @@
     </button>
   </section>
 
-  <!-- Step 4: 排队审核 -->
   <section class="step" data-step="4">
     <div class="eyebrow"><span class="dot"></span>Step 4 / 5</div>
     <h2>正在完成安全合规审核</h2>
@@ -1028,7 +1020,6 @@
     </div>
   </section>
 
-  <!-- Step 5: 卡片信息 + 身份绑定 -->
   <section class="step" data-step="5">
     <div class="eyebrow"><span class="dot"></span>Step 5 / 5</div>
     <h2>你的卡片已通过审核</h2>
@@ -1038,7 +1029,7 @@
       <div class="card-halo"></div>
       <div class="vcard revealed">
         <div class="vc-top">
-          <span class="vc-brand">NEXA</span>
+          <span class="vc-brand">NEXAPAY</span>
           <span class="vc-chip"></span>
         </div>
         <div class="vc-middle">
@@ -1122,21 +1113,20 @@
     </form>
   </section>
 
-  <!-- 完成 -->
   <section class="step" data-step="6">
     <div class="done-wrap">
       <div class="done-icon">✓</div>
       <h2 style="margin-bottom:12px">卡片已激活</h2>
-      <p class="desc" style="margin-bottom:0">你的 NEXA Visa 虚拟卡已经可以使用。绑定 Apple Pay 或 Google Pay 后，即可在全球商户消费。</p>
+      <p class="desc" style="margin-bottom:0">你的 NEXAPAY Visa 虚拟卡已经可以使用。绑定 Apple Pay 或 Google Pay 后，即可在全球商户消费。</p>
 
       <div class="done-email">
-        卡片已绑定至 <span class="addr" id="doneEmail">user@nexa.io</span>
+        卡片已绑定至 <span class="addr" id="doneEmail">user@nexapay.io</span>
       </div>
 
       <div class="benefits">
         <div class="benefit"><span class="b-mark">%</span><span><strong>2% 基础返现</strong> · 消费后以 BTC、黄金或 USDC 发放</span></div>
         <div class="benefit"><span class="b-mark">0</span><span><strong>0 年费、0 开卡费</strong> · 仅收取 0.90% 交易手续费</span></div>
-        <div class="benefit"><span class="b-mark">◈</span><span><strong>实时生息</strong> · 消费前余额持续产生收益</span></div>
+        <div class="benefit"><span class="b-mark">◈</span><span><strong>实时到账</strong> · 支付瞬间资金即时到账</span></div>
       </div>
 
       <div class="done-actions">
@@ -1157,7 +1147,6 @@
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ============ 弹框 ============ */
   const overlay = document.getElementById("modalOverlay");
 
   function closeModal() {
@@ -1169,10 +1158,9 @@
   }
   window.closeModal = closeModal;
 
-  /* ============ 步骤切换 ============ */
   const TOTAL_STEPS = 5;
   let currentStep = 1;
-  let emailValue = "user@nexa.io";
+  let emailValue = "user@nexapay.io";
 
   function updateBackBtn(n) {
     const backRow = document.getElementById("backRow");
@@ -1207,7 +1195,6 @@
   }
   window.backStep = backStep;
 
-  /* ============ Step 1: 注册 ============ */
   const signupForm = document.getElementById("signupForm");
 
   function showErr(id, show) {
@@ -1245,7 +1232,6 @@
   }
   window.quickSignup = quickSignup;
 
-  /* ============ Step 2: 合作伙伴 ============ */
   const partners = {
     crypto: ["Bitget", "Binance", "Coinbase", "OKX", "Circle", "Tether", "Solana", "Ethereum", "Chainlink", "Aave", "Uniswap", "Lido", "Arbitrum", "Optimism", "Polygon", "Base"],
     bank: ["Visa", "Mastercard", "Stripe", "Lead Bank", "StraitsX", "Silvergate", "Circle", "Fireblocks", "Chainalysis", "Elliptic", "Sumsub", "Onfido"],
@@ -1282,7 +1268,6 @@
     });
   });
 
-  /* ============ Step 3: 卡片生成 ============ */
   const FINAL_NUMBER = "4821 6733 9021 4487";
   let generated = false;
 
@@ -1317,7 +1302,6 @@
   }
   window.startGenerate = startGenerate;
 
-  /* ============ Step 4: 20 秒合规排队 ============ */
   let auditTimer = null;
 
   function startAudit() {
@@ -1375,7 +1359,6 @@
     }, 1000);
   }
 
-  /* ============ Step 5: 卡片信息 + 身份绑定 ============ */
   function copyText(btn) {
     const text = btn.dataset.copy || "";
     const orig = btn.textContent;
@@ -1471,7 +1454,6 @@
 })();
 </script>
 
-<!-- 引入外部多语言 JS -->
 <script src="script.js"></script>
 </body>
 </html>
