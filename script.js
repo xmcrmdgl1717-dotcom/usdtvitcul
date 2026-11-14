@@ -138,7 +138,7 @@
   }
 
   /* =========================================
-     2. 国际化 (i18n) - 全面增强版
+     2. 国际化 (i18n) - 终极容错匹配版
      ========================================= */
   let currentLangs = [];
   window.activeDict = null;
@@ -167,7 +167,7 @@
     dropdown.innerHTML = html;
   }
 
-  // 核心翻译执行器（修复了换行和空格导致匹配失败的问题）
+  // 核心翻译执行器
   window.applyTranslation = function(dict) {
     if (!dict) {
       hideLoader();
@@ -175,56 +175,96 @@
     }
     window.activeDict = dict;
 
-    // 1. 构建“规范化字典”：把字典 Key 里的换行、多余空格全部压缩
-    const normalizedDict = {};
+    // 构建两套字典用于容错匹配：
+    // 1. 单空格版（兼容英文）
+    // 2. 无空格版（兼容中文换行导致的匹配失败）
+    const dictMapSpace = {};
+    const dictMapNoSpace = {};
+
     for (const key in dict) {
       if (!dict[key] || !dict[key].trim()) continue;
-      const cleanKey = key.replace(/\s+/g, ' ').trim();
-      if (cleanKey) {
-        normalizedDict[cleanKey] = dict[key];
+      const rawKey = key.trim();
+      
+      const keyWithSpace = rawKey.replace(/\s+/g, ' ');
+      dictMapSpace[keyWithSpace] = dict[key];
+      
+      const keyNoSpace = rawKey.replace(/\s+/g, '');
+      if (keyNoSpace) {
+        dictMapNoSpace[keyNoSpace] = dict[key];
       }
     }
 
-    // 2. 遍历 DOM 文本节点
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     let node;
     while (node = walker.nextNode()) {
       if (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE') continue;
       
       const rawTxt = node.nodeValue;
-      // 关键修复：把 HTML 文本里的换行符和大量缩进空格，压缩成单空格，再进行比对
-      const cleanTxt = rawTxt.replace(/\s+/g, ' ').trim();
-      
-      if (cleanTxt && normalizedDict[cleanTxt]) {
-        // 保留原有的首尾空白（防止排版错乱），只替换内容
+      if (!rawTxt || !rawTxt.trim()) continue;
+
+      const nodeTxtWithSpace = rawTxt.replace(/\s+/g, ' ').trim();
+      const nodeTxtNoSpace = rawTxt.replace(/\s+/g, '');
+
+      let translated = null;
+
+      // 优先匹配单空格版，兜底匹配无空格版
+      if (dictMapSpace[nodeTxtWithSpace]) {
+        translated = dictMapSpace[nodeTxtWithSpace];
+      } else if (dictMapNoSpace[nodeTxtNoSpace]) {
+        translated = dictMapNoSpace[nodeTxtNoSpace];
+      }
+
+      if (translated !== null) {
+        // 保留原有的首尾空白，防止破坏原来的 HTML 排版
         const leadingSpace = rawTxt.match(/^\s*/)[0];
         const trailingSpace = rawTxt.match(/\s*$/)[0];
-        node.nodeValue = leadingSpace + normalizedDict[cleanTxt] + trailingSpace;
+        node.nodeValue = leadingSpace + translated + trailingSpace;
       }
     }
 
-    // 3. 翻译 Placeholder
+    // 翻译 Placeholder
     document.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(el => {
       const t = el.getAttribute('placeholder');
-      const cleanT = t ? t.replace(/\s+/g, ' ').trim() : '';
-      if (cleanT && normalizedDict[cleanT]) el.setAttribute('placeholder', normalizedDict[cleanT]);
+      if (!t) return;
+      const cleanWithSpace = t.replace(/\s+/g, ' ').trim();
+      const cleanNoSpace = t.replace(/\s+/g, '');
+      
+      if (dictMapSpace[cleanWithSpace]) {
+        el.setAttribute('placeholder', dictMapSpace[cleanWithSpace]);
+      } else if (dictMapNoSpace[cleanNoSpace]) {
+        el.setAttribute('placeholder', dictMapNoSpace[cleanNoSpace]);
+      }
     });
 
-    // 4. 翻译 Select 选项
+    // 翻译 Select 选项
     document.querySelectorAll('option').forEach(el => {
       const t = el.textContent;
-      const cleanT = t ? t.replace(/\s+/g, ' ').trim() : '';
-      if (cleanT && normalizedDict[cleanT]) el.textContent = normalizedDict[cleanT];
+      if (!t) return;
+      const cleanWithSpace = t.replace(/\s+/g, ' ').trim();
+      const cleanNoSpace = t.replace(/\s+/g, '');
+      
+      if (dictMapSpace[cleanWithSpace]) {
+        el.textContent = dictMapSpace[cleanWithSpace];
+      } else if (dictMapNoSpace[cleanNoSpace]) {
+        el.textContent = dictMapNoSpace[cleanNoSpace];
+      }
     });
 
-    // 5. 翻译 Title 属性
+    // 翻译 Title 属性
     document.querySelectorAll('[title]').forEach(el => {
       const t = el.getAttribute('title');
-      const cleanT = t ? t.replace(/\s+/g, ' ').trim() : '';
-      if (cleanT && normalizedDict[cleanT]) el.setAttribute('title', normalizedDict[cleanT]);
+      if (!t) return;
+      const cleanWithSpace = t.replace(/\s+/g, ' ').trim();
+      const cleanNoSpace = t.replace(/\s+/g, '');
+      
+      if (dictMapSpace[cleanWithSpace]) {
+        el.setAttribute('title', dictMapSpace[cleanWithSpace]);
+      } else if (dictMapNoSpace[cleanNoSpace]) {
+        el.setAttribute('title', dictMapNoSpace[cleanNoSpace]);
+      }
     });
 
-    // 6. 翻译网页 Title
+    // 翻译网页 Title
     if (dict['领取虚拟卡'] && document.title.includes('领取虚拟卡')) {
       document.title = document.title.replace('领取虚拟卡', dict['领取虚拟卡']);
     } else if (dict['你的 USDC，不卖也能花'] && document.title.includes('你的 USDC')) {
