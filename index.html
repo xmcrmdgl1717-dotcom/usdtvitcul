@@ -8,15 +8,17 @@
 <style>
   /* 适配 GreotPay 风格的覆盖样式 */
   :root {
-    --brand-red: #00f0ff; /* 保留原有的青色作为主色调 */
+    --brand-red: #ff3333; /* GreotPay 品牌的红色点缀 */
     --bg-light: #f8f9fa;
     --text-dark: #111;
     --text-gray: #666;
+    --cyan: #00f0ff;
   }
 
   body {
     background: #fff;
     color: var(--text-dark);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
   }
 
   /* 顶部导航 */
@@ -95,20 +97,135 @@
   .dark-showcase { background: #0f0f0f; border-radius: 32px; padding: 80px 20px; text-align: center; margin: 0 20px; position: relative; overflow: hidden; }
   .dark-showcase h2 { color: #fff; font-size: 40px; font-weight: 800; margin-bottom: 16px; }
   .dark-showcase p { color: rgba(255,255,255,0.6); font-size: 16px; margin-bottom: 40px; }
-  .mock-card { width: 340px; height: 210px; margin: 0 auto; background: linear-gradient(135deg, #ff0055, #ff5599); border-radius: 16px; box-shadow: 0 20px 40px rgba(255,0,85,0.3); position: relative; }
+  .mock-card { width: 340px; height: 210px; margin: 0 auto; background: linear-gradient(135deg, var(--cyan), #00aaff); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,240,255,0.2); position: relative; }
+
+  /* =========================================
+     核心重构：轮播滑动区 (Carousel)
+     ========================================= */
+  .feature-slider-section {
+    padding: 100px 20px;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .slider-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 600px;
+  }
   
-  /* 交替图文 */
-  .zigzag-row { display: flex; align-items: center; justify-content: space-between; gap: 60px; margin-bottom: 100px; }
-  .zigzag-row:nth-child(even) { flex-direction: row-reverse; }
-  .zigzag-text { flex: 1; max-width: 450px; }
-  .zigzag-text h3 { font-size: 36px; font-weight: 800; margin-bottom: 16px; line-height: 1.3; }
-  .zigzag-text p { font-size: 16px; color: var(--text-gray); line-height: 1.6; margin-bottom: 24px; }
-  .btn-text { font-size: 14px; font-weight: 700; color: #111; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-  .btn-text::after { content: '→'; }
+  /* 左侧文字内容 */
+  .slider-text-wrapper {
+    width: 45%;
+    position: relative;
+    z-index: 2;
+  }
+  .slider-text-item {
+    position: absolute;
+    top: 0; left: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+  }
+  .slider-text-item.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    position: relative;
+  }
   
-  .zigzag-visual { flex: 1; display: flex; justify-content: center; }
-  .mock-phone { width: 280px; height: 560px; background: #f0f0f0; border-radius: 40px; border: 8px solid #111; box-shadow: 0 20px 40px rgba(0,0,0,0.1); position: relative; overflow: hidden; }
-  .mock-phone::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 24px; background: #111; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; z-index: 2; }
+  .slider-tag { color: var(--brand-red); font-size: 16px; font-weight: 700; margin-bottom: 16px; display: block; }
+  .slider-title { font-size: clamp(32px, 4vw, 48px); font-weight: 800; color: #111; margin-bottom: 20px; line-height: 1.2; }
+  .slider-desc { font-size: 16px; color: var(--text-gray); margin-bottom: 30px; line-height: 1.6; }
+  .btn-more { 
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #111; color: #fff; padding: 12px 24px; border-radius: 30px;
+    font-weight: 600; text-decoration: none; font-size: 14px;
+    transition: background 0.3s;
+  }
+  .btn-more:hover { background: #333; }
+  .btn-more svg { width: 14px; height: 14px; }
+
+  /* 右侧手机界面 */
+  .slider-visual-wrapper {
+    width: 50%;
+    position: relative;
+    height: 680px; /* 根据手机高度调整 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .phone-mockup {
+    width: 320px; height: 650px;
+    background: #000;
+    border-radius: 44px;
+    padding: 12px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.15), inset 0 0 0 2px #222;
+    position: absolute;
+    top: 50%;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-50%) scale(0.95);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .phone-mockup.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) scale(1);
+  }
+  .phone-screen {
+    width: 100%; height: 100%;
+    background: #fff;
+    border-radius: 34px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  /* 手机顶部刘海 */
+  .phone-notch {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 28px; background: #000;
+    border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;
+    z-index: 10;
+  }
+  /* 模拟 App UI */
+  .app-ui { padding: 40px 20px 20px; height: 100%; display: flex; flex-direction: column; background: #fafafa; }
+  .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; font-weight: 600; }
+  .app-box { background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+  .app-label { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .app-val { font-size: 28px; font-weight: 800; color: #111; display: flex; justify-content: space-between; align-items: center; }
+  .app-btn { margin-top: auto; background: #111; color: #fff; text-align: center; padding: 16px; border-radius: 12px; font-weight: 600; font-size: 14px; }
+
+  /* 右侧垂直指示点 */
+  .slider-dots {
+    position: absolute;
+    right: -60px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    z-index: 10;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .dot:hover { background: #aaa; }
+  .dot.active {
+    background: var(--brand-red);
+    transform: scale(1.3);
+  }
 
   /* 深色数据区 */
   .stats-dark { background: #0f0f0f; border-radius: 32px; padding: 60px 20px; margin: 0 20px; color: #fff; text-align: center; }
@@ -146,7 +263,7 @@
   .footer-col a:hover { color: #fff; }
   .footer-bottom { max-width: 1200px; margin: 60px auto 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; color: rgba(255,255,255,0.4); font-size: 12px; }
 
-  /* 登录/注册弹窗 (复用) */
+  /* 登录/注册弹窗 */
   .auth-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 9999; display: none; align-items: center; justify-content: center; }
   .auth-modal.show { display: flex; }
   .auth-box { background: #fff; border-radius: 16px; padding: 40px; width: 100%; max-width: 400px; text-align: center; position: relative; }
@@ -157,10 +274,15 @@
 
   @media (max-width: 960px) {
     .features-grid, .stats-grid, .testimonials, .footer-inner-greotpay { grid-template-columns: 1fr; text-align: center; }
-    .zigzag-row, .zigzag-row:nth-child(even) { flex-direction: column; text-align: center; gap: 40px; }
-    .zigzag-text { max-width: 100%; }
     .nav-links { display: none; }
     .footer-brand { text-align: center; }
+    
+    /* 移动端轮播适配 */
+    .slider-container { flex-direction: column; min-height: 800px; padding-bottom: 60px; }
+    .slider-text-wrapper { width: 100%; text-align: center; margin-bottom: 40px; }
+    .slider-visual-wrapper { width: 100%; height: 650px; }
+    .slider-dots { right: 50%; transform: translateX(50%); top: auto; bottom: -20px; flex-direction: row; }
+    .btn-more { justify-content: center; }
   }
 </style>
 </head>
@@ -183,7 +305,7 @@
   })();
 </script>
 
-<!-- 语言切换器 (固定右上角) -->
+<!-- 语言切换器 -->
 <div class="lang-switch-wrap" style="right: 120px; left: auto;">
   <div class="lang-switch-btn" onclick="toggleLangMenu(event)" style="background:#fff; color:#111; border-color:#ddd;">🌏</div>
   <div class="lang-dropdown" id="langDropdown" style="right: 0; left: auto;"></div>
@@ -211,7 +333,7 @@
   </div>
 </header>
 
-<!-- Hero 区域 (保留视频) -->
+<!-- Hero 区域 -->
 <section class="hero-greotpay">
   <video class="hero-video" autoplay muted loop playsinline preload="auto">
     <source src="homeBg.3__npe53rz97a.webm" type="video/webm" />
@@ -223,7 +345,7 @@
   </div>
 </section>
 
-<!-- 日常权益 (4个卡片) -->
+<!-- 4 个卡片 -->
 <section class="section-greotpay">
   <div class="container-greotpay">
     <h2 class="section-title">享受日常权益</h2>
@@ -255,71 +377,215 @@
   <div class="mock-card"></div>
 </section>
 
-<!-- 交替图文 (Zigzag) -->
-<section class="section-greotpay">
-  <div class="container-greotpay">
+<!-- =========================================
+     全新的折叠轮播区 (完全按截图实现)
+     ========================================= -->
+<section class="feature-slider-section">
+  <div class="slider-container">
     
-    <div class="zigzag-row reveal">
-      <div class="zigzag-text">
-        <h3>发送加密货币，收取本地货币</h3>
-        <p>即时转账，零隐藏费用，让收款人使用最方便的货币。</p>
-        <a href="#" class="btn-text">立即体验</a>
+    <!-- 左侧文字区 -->
+    <div class="slider-text-wrapper">
+      
+      <div class="slider-text-item active" data-index="0">
+        <span class="slider-tag">全球转账</span>
+        <h3 class="slider-title">发送加密货币，收取本地货币</h3>
+        <p class="slider-desc">轻松转账，每笔交易都有保障，让收款人更快收到资金。</p>
+        <a href="#" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
-      <div class="zigzag-visual"><div class="mock-phone"></div></div>
+
+      <div class="slider-text-item" data-index="1">
+        <span class="slider-tag">应用内转账</span>
+        <h3 class="slider-title">向任何 NEXAPAY 用户发送加密货币</h3>
+        <p class="slider-desc">无论何时何地，只需对方 NEXAPAY ID，即发即达。</p>
+        <a href="#" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+      </div>
+
+      <div class="slider-text-item" data-index="2">
+        <span class="slider-tag">卡片</span>
+        <h3 class="slider-title">连接加密货币与日常生活</h3>
+        <p class="slider-desc">绑定虚拟卡，全球商户畅享支付体验。</p>
+        <a href="#" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+      </div>
+
+      <div class="slider-text-item" data-index="3">
+        <span class="slider-tag">信用额度</span>
+        <h3 class="slider-title">持有加密货币，使用信用额度</h3>
+        <p class="slider-desc">无需卖出您的加密资产，即可享受消费额度。</p>
+        <a href="#" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+      </div>
+
+      <div class="slider-text-item" data-index="4">
+        <span class="slider-tag">赚币</span>
+        <h3 class="slider-title">轻松增值您的加密资产</h3>
+        <p class="slider-desc">让闲钱为您工作，获取稳定收益。</p>
+        <a href="#" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+      </div>
+
+      <div class="slider-text-item" data-index="5">
+        <span class="slider-tag">兑换</span>
+        <h3 class="slider-title">轻松兑换加密资产</h3>
+        <p class="slider-desc">极具竞争力的汇率，支持多种主流币种兑换。</p>
+        <a href="#" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+      </div>
+
+      <div class="slider-text-item" data-index="6">
+        <span class="slider-tag">P2P</span>
+        <h3 class="slider-title">点对点交易，由您驱动</h3>
+        <p class="slider-desc">直接与其他用户交易，安全、高效、低费率。</p>
+        <a href="#" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+      </div>
+
     </div>
 
-    <div class="zigzag-row reveal">
-      <div class="zigzag-text">
-        <h3>向任何 NEXAPAY 用户发送加密货币</h3>
-        <p>无论何时何地，只需对方 NEXAPAY ID，即发即达。</p>
-        <a href="#" class="btn-text">立即体验</a>
+    <!-- 右侧视觉手机区 -->
+    <div class="slider-visual-wrapper">
+      
+      <!-- 手机 1 -->
+      <div class="phone-mockup active" data-index="0">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-ui">
+            <div class="app-header"><span>&larr;</span><span>&#9635;</span></div>
+            <div class="app-box">
+              <div class="app-label">You send</div>
+              <div class="app-val"><span>🇺🇸 USDT</span> 1,000</div>
+            </div>
+            <div style="text-align:center; color:#888; margin-bottom:16px;">&darr; 1 USDT = 0.87707 EUR</div>
+            <div class="app-box">
+              <div class="app-label">Recipient gets</div>
+              <div class="app-val"><span>🇪🇺 EUR</span> 877.07</div>
+            </div>
+            <div class="app-label" style="display:flex; justify-content:space-between; margin-top:10px;"><span>Arrives</span><span>By 25 Jun.</span></div>
+            <div class="app-label" style="display:flex; justify-content:space-between;"><span>Includes fee</span><span>3.384 USDT</span></div>
+            <div class="app-btn">Add recipient</div>
+          </div>
+        </div>
       </div>
-      <div class="zigzag-visual"><div class="mock-phone"></div></div>
+
+      <!-- 手机 2 -->
+      <div class="phone-mockup" data-index="1">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-ui">
+            <div class="app-header"><span>Send to User</span></div>
+            <div style="text-align:center; margin: 40px 0;">
+               <div style="width:60px; height:60px; border-radius:50%; background:#eee; margin:0 auto 10px;"></div>
+               <div style="font-weight:600;">@alex_design</div>
+            </div>
+            <div class="app-box">
+              <div class="app-label">Amount</div>
+              <div class="app-val" style="justify-content:center;">50 USDC</div>
+            </div>
+            <div class="app-btn">Send Now</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 手机 3 -->
+      <div class="phone-mockup" data-index="2">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-ui">
+            <div class="app-header"><span>My Cards</span></div>
+            <div style="background: linear-gradient(135deg, #00f0ff, #00aaff); border-radius: 16px; height: 180px; padding: 20px; color: #000; display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 20px;">
+               <div style="font-weight:800; font-size:20px;">NEXAPAY</div>
+               <div style="font-family:monospace; font-size:18px;">•••• 4821</div>
+            </div>
+            <div class="app-label">Recent Transactions</div>
+            <div class="app-box" style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Amazon</span><span>-$45.00</span></div>
+            <div class="app-box" style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Starbucks</span><span>-$5.20</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 手机 4 -->
+      <div class="phone-mockup" data-index="3">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-ui">
+            <div class="app-header"><span>Credit</span></div>
+            <div style="text-align:center; margin: 30px 0;">
+               <div class="app-label">Available to Spend</div>
+               <div style="font-size:40px; font-weight:800; color:#111;">$40.82</div>
+            </div>
+            <div class="app-box">
+               <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Collateral (BTC)</span><span>$1,200.00</span></div>
+               <div style="display:flex; justify-content:space-between;"><span>LTV Ratio</span><span>15%</span></div>
+            </div>
+            <div class="app-btn">Manage Collateral</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 手机 5 -->
+      <div class="phone-mockup" data-index="4">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-ui">
+            <div class="app-header"><span>Earn</span></div>
+            <div class="app-box">
+               <div class="app-label">Total Balance</div>
+               <div class="app-val">276.82</div>
+            </div>
+            <div class="app-box">
+               <div class="app-label">USDT Yield</div>
+               <div class="app-val" style="color:var(--brand-red);">4.2% APY</div>
+            </div>
+            <div class="app-btn">Deposit & Earn</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 手机 6 -->
+      <div class="phone-mockup" data-index="5">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-ui">
+            <div class="app-header"><span>Exchange</span></div>
+            <div class="app-box">
+              <div class="app-label">From</div>
+              <div class="app-val"><span>BTC</span> 0.5</div>
+            </div>
+            <div style="text-align:center; margin:10px 0;">&darr;</div>
+            <div class="app-box">
+              <div class="app-label">To</div>
+              <div class="app-val"><span>ETH</span> 4.2</div>
+            </div>
+            <div class="app-btn">Confirm Swap</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 手机 7 -->
+      <div class="phone-mockup" data-index="6">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-ui">
+            <div class="app-header"><span>P2P Market</span></div>
+            <div class="app-box" style="border: 1px solid #eee; background:#fff;">
+              <div class="app-label">Buy USDT</div>
+              <div style="font-weight:700;">1.02 USD</div>
+              <div style="margin-top:10px; font-size:12px; color:#888;">Merchant: CryptoKing</div>
+              <div style="margin-top:10px; display:flex; gap:10px;">
+                 <button style="flex:1; padding:8px; border-radius:6px; border:1px solid #111; background:#fff;">Sell</button>
+                 <button style="flex:1; padding:8px; border-radius:6px; border:none; background:#111; color:#fff;">Buy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <div class="zigzag-row reveal">
-      <div class="zigzag-text">
-        <h3>连接加密货币与日常生活</h3>
-        <p>绑定虚拟卡，全球商户畅享支付体验。</p>
-        <a href="#" class="btn-text">立即体验</a>
-      </div>
-      <div class="zigzag-visual"><div class="mock-phone"></div></div>
-    </div>
-
-    <div class="zigzag-row reveal">
-      <div class="zigzag-text">
-        <h3>持有加密货币，使用信用额度</h3>
-        <p>无需卖出您的加密资产，即可享受消费额度。</p>
-        <a href="#" class="btn-text">立即体验</a>
-      </div>
-      <div class="zigzag-visual"><div class="mock-phone"></div></div>
-    </div>
-
-    <div class="zigzag-row reveal">
-      <div class="zigzag-text">
-        <h3>轻松增值您的加密资产</h3>
-        <p>让闲钱为您工作，获取稳定收益。</p>
-        <a href="#" class="btn-text">立即体验</a>
-      </div>
-      <div class="zigzag-visual"><div class="mock-phone"></div></div>
-    </div>
-
-    <div class="zigzag-row reveal">
-      <div class="zigzag-text">
-        <h3>轻松兑换加密资产</h3>
-        <p>极具竞争力的汇率，支持多种主流币种兑换。</p>
-        <a href="#" class="btn-text">立即体验</a>
-      </div>
-      <div class="zigzag-visual"><div class="mock-phone"></div></div>
-    </div>
-
-    <div class="zigzag-row reveal">
-      <div class="zigzag-text">
-        <h3>点对点交易，由您驱动</h3>
-        <p>直接与其他用户交易，安全、高效、低费率。</p>
-        <a href="#" class="btn-text">立即体验</a>
-      </div>
-      <div class="zigzag-visual"><div class="mock-phone"></div></div>
+    <!-- 右侧圆点导航 -->
+    <div class="slider-dots" id="sliderDots">
+      <div class="dot active" onclick="goToSlide(0)"></div>
+      <div class="dot" onclick="goToSlide(1)"></div>
+      <div class="dot" onclick="goToSlide(2)"></div>
+      <div class="dot" onclick="goToSlide(3)"></div>
+      <div class="dot" onclick="goToSlide(4)"></div>
+      <div class="dot" onclick="goToSlide(5)"></div>
+      <div class="dot" onclick="goToSlide(6)"></div>
     </div>
 
   </div>
@@ -438,7 +704,7 @@
 
 <script src="script.js"></script>
 <script>
-  // 弹窗逻辑
+  // 登录弹窗
   window.openAuthModal = function(type) {
     document.getElementById('authTitle').textContent = type;
     document.getElementById('authModal').classList.add('show');
@@ -447,7 +713,7 @@
     document.getElementById('authModal').classList.remove('show');
   };
 
-  // FAQ 折叠逻辑
+  // FAQ 折叠
   document.querySelectorAll('.faq-q').forEach(btn => {
     btn.addEventListener('click', () => {
       const item = btn.parentElement;
@@ -457,15 +723,59 @@
     });
   });
 
-  // 导航栏滚动变色
-  window.addEventListener('scroll', () => {
-    const topbar = document.querySelector('.topbar');
-    if (window.scrollY > 50) {
-      topbar.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
-    } else {
-      topbar.style.boxShadow = 'none';
-    }
-  });
+  // ==========================================
+  // 折叠轮播 (Carousel) 核心逻辑
+  // ==========================================
+  let currentSlide = 0;
+  const totalSlides = 7;
+  let autoSlideInterval;
+
+  window.goToSlide = function(index) {
+    // 1. 切换左侧文字
+    document.querySelectorAll('.slider-text-item').forEach((el, i) => {
+      if (i === index) el.classList.add('active');
+      else el.classList.remove('active');
+    });
+
+    // 2. 切换右侧手机
+    document.querySelectorAll('.phone-mockup').forEach((el, i) => {
+      if (i === index) el.classList.add('active');
+      else el.classList.remove('active');
+    });
+
+    // 3. 切换圆点状态
+    document.querySelectorAll('.slider-dots .dot').forEach((el, i) => {
+      if (i === index) el.classList.add('active');
+      else el.classList.remove('active');
+    });
+
+    currentSlide = index;
+    
+    // 重置自动播放
+    resetAutoSlide();
+  };
+
+  // 自动轮播
+  function startAutoSlide() {
+    autoSlideInterval = setInterval(() => {
+      let next = (currentSlide + 1) % totalSlides;
+      goToSlide(next);
+    }, 4000);
+  }
+
+  function resetAutoSlide() {
+    clearInterval(autoSlideInterval);
+    startAutoSlide();
+  }
+
+  // 初始化自动播放
+  startAutoSlide();
+
+  // 鼠标悬停在轮播区时暂停自动播放
+  const sliderSection = document.querySelector('.feature-slider-section');
+  sliderSection.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
+  sliderSection.addEventListener('mouseleave', startAutoSlide);
+
 </script>
 </body>
 </html>
