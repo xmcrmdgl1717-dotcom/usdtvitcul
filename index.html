@@ -18,79 +18,28 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  
   html { scroll-behavior: smooth; }
+  body { background: #f0f4f8; color: var(--text-dark); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; overflow-x: hidden; }
 
-  body {
-    background: #f0f4f8;
-    color: var(--text-dark);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-    overflow-x: hidden;
-  }
-
-  /* ================= 动态绚丽背景 ================= */
-  .bg-glow {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: -1;
-    overflow: hidden;
-    background: #fff;
-  }
-  .glow-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.4;
-    animation: float 20s infinite alternate;
-  }
+  /* 动态背景 */
+  .bg-glow { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden; background: #fff; }
+  .glow-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4; animation: float 20s infinite alternate; }
   .glow-1 { width: 500px; height: 500px; background: #00f0ff; top: -10%; left: -10%; }
   .glow-2 { width: 600px; height: 600px; background: #ff3366; bottom: -20%; right: -10%; animation-delay: -10s; }
   .glow-3 { width: 400px; height: 400px; background: #00ffaa; top: 40%; left: 60%; animation-delay: -5s; }
-  @keyframes float {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(100px, 100px) scale(1.2); }
-  }
+  @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(100px, 100px) scale(1.2); } }
 
-  /* ================= 顶部导航 ================= */
-  .topbar {
-    position: fixed;
-    top: 0; left: 0; width: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--glass-border);
-    z-index: 1000;
-    padding: 16px 0;
-    transition: all 0.3s;
-  }
-  .topbar-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+  /* 顶部导航 */
+  .topbar { position: fixed; top: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); z-index: 1000; padding: 16px 0; transition: all 0.3s; }
+  .topbar-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
   .logo { display: flex; align-items: center; gap: 8px; font-size: 22px; font-weight: 800; color: #111; text-decoration: none; }
   .logo-mark { width: 36px; height: 36px; background: linear-gradient(135deg, var(--cyan), var(--neon)); color: #000; border-radius: 10px; display: grid; place-items: center; font-size: 18px; box-shadow: 0 4px 15px rgba(0,240,255,0.4); }
 
   .header-actions { display: flex; align-items: center; gap: 16px; margin-left: auto; }
-  
   .lang-switch-wrap { position: relative; display: inline-flex; align-items: center; }
-  .lang-switch-btn {
-    width: 36px; height: 36px;
-    border-radius: 50%; background: rgba(255,255,255,0.5); border: 1px solid var(--glass-border);
-    display: flex; justify-content: center; align-items: center;
-    font-size: 16px; cursor: pointer; transition: all 0.3s;
-    backdrop-filter: blur(10px);
-  }
+  .lang-switch-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.5); border: 1px solid var(--glass-border); display: flex; justify-content: center; align-items: center; font-size: 16px; cursor: pointer; transition: all 0.3s; backdrop-filter: blur(10px); }
   .lang-switch-btn:hover { background: #fff; transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-  .lang-dropdown {
-    position: absolute; top: 50px; right: 0;
-    background: #fff; border: 1px solid #eee; border-radius: 12px;
-    padding: 8px 0; display: none; flex-direction: column; min-width: 140px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1); z-index: 1001;
-  }
+  .lang-dropdown { position: absolute; top: 50px; right: 0; background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 8px 0; display: none; flex-direction: column; min-width: 140px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); z-index: 1001; }
   .lang-dropdown.show { display: flex; }
   .lang-dropdown a { padding: 10px 16px; font-size: 14px; color: #333; text-decoration: none; white-space: nowrap; cursor: pointer; }
   .lang-dropdown a:hover { background: #f8f9fa; color: var(--brand-red); }
@@ -98,67 +47,36 @@
   .auth-group { display: flex; align-items: center; gap: 20px; }
   .btn-auth { font-size: 15px; font-weight: 600; color: #111; cursor: pointer; text-decoration: none; transition: color 0.2s; }
   .btn-auth:hover { color: var(--brand-red); }
-  .btn-register { 
-    background: #111; color: #fff; padding: 10px 24px; border-radius: 30px; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s;
-  }
+  .btn-register { background: #111; color: #fff; padding: 10px 24px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s; }
   .btn-register:hover { background: #333; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); color: #fff; }
 
   .user-avatar-wrap { position: relative; display: none; cursor: pointer; }
   .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--neon)); display: grid; place-items: center; font-weight: 800; color: #000; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-  .user-dropdown {
-    position: absolute; top: 50px; right: 0;
-    background: #fff; border: 1px solid #eee; border-radius: 12px;
-    padding: 8px 0; display: none; flex-direction: column; min-width: 140px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1); z-index: 1001;
-  }
+  .user-dropdown { position: absolute; top: 50px; right: 0; background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 8px 0; display: none; flex-direction: column; min-width: 140px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); z-index: 1001; }
   .user-avatar-wrap:hover .user-dropdown { display: flex; }
   .user-dropdown a { padding: 10px 16px; font-size: 14px; color: #333; text-decoration: none; cursor: pointer; white-space: nowrap; }
   .user-dropdown a:hover { background: #f8f9fa; color: var(--brand-red); }
 
-  /* ================= Hero ================= */
-  .hero-greotpay {
-    position: relative; 
-    height: 100vh; height: 100dvh;
-    display: flex; align-items: center; justify-content: flex-start;
-    text-align: left; overflow: hidden; background: #000; 
-    padding: 80px 8vw 0;
-    border-radius: 0 0 40px 40px;
-  }
+  /* Hero */
+  .hero-greotpay { position: relative; height: 100vh; height: 100dvh; display: flex; align-items: center; justify-content: flex-start; text-align: left; overflow: hidden; background: #000; padding: 80px 8vw 0; border-radius: 0 0 40px 40px; }
   .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.65; }
   .hero-content-greotpay { position: relative; z-index: 2; max-width: 800px; }
   .hero-title-greotpay { font-size: clamp(40px, 6vw, 76px); font-weight: 800; color: #fff; line-height: 1.15; margin-bottom: 24px; text-shadow: 0 10px 30px rgba(0,0,0,0.5); }
   .hero-sub-greotpay { font-size: clamp(16px, 2vw, 24px); color: rgba(255,255,255,0.9); margin-bottom: 48px; text-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-  .btn-start {
-    display: inline-block; padding: 18px 40px; font-size: 16px; font-weight: 700;
-    background: var(--brand-red); color: #fff; border-radius: 40px; text-decoration: none; cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 10px 30px rgba(255,51,51,0.4);
-    position: relative; overflow: hidden;
-  }
-  .btn-start::after {
-    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transform: skewX(-20deg); transition: 0.5s;
-  }
+  .btn-start { display: inline-block; padding: 18px 40px; font-size: 16px; font-weight: 700; background: var(--brand-red); color: #fff; border-radius: 40px; text-decoration: none; cursor: pointer; transition: all 0.4s; box-shadow: 0 10px 30px rgba(255,51,51,0.4); }
   .btn-start:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 15px 40px rgba(255,51,51,0.6); }
-  .btn-start:hover::after { left: 150%; }
 
-  /* ================= 通用区块 ================= */
+  /* 通用区块 */
   .section-greotpay { padding: 100px 20px; position: relative; z-index: 10; }
   .container-greotpay { max-width: 1200px; margin: 0 auto; }
   .section-title { font-size: 36px; font-weight: 800; margin-bottom: 48px; text-align: center; letter-spacing: -1px; }
 
-  /* ================= 横向滑动卡片区 ================= */
+  /* 横向滑动卡片区 */
   .horizontal-scroll-wrap { position: relative; width: 100%; padding: 20px 0; }
   .horizontal-scroll-wrap::-webkit-scrollbar { display: none; }
   .horizontal-scroll-wrap { -ms-overflow-style: none; scrollbar-width: none; }
   .scroll-track { display: flex; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 20px 8vw; scroll-padding: 0 8vw; -webkit-overflow-scrolling: touch; }
-  .glass-card {
-    flex: 0 0 320px; height: 420px; border-radius: 24px; scroll-snap-align: center; position: relative; overflow: hidden;
-    background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.4s ease; display: flex; flex-direction: column;
-  }
+  .glass-card { flex: 0 0 320px; height: 420px; border-radius: 24px; scroll-snap-align: center; position: relative; overflow: hidden; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 20px 40px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.4s ease; display: flex; flex-direction: column; }
   .glass-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 30px 60px rgba(0,0,0,0.1); border-color: rgba(255,255,255,0.9); }
   .glass-card img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1; transition: transform 0.5s; }
   .glass-card:hover img { transform: scale(1.05); }
@@ -167,130 +85,57 @@
   .card-content h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
   .card-content p { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.5; }
 
-  /* ================= 黑底卡片展示区 ================= */
-  .dark-showcase { 
-    background: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%); 
-    border-radius: 40px; padding: 80px 20px 60px; text-align: center; 
-    margin: 0 20px; position: relative; overflow: hidden; 
-    box-shadow: inset 0 0 100px rgba(255,51,51,0.05), 0 20px 40px rgba(0,0,0,0.2);
-  }
+  /* 黑底卡片展示区 */
+  .dark-showcase { background: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%); border-radius: 40px; padding: 80px 20px 60px; text-align: center; margin: 0 20px; position: relative; overflow: hidden; box-shadow: inset 0 0 100px rgba(255,51,51,0.05), 0 20px 40px rgba(0,0,0,0.2); }
   .dark-showcase h2 { color: #fff; font-size: 36px; font-weight: 800; margin-bottom: 16px; position: relative; z-index: 2; }
   .dark-showcase p { color: rgba(255,255,255,0.6); font-size: 16px; margin-bottom: 32px; position: relative; z-index: 2; max-width: 400px; margin-left: auto; margin-right: auto; }
-  
-  .btn-learn-more {
-    display: inline-block; background: #fff; color: #000; padding: 12px 32px;
-    border-radius: 30px; font-weight: 700; font-size: 14px; text-decoration: none;
-    cursor: pointer; transition: all 0.3s; position: relative; z-index: 2; margin-bottom: 50px; border: none;
-  }
+  .btn-learn-more { display: inline-block; background: #fff; color: #000; padding: 12px 32px; border-radius: 30px; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.3s; position: relative; z-index: 2; margin-bottom: 50px; border: none; }
   .btn-learn-more:hover { background: #eee; transform: scale(1.05); }
 
-  /* 3D 卡片动效容器 */
   .card-3d-wrapper { perspective: 1200px; width: 100%; max-width: 400px; margin: 0 auto; position: relative; z-index: 2; padding: 10px; }
-  
-  /* 翻转动画类 */
   .flipping { transform: rotateY(90deg) !important; transition: transform 0.3s ease-in !important; }
-
-  .mock-card-3d { 
-    width: 100%; aspect-ratio: 1.58 / 1;
-    border-radius: 20px; 
-    position: relative; display: flex; flex-direction: column; justify-content: space-between; 
-    padding: 24px; text-align: left; 
-    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
-    transform-style: preserve-3d;
-    will-change: transform;
-  }
+  .mock-card-3d { width: 100%; aspect-ratio: 1.58 / 1; border-radius: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; text-align: left; transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease; transform-style: preserve-3d; will-change: transform; }
   
-  /* === 虚拟卡样式 (红黑) === */
-  .mock-card-3d.virtual {
-    background: linear-gradient(135deg, #d90012, #7a000a);
-    box-shadow: 0 30px 60px rgba(217,0,18,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-
-  /* === 实体卡样式 (黑金) === */
-  .mock-card-3d.physical {
-    background: linear-gradient(135deg, #1a1a1a, #050505);
-    box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(212,175,55,0.3);
-    border: 1px solid rgba(212,175,55,0.2);
-  }
+  .mock-card-3d.virtual { background: linear-gradient(135deg, #d90012, #7a000a); box-shadow: 0 30px 60px rgba(217,0,18,0.3), inset 0 1px 0 rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.1); }
+  .mock-card-3d.physical { background: linear-gradient(135deg, #1a1a1a, #050505); box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(212,175,55,0.3); border: 1px solid rgba(212,175,55,0.2); }
   .mock-card-3d.physical .mc-logo { color: var(--gold); }
   .mock-card-3d.physical .mc-num { color: var(--gold); text-shadow: 0 0 10px rgba(212,175,55,0.3); }
   .mock-card-3d.physical .mc-net { color: var(--gold); }
   .mock-card-3d.physical .mc-info span { color: #eee; }
 
-  /* 卡片炫光遮罩 */
-  .mock-card-3d::before {
-    content: ''; position: absolute; inset: 0; border-radius: 20px; pointer-events: none;
-    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 60%);
-    opacity: 0; transition: opacity 0.3s; mix-blend-mode: overlay; z-index: 1;
-  }
+  .mock-card-3d::before { content: ''; position: absolute; inset: 0; border-radius: 20px; pointer-events: none; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s; mix-blend-mode: overlay; z-index: 1; }
   .card-3d-wrapper:hover .mock-card-3d::before { opacity: 1; }
 
-  /* 卡片顶部图标 */
   .mc-logo { font-size: 18px; font-weight: 800; font-family: sans-serif; letter-spacing: 0.5px; color: #fff; transition: color 0.3s; position: relative; z-index: 2; }
   .mc-chip-net { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; position: relative; z-index: 2; }
   .mc-chip { width: 40px; height: 30px; background: linear-gradient(135deg, #f0dca0, #d4b260); border-radius: 6px; position: relative; }
   .mc-chip::after { content: ''; position: absolute; inset: 4px; border: 1px solid rgba(0,0,0,0.2); border-radius: 3px; }
   .mc-net { font-size: 24px; font-weight: 800; font-style: italic; color: #fff; transition: color 0.3s; }
-
-  /* 卡号 */
-  .mc-num { 
-    font-size: 20px; font-family: monospace; letter-spacing: 2px; 
-    margin: 24px 0; color: #fff; transition: color 0.3s;
-    transform: translateZ(20px); position: relative; z-index: 2;
-  }
-
-  /* 底部信息 */
+  .mc-num { font-size: 20px; font-family: monospace; letter-spacing: 2px; margin: 24px 0; color: #fff; transition: color 0.3s; transform: translateZ(20px); position: relative; z-index: 2; }
   .mc-bottom { display: flex; justify-content: space-between; align-items: flex-end; transform: translateZ(15px); position: relative; z-index: 2; }
   .mc-info { font-size: 10px; color: rgba(255,255,255,0.7); text-transform: uppercase; }
   .mc-info span { display: block; font-size: 14px; font-weight: 600; margin-top: 4px; letter-spacing: 0.5px; color: #fff; transition: color 0.3s; }
 
-  /* 切换胶囊按钮 */
-  .card-tabs {
-    display: flex; background: rgba(255,255,255,0.1); padding: 6px; border-radius: 30px;
-    margin: 40px auto 0; width: max-content; position: relative; z-index: 2; border: 1px solid rgba(255,255,255,0.05);
-  }
-  .card-tab {
-    padding: 10px 24px; border-radius: 24px; font-size: 14px; font-weight: 600; color: #888;
-    cursor: pointer; transition: all 0.3s;
-  }
+  .card-tabs { display: flex; background: rgba(255,255,255,0.1); padding: 6px; border-radius: 30px; margin: 40px auto 0; width: max-content; position: relative; z-index: 2; border: 1px solid rgba(255,255,255,0.05); }
+  .card-tab { padding: 10px 24px; border-radius: 24px; font-size: 14px; font-weight: 600; color: #888; cursor: pointer; transition: all 0.3s; }
   .card-tab.active { background: #fff; color: #000; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
-  /* ================= 图文轮播区 ================= */
+  /* 图文轮播区 */
   .feature-slider-section { padding: 100px 20px; position: relative; z-index: 10; }
   .slider-container { max-width: 1100px; margin: 0 auto; position: relative; min-height: 650px; }
-  
-  .slide-block { 
-    display: flex; align-items: center; justify-content: space-between; gap: 40px; 
-    position: absolute; top: 0; left: 0; width: 100%; 
-    opacity: 0; visibility: hidden; transform: translateY(30px); 
-    transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); pointer-events: none; 
-  }
+  .slide-block { display: flex; align-items: center; justify-content: space-between; gap: 40px; position: absolute; top: 0; left: 0; width: 100%; opacity: 0; visibility: hidden; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); pointer-events: none; }
   .slide-block.active { opacity: 1; visibility: visible; transform: translateY(0); position: relative; pointer-events: auto; }
   
   .slide-text { width: 45%; }
-  .slider-tag { 
-    color: var(--brand-red); font-size: 14px; font-weight: 700; margin-bottom: 16px; 
-    display: inline-block; padding: 4px 12px; background: rgba(255,51,51,0.1); 
-    border-radius: 20px; border: 1px solid rgba(255,51,51,0.2);
-  }
+  .slider-tag { color: var(--brand-red); font-size: 14px; font-weight: 700; margin-bottom: 16px; display: inline-block; padding: 4px 12px; background: rgba(255,51,51,0.1); border-radius: 20px; border: 1px solid rgba(255,51,51,0.2); }
   .slide-title { font-size: clamp(32px, 4vw, 48px); font-weight: 800; color: #111; margin-bottom: 20px; line-height: 1.2; letter-spacing: -1px; }
   .slide-desc { font-size: 16px; color: var(--text-gray); margin-bottom: 32px; line-height: 1.7; }
-  
-  .btn-more { 
-    display: inline-flex; align-items: center; gap: 8px; background: #111; color: #fff; 
-    padding: 14px 28px; border-radius: 30px; font-weight: 600; text-decoration: none; 
-    font-size: 15px; transition: all 0.3s; cursor: pointer;
-  }
+  .btn-more { display: inline-flex; align-items: center; gap: 8px; background: #111; color: #fff; padding: 14px 28px; border-radius: 30px; font-weight: 600; text-decoration: none; font-size: 15px; transition: all 0.3s; cursor: pointer; }
   .btn-more:hover { background: #333; transform: translateX(5px); }
   .btn-more svg { width: 16px; height: 16px; }
 
   .slide-phone { width: 50%; display: flex; justify-content: center; perspective: 1000px; }
-  .phone-mockup { 
-    width: 300px; height: 610px; background: #000; border-radius: 40px; padding: 10px; 
-    box-shadow: 0 40px 80px rgba(0,0,0,0.15), inset 0 0 0 2px #333; 
-    position: relative; transition: transform 0.5s; 
-  }
+  .phone-mockup { width: 300px; height: 610px; background: #000; border-radius: 40px; padding: 10px; box-shadow: 0 40px 80px rgba(0,0,0,0.15), inset 0 0 0 2px #333; position: relative; transition: transform 0.5s; }
   .slide-block:hover .phone-mockup { transform: rotateY(-10deg) rotateX(5deg); }
   .phone-screen { width: 100%; height: 100%; background: #fff; border-radius: 32px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
   .phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 110px; height: 25px; background: #000; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; z-index: 10; }
@@ -306,11 +151,8 @@
   .dot { width: 10px; height: 10px; border-radius: 50%; background: #ddd; cursor: pointer; transition: all 0.4s; }
   .dot.active { background: var(--brand-red); transform: scale(1.5); box-shadow: 0 0 10px rgba(255,51,51,0.5); }
 
-  /* ================= 数据区 ================= */
-  .stats-dark { 
-    background: linear-gradient(135deg, #111, #222); border-radius: 40px; padding: 80px 20px; 
-    margin: 0 20px; color: #fff; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-  }
+  /* 数据区 */
+  .stats-dark { background: linear-gradient(135deg, #111, #222); border-radius: 40px; padding: 80px 20px; margin: 0 20px; color: #fff; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
   .stats-dark h2 { font-size: 28px; font-weight: 800; margin-bottom: 48px; }
   .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 900px; margin: 0 auto; }
   .stat-item { background: rgba(255,255,255,0.05); padding: 40px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s; }
@@ -318,18 +160,13 @@
   .stat-item .num { font-size: 42px; font-weight: 800; margin-bottom: 8px; background: linear-gradient(135deg, var(--cyan), var(--neon)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   .stat-item .lbl { font-size: 14px; color: rgba(255,255,255,0.6); }
 
-  /* ================= 社区心声 ================= */
+  /* 社区心声 */
   .testimonial-section { background: transparent; padding: 100px 0; overflow: hidden; }
   .testimonial-track { display: flex; gap: 24px; padding: 20px; width: max-content; animation: scrollX 40s linear infinite; }
   .testimonial-track:hover { animation-play-state: paused; }
   @keyframes scrollX { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
   
-  .glow-test-card {
-    width: 380px; padding: 32px; border-radius: 24px;
-    background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-    position: relative; transition: all 0.3s;
-  }
+  .glow-test-card { width: 380px; padding: 32px; border-radius: 24px; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 15px 35px rgba(0,0,0,0.05); position: relative; transition: all 0.3s; }
   .glow-test-card:hover { transform: translateY(-5px); background: #fff; box-shadow: 0 20px 40px rgba(0,240,255,0.15); }
   .glow-test-card p { font-size: 16px; color: #333; line-height: 1.7; margin-bottom: 24px; font-weight: 500; }
   .glow-test-author { display: flex; align-items: center; gap: 12px; }
@@ -337,21 +174,16 @@
   .glow-info { font-size: 14px; color: #666; font-weight: 600; display: flex; flex-direction: column; }
   .glow-info span { font-size: 12px; color: #999; font-weight: 400; margin-top: 2px; }
 
-  /* ================= FAQ ================= */
+  /* FAQ */
   .faq-list { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.03); }
   .faq-item { border-bottom: 1px solid #eee; }
   .faq-item:last-child { border-bottom: none; }
-  .faq-q { 
-    width: 100%; text-align: left; background: none; border: none; 
-    outline: none; -webkit-tap-highlight-color: transparent;
-    padding: 24px 0; font-size: 18px; font-weight: 700; color: #111; 
-    display: flex; justify-content: space-between; align-items: center; cursor: pointer; 
-  }
+  .faq-q { width: 100%; text-align: left; background: none; border: none; outline: none; -webkit-tap-highlight-color: transparent; padding: 24px 0; font-size: 18px; font-weight: 700; color: #111; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
   .faq-q .plus { font-size: 24px; font-weight: 300; transition: transform 0.3s; color: var(--brand-red); }
   .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding-bottom 0.4s ease; font-size: 15px; color: var(--text-gray); line-height: 1.8; }
   .faq-item.open .faq-a { max-height: 300px; padding-bottom: 24px; }
 
-  /* ================= Footer ================= */
+  /* Footer */
   .footer-greotpay { background: #050505; color: #fff; padding: 60px 20px; text-align: center; position: relative; z-index: 10; }
   .footer-brand { display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .footer-brand .logo-box { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
@@ -359,51 +191,55 @@
   .footer-brand .logo-box span:last-child { font-size: 28px; font-weight: 800; }
   .footer-brand p { color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 30px; line-height: 1.6; }
   .footer-brand p span.slogan { color: #fff; font-weight: 800; font-size: 20px; margin-top: 10px; display: inline-block; background: linear-gradient(90deg, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  
   .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; color: rgba(255,255,255,0.3); font-size: 13px; }
 
-  /* ================= 移动端 ================= */
+  /* Safari 拦截弹窗 */
+  .safari-modal { position: fixed; inset: 0; background: rgba(10, 20, 30, 0.9); backdrop-filter: blur(10px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .safari-modal.show { display: flex; }
+  .safari-box { background: #1e293b; border-radius: 20px; padding: 30px; width: 100%; max-width: 400px; text-align: center; color: #fff; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid #334155; }
+  .safari-icon { width: 70px; height: 70px; background: #0284c7; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 20px; font-size: 35px; box-shadow: 0 0 20px rgba(2,132,199,0.4); }
+  .safari-title { font-size: 22px; font-weight: 800; margin-bottom: 12px; }
+  .safari-desc { font-size: 14px; color: #94a3b8; line-height: 1.6; margin-bottom: 24px; }
+  .safari-link-box { background: #0f172a; padding: 16px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 24px; border: 1px solid #334155; }
+  .safari-link-box input { background: transparent; border: none; color: #38bdf8; font-size: 14px; width: 100%; outline: none; text-align: center; }
+  .btn-safari-copy { width: 100%; padding: 16px; background: #2563eb; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+  .btn-safari-copy:hover { background: #1d4ed8; }
+  .safari-close { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #64748b; cursor: pointer; }
+  .safari-close:hover { color: #fff; }
+
   @media (max-width: 960px) {
     .topbar-inner { padding: 0 16px; }
     .logo span:last-child { font-size: 18px; }
-    
     .hero-greotpay { height: 100vh; height: 100dvh; padding: 100px 24px 0; justify-content: center; text-align: center; }
-    
     .glass-card { flex: 0 0 280px; height: 380px; }
-    
     .slider-container { min-height: auto; }
     .slider-dots { display: none; }
     .slide-block { position: relative !important; opacity: 1 !important; visibility: visible !important; transform: none !important; pointer-events: auto !important; flex-direction: column; text-align: center; padding: 40px 0; border-bottom: 1px solid rgba(0,0,0,0.05); gap: 40px; }
     .slide-text { width: 100%; }
     .slide-phone { width: 100%; }
     .btn-more { margin: 0 auto; }
-    
     .stats-grid { grid-template-columns: 1fr; }
     .dark-showcase { padding: 50px 16px; margin: 0 16px; }
-    
     .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
   }
 </style>
 </head>
 <body>
 
+<!-- 防闪烁遮罩 -->
+<div id="i18n-loader" style="display: none; position: fixed; inset: 0; z-index: 99999; background: #fff; place-items: center;">
+  <div style="width: 30px; height: 30px; border: 3px solid #eee; border-top-color: #00f0ff; border-radius: 50%; animation: i18n-spin 1s linear infinite;"></div>
+</div>
+<style>@keyframes i18n-spin { to { transform: rotate(360deg); } }</style>
+
+<!-- 动态背景 -->
 <div class="bg-glow">
   <div class="glow-orb glow-1"></div>
   <div class="glow-orb glow-2"></div>
   <div class="glow-orb glow-3"></div>
 </div>
 
-<div id="i18n-loader" style="display: none; position: fixed; inset: 0; z-index: 99999; background: #fff; place-items: center;">
-  <div style="width: 30px; height: 30px; border: 3px solid #eee; border-top-color: #00f0ff; border-radius: 50%; animation: i18n-spin 1s linear infinite;"></div>
-</div>
-<style>@keyframes i18n-spin { to { transform: rotate(360deg); } }</style>
-<script>
-  (function() {
-    var lang = localStorage.getItem('nexapay_manual_lang');
-    if (lang && lang !== 'zh') { document.getElementById('i18n-loader').style.display = 'grid'; }
-  })();
-</script>
-
+<!-- 顶部导航 -->
 <header class="topbar">
   <div class="topbar-inner">
     <a href="#" class="logo">
@@ -438,102 +274,113 @@
     <source src="homeBg.3__npe53rz97a.webm" type="video/webm" />
   </video>
   <div class="hero-content-greotpay">
-    <h1 class="hero-title-greotpay">让加密货币<br>融入真实生活</h1>
-    <p class="hero-sub-greotpay">向稳定币支付敞开大门</p>
-    <a onclick="goAuth()" class="btn-start">立即开始支付</a>
+    <h1 class="hero-title-greotpay" data-i18n="hero_title">让加密货币<br>融入真实生活</h1>
+    <p class="hero-sub-greotpay" data-i18n="hero_sub">向稳定币支付敞开大门</p>
+    <a onclick="goAuth()" class="btn-start" data-i18n="hero_btn">立即开始支付</a>
   </div>
 </section>
 
 <!-- 横向滑动卡片区 -->
 <section class="section-greotpay" style="padding-bottom: 40px;">
   <div class="container-greotpay">
-    <h2 class="section-title">享受日常权益</h2>
+    <h2 class="section-title" data-i18n="feature_title">享受日常权益</h2>
   </div>
   <div class="horizontal-scroll-wrap">
     <div class="scroll-track">
-      
       <div class="glass-card" onclick="goAuth()">
-        <img src="swiper-1.webp" alt="轻松获取稳定币" onerror="this.style.display='none'">
+        <img src="swiper-1.webp" alt="Easy Crypto" onerror="this.style.display='none'">
         <div class="card-content">
-          <h3>轻松获取稳定币</h3>
-          <p>通过 P2P 兑换和法币入金。</p>
+          <h3 data-i18n="f1_t">轻松获取稳定币</h3>
+          <p data-i18n="f1_d">通过 P2P 兑换和法币入金。</p>
         </div>
       </div>
-
       <div class="glass-card" onclick="goAuth()">
-        <img src="swiper-2.webp" alt="随时使用稳定币支付" onerror="this.style.display='none'">
+        <img src="swiper-2.webp" alt="Pay with Crypto" onerror="this.style.display='none'">
         <div class="card-content">
-          <h3>随时使用稳定币支付</h3>
-          <p>绑定卡片，随心支付。</p>
+          <h3 data-i18n="f2_t">随时使用稳定币支付</h3>
+          <p data-i18n="f2_d">绑定卡片，随心支付。</p>
         </div>
       </div>
-
       <div class="glass-card" onclick="goAuth()">
-        <img src="swiper-3.webp" alt="快速安全地转移" onerror="this.style.display='none'">
+        <img src="swiper-3.webp" alt="Transfer" onerror="this.style.display='none'">
         <div class="card-content">
-          <h3>快速安全地转移加密货币</h3>
-          <p>支持 100+ 国家/地区。</p>
+          <h3 data-i18n="f3_t">快速安全地转移加密货币</h3>
+          <p data-i18n="f3_d">支持 100+ 国家/地区。</p>
         </div>
       </div>
-
       <div class="glass-card" onclick="goAuth()">
-        <img src="swiper-4.webp" alt="多种货币，一个应用" onerror="this.style.display='none'">
+        <img src="swiper-4.webp" alt="Multi Wallet" onerror="this.style.display='none'">
         <div class="card-content">
-          <h3>多种货币，一个应用</h3>
-          <p>一站式管理加密资产。</p>
+          <h3 data-i18n="f4_t">多种货币，一个应用</h3>
+          <p data-i18n="f4_d">一站式管理加密资产。</p>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
 <!-- 黑底卡片展示区 -->
 <section class="dark-showcase">
-  <h2>数字支付，简单随行</h2>
-  <p>轻松、安全地支付订阅、旅行和日常消费。</p>
+  <h2 data-i18n="showcase_t">数字支付，简单随行</h2>
+  <p data-i18n="showcase_d">轻松、安全地支付订阅、旅行和日常消费。</p>
+  <button class="btn-learn-more" onclick="goAuth()" data-i18n="showcase_btn">了解更多</button>
   
-  <button class="btn-learn-more" onclick="goAuth()">了解更多</button>
-
-  <!-- 3D 动效卡片包裹区 -->
   <div class="card-3d-wrapper" id="card3dWrapper">
-    <!-- 默认添加 virtual 类，初始为红黑卡 -->
     <div class="mock-card-3d virtual" id="mockCard3d">
       <div>
         <div class="mc-logo">NEXAPAY</div>
-        <div class="mc-chip-net">
-          <div class="mc-chip"></div>
-          <div class="mc-net">VISA</div>
-        </div>
+        <div class="mc-chip-net"><div class="mc-chip"></div><div class="mc-net">VISA</div></div>
       </div>
-      
       <div class="mc-num">5312 •••• •••• 8042</div>
-      
       <div class="mc-bottom">
-        <div class="mc-info">持卡人 <span>AVA CHEN</span></div>
-        <div class="mc-info">有效期 <span>09/29</span></div>
+        <div class="mc-info" data-i18n="card_holder">持卡人 <span>AVA CHEN</span></div>
+        <div class="mc-info" data-i18n="card_exp">有效期 <span>09/29</span></div>
       </div>
     </div>
   </div>
 
   <div class="card-tabs">
-    <div class="card-tab active" onclick="switchCard('virtual', this)">虚拟卡</div>
-    <div class="card-tab" onclick="switchCard('physical', this)">实体卡</div>
+    <div class="card-tab active" onclick="switchCard('virtual', this)" data-i18n="tab_virtual">虚拟卡</div>
+    <div class="card-tab" onclick="switchCard('physical', this)" data-i18n="tab_physical">实体卡</div>
   </div>
-
 </section>
 
-<!-- 图文轮播区 -->
+<!-- 图文轮播区 (已将赚币移至首位) -->
 <section class="feature-slider-section">
   <div class="slider-container">
-
-    <!-- Slide 1: 全球转账 -->
+    
+    <!-- Slide 1: 赚币 (原全球扫码位置) -->
     <div class="slide-block active" data-index="0">
       <div class="slide-text">
-        <span class="slider-tag">全球转账</span>
-        <h3 class="slide-title">发送加密货币，收取本地货币</h3>
-        <p class="slide-desc">轻松转账，每笔交易都有保障，让收款人更快收到资金。</p>
-        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <span class="slider-tag" data-i18n="s1_tag">赚币</span>
+        <h3 class="slide-title" data-i18n="s1_title">轻松增值您的加密资产</h3>
+        <p class="slide-desc" data-i18n="s1_desc">让加密货币为您工作，获得每日奖励。</p>
+        <a onclick="goAuth()" class="btn-more" data-i18n="btn_more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+      </div>
+      <div class="slide-phone">
+        <div class="phone-mockup">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="app-ui">
+              <div class="app-header"><span>Earn</span></div>
+              <div class="app-box"><div class="app-label">Total Balance</div><div class="app-val">276.82 <span style="font-size:12px; color:#888;">USDT</span></div></div>
+              <div class="app-label" style="margin:10px 0;">Savings</div>
+              <div class="app-box" style="display:flex; justify-content:space-between; padding:12px; margin-bottom:8px; font-size:13px;"><span>USDT Savings</span><span style="color:#ff3333;">4.2%</span></div>
+              <div class="app-box" style="display:flex; justify-content:space-between; padding:12px; margin-bottom:8px; font-size:13px;"><span>BTC Savings</span><span style="color:#ff3333;">1.5%</span></div>
+              <div class="app-btn">Deposit & Earn</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2: 全球转账 -->
+    <div class="slide-block" data-index="1">
+      <div class="slide-text">
+        <span class="slider-tag" data-i18n="s2_tag">全球转账</span>
+        <h3 class="slide-title" data-i18n="s2_title">发送加密货币，收取本地货币</h3>
+        <p class="slide-desc" data-i18n="s2_desc">轻松转账，每笔交易都有保障，让收款人更快收到资金。</p>
+        <a onclick="goAuth()" class="btn-more" data-i18n="btn_more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -541,15 +388,9 @@
           <div class="phone-screen">
             <div class="app-ui">
               <div class="app-header"><span>&larr;</span><span>&#9635;</span></div>
-              <div class="app-box">
-                <div class="app-label">You send</div>
-                <div class="app-val"><span style="display:flex; align-items:center; gap:6px;"><span style="width:20px;height:20px;background:#26a17b;border-radius:50%;display:inline-block;"></span> USDT</span> 1,000</div>
-              </div>
+              <div class="app-box"><div class="app-label">You send</div><div class="app-val"><span style="display:flex; align-items:center; gap:6px;"><span style="width:20px;height:20px;background:#26a17b;border-radius:50%;display:inline-block;"></span> USDT</span> 1,000</div></div>
               <div style="text-align:center; color:#888; font-size:12px; margin-bottom:12px;">&darr; 1 USDT = 0.87707 EUR</div>
-              <div class="app-box">
-                <div class="app-label">Recipient gets</div>
-                <div class="app-val"><span style="display:flex; align-items:center; gap:6px;"><span style="width:20px;height:20px;background:#003399;border-radius:50%;display:inline-block;color:#fff;font-size:10px;text-align:center;line-height:20px;">€</span> EUR</span> 877.07</div>
-              </div>
+              <div class="app-box"><div class="app-label">Recipient gets</div><div class="app-val"><span style="display:flex; align-items:center; gap:6px;"><span style="width:20px;height:20px;background:#003399;border-radius:50%;display:inline-block;color:#fff;font-size:10px;text-align:center;line-height:20px;">€</span> EUR</span> 877.07</div></div>
               <div class="app-btn">Add recipient</div>
             </div>
           </div>
@@ -557,13 +398,13 @@
       </div>
     </div>
 
-    <!-- Slide 2: 多币种钱包 -->
-    <div class="slide-block" data-index="1">
+    <!-- Slide 3: 多币种钱包 -->
+    <div class="slide-block" data-index="2">
       <div class="slide-text">
-        <span class="slider-tag">多币种钱包</span>
-        <h3 class="slide-title">连接加密货币与日常生活</h3>
-        <p class="slide-desc">集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。</p>
-        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <span class="slider-tag" data-i18n="s3_tag">多币种钱包</span>
+        <h3 class="slide-title" data-i18n="s3_title">连接加密货币与日常生活</h3>
+        <p class="slide-desc" data-i18n="s3_desc">集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。</p>
+        <a onclick="goAuth()" class="btn-more" data-i18n="btn_more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M7 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -581,41 +422,13 @@
       </div>
     </div>
 
-    <!-- Slide 3: 赚币 -->
-    <div class="slide-block" data-index="2">
-      <div class="slide-text">
-        <span class="slider-tag">赚币</span>
-        <h3 class="slide-title">轻松增值您的加密资产</h3>
-        <p class="slide-desc">让加密货币为您工作，获得每日奖励。</p>
-        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
-      </div>
-      <div class="slide-phone">
-        <div class="phone-mockup">
-          <div class="phone-notch"></div>
-          <div class="phone-screen">
-            <div class="app-ui">
-              <div class="app-header"><span>Earn</span></div>
-              <div class="app-box">
-                 <div class="app-label">Total Balance</div>
-                 <div class="app-val">276.82 <span style="font-size:12px; color:#888;">USDT</span></div>
-              </div>
-              <div class="app-label" style="margin:10px 0;">Savings</div>
-              <div class="app-box" style="display:flex; justify-content:space-between; padding:12px; margin-bottom:8px; font-size:13px;"><span>USDT Savings</span><span style="color:#ff3333;">4.2%</span></div>
-              <div class="app-box" style="display:flex; justify-content:space-between; padding:12px; margin-bottom:8px; font-size:13px;"><span>BTC Savings</span><span style="color:#ff3333;">1.5%</span></div>
-              <div class="app-btn">Deposit & Earn</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Slide 4: 兑换 -->
     <div class="slide-block" data-index="3">
       <div class="slide-text">
-        <span class="slider-tag">兑换</span>
-        <h3 class="slide-title">轻松兑换加密资产</h3>
-        <p class="slide-desc">提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。</p>
-        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M7 7H7M17 7V17"/></svg></a>
+        <span class="slider-tag" data-i18n="s4_tag">兑换</span>
+        <h3 class="slide-title" data-i18n="s4_title">轻松兑换加密资产</h3>
+        <p class="slide-desc" data-i18n="s4_desc">提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。</p>
+        <a onclick="goAuth()" class="btn-more" data-i18n="btn_more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M7 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -652,123 +465,312 @@
 
 <!-- 数据区 -->
 <section class="stats-dark">
-  <h2>备受全球信赖</h2>
+  <h2 data-i18n="stats_title">备受全球信赖</h2>
   <div class="stats-grid">
-    <div class="stat-item"><div class="num">3M+</div><div class="lbl">全球用户</div></div>
-    <div class="stat-item"><div class="num">100+</div><div class="lbl">国家</div></div>
-    <div class="stat-item"><div class="num">$12B</div><div class="lbl">年度支付交易额</div></div>
+    <div class="stat-item"><div class="num">3M+</div><div class="lbl" data-i18n="stats_1">全球用户</div></div>
+    <div class="stat-item"><div class="num">100+</div><div class="lbl" data-i18n="stats_2">国家</div></div>
+    <div class="stat-item"><div class="num">$12B</div><div class="lbl" data-i18n="stats_3">年度支付交易额</div></div>
   </div>
 </section>
 
-<!-- 社区心声 -->
+<!-- 社区心声 (动态渲染) -->
 <section class="testimonial-section">
   <div class="container-greotpay">
-    <h2 class="section-title">聆听社区心声</h2>
+    <h2 class="section-title" data-i18n="testi_title">聆听社区心声</h2>
   </div>
-  <div class="testimonial-track">
-    
-    <div class="glow-test-card">
-      <p>“使用 NEXAPAY 的虚拟卡支付非常简单，直接从加密货币余额扣款，省去了很多麻烦。”</p>
-      <div class="glow-test-author">
-        <div class="glow-avatar">N</div>
-        <div class="glow-info">Nick<span>自由设计师</span></div>
-      </div>
-    </div>
-
-    <div class="glow-test-card">
-      <p>“NEXAPAY 用起来真简便，从注册、入金到开始支付，一气呵成！”</p>
-      <div class="glow-test-author">
-        <div class="glow-avatar" style="background: linear-gradient(135deg, #ff3366, #ff9933);">M</div>
-        <div class="glow-info">Mia<span>远程工作者</span></div>
-      </div>
-    </div>
-
-    <div class="glow-test-card">
-      <p>“NEXAPAY 的虚拟卡不仅在支付时方便，还能享受返现，非常棒。”</p>
-      <div class="glow-test-author">
-        <div class="glow-avatar" style="background: linear-gradient(135deg, #9933ff, #33ccff);">A</div>
-        <div class="glow-info">Alex<span>跨境电商</span></div>
-      </div>
-    </div>
-
-    <div class="glow-test-card">
-      <p>“使用 NEXAPAY 的虚拟卡支付非常简单，直接从加密货币余额扣款，省去了很多麻烦。”</p>
-      <div class="glow-test-author">
-        <div class="glow-avatar">N</div>
-        <div class="glow-info">Nick<span>自由设计师</span></div>
-      </div>
-    </div>
-
-    <div class="glow-test-card">
-      <p>“NEXAPAY 用起来真简便，从注册、入金到开始支付，一气呵成！”</p>
-      <div class="glow-test-author">
-        <div class="glow-avatar" style="background: linear-gradient(135deg, #ff3366, #ff9933);">M</div>
-        <div class="glow-info">Mia<span>远程工作者</span></div>
-      </div>
-    </div>
-
-    <div class="glow-test-card">
-      <p>“NEXAPAY 的虚拟卡不仅在支付时方便，还能享受返现，非常棒。”</p>
-      <div class="glow-test-author">
-        <div class="glow-avatar" style="background: linear-gradient(135deg, #9933ff, #33ccff);">A</div>
-        <div class="glow-info">Alex<span>跨境电商</span></div>
-      </div>
-    </div>
-
+  <div class="testimonial-track" id="testimonialTrack">
+    <!-- JS 动态插入 -->
   </div>
 </section>
 
-<!-- FAQ -->
+<!-- FAQ (动态渲染) -->
 <section class="section-greotpay">
   <div class="container-greotpay">
-    <h2 class="section-title">常见问题</h2>
-    <div class="faq-list">
-      <div class="faq-item">
-        <button class="faq-q" type="button"><span>为什么我的身份验证未通过？</span><span class="plus">+</span></button>
-        <div class="faq-a"><p>常见原因包括照片模糊、证件过期或个人信息不一致。请在光线充足处重新拍摄，确保完整显示证件四角，且姓名与账户完全一致。</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button"><span>可以使用 NEXAPAY 支付订阅或服务费用吗？</span><span class="plus">+</span></button>
-        <div class="faq-a"><p>可以。虚拟卡可用于在线订阅、旅行预订和日常结账，也可以添加到 Apple Pay 或 Google Pay 进行线下感应支付。</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button"><span>NEXAPAY 安全吗？</span><span class="plus">+</span></button>
-        <div class="faq-a"><p>资金通过经过审计的稳定币通道流转，支持即时冻结、单笔交易限额以及每笔支付的推送提醒。（请务必在官方渠道核实安全声明。）</p></div>
-      </div>
+    <h2 class="section-title" data-i18n="faq_title">常见问题</h2>
+    <div class="faq-list" id="faqList">
+      <!-- JS 动态插入 -->
     </div>
   </div>
 </section>
 
-<!-- 极简 Footer -->
+<!-- Footer -->
 <footer class="footer-greotpay">
   <div class="footer-brand">
-    <div class="logo-box">
-      <span>N</span>
-      <span>NEXAPAY</span>
-    </div>
-    <p>与 NEXAPAY 开启稳定币支付之旅<br><span class="slogan">快速。流畅。安全。</span></p>
+    <div class="logo-box"><span>N</span><span>NEXAPAY</span></div>
+    <p><span data-i18n="footer_desc">与 NEXAPAY 开启稳定币支付之旅</span><br><span class="slogan" data-i18n="footer_slogan">快速。流畅。安全。</span></p>
   </div>
-  
   <div class="footer-bottom">
-    <span>© 2026 NEXAPAY. All rights reserved.</span>
-    <span>简体中文</span>
+    <span data-i18n="footer_copy">© 2026 NEXAPAY. All rights reserved.</span>
+    <span data-i18n="footer_lang">简体中文</span>
   </div>
 </footer>
 
-<script src="script.js"></script>
+<!-- Safari 提示弹窗 -->
+<div class="safari-modal" id="safariModal">
+  <div class="safari-box">
+    <span class="safari-close" onclick="closeSafariModal()">×</span>
+    <div class="safari-icon">🧭</div>
+    <div class="safari-title" id="safariTitle">请使用 Safari 浏览器打开</div>
+    <div class="safari-desc" id="safariDesc">系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。</div>
+    <div class="safari-link-box">
+      <input type="text" id="currentUrlInput" readonly>
+    </div>
+    <button class="btn-safari-copy" onclick="copyCurrentUrl()" id="copyBtn">复制当前链接</button>
+  </div>
+</div>
+
 <script>
   // =========================================
-  // 登录与跳转逻辑
+  // 1. 全局数据与语言初始化
   // =========================================
+  let globalData = { langs: [], globalDict: {}, faqs: [], testimonials: [], sysConfig: {} };
+  let currentLangCode = 'zh';
+  let activeDict = null;
+
+  // Safari 检测与拦截
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  
+  if (!isSafari) {
+    document.addEventListener('click', function(e) {
+      const target = e.target.closest('a, [onclick]');
+      if (target && target.tagName !== 'BODY') {
+        // 如果是在 Safari 弹窗内部的点击，不拦截
+        if (e.target.closest('#safariModal')) return;
+        
+        e.preventDefault();
+        e.stopPropagation();
+        openSafariModal();
+      }
+    }, true); // 使用捕获阶段拦截
+  }
+
+  window.openSafariModal = function() {
+    document.getElementById('currentUrlInput').value = window.location.href;
+    document.getElementById('safariModal').classList.add('show');
+    if (globalData.sysConfig) {
+      document.getElementById('safariTitle').textContent = globalData.sysConfig.safariTitle || "请使用 Safari 浏览器打开";
+      document.getElementById('safariDesc').textContent = globalData.sysConfig.safariDesc || "系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。";
+    }
+  };
+
+  window.closeSafariModal = function() {
+    document.getElementById('safariModal').classList.remove('show');
+  };
+
+  window.copyCurrentUrl = function() {
+    const urlInput = document.getElementById('currentUrlInput');
+    urlInput.select();
+    document.execCommand('copy');
+    const btn = document.getElementById('copyBtn');
+    const orig = btn.textContent;
+    btn.textContent = '已复制！';
+    setTimeout(() => { btn.textContent = orig; }, 2000);
+  };
+
+  // 异步获取数据并根据规则匹配语言
+  async function initApp() {
+    try {
+      const res = await fetch('/api/data');
+      globalData = await res.json();
+      
+      // 如果老数据没有新结构，补全
+      if (!globalData.faqs) globalData.faqs = [];
+      if (!globalData.testimonials) globalData.testimonials = [];
+      if (!globalData.sysConfig) globalData.sysConfig = { safariTitle: "请使用 Safari 浏览器打开", safariDesc: "系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。" };
+
+      // 决定语言
+      let manualLang = localStorage.getItem('nexapay_manual_lang');
+      let deviceLang = navigator.language || navigator.userLanguage;
+      
+      // 注意：真实项目建议在这里调用 IP 定位 API，由于前端限制，此处模拟根据设备语言和后台语言列表匹配
+      let finalLang = 'en'; // 兜底
+
+      const availableLangs = globalData.langs.filter(l => l.status !== false).map(l => l.code);
+      if (!availableLangs.includes('en')) availableLangs.push('en'); // 确保有en兜底
+
+      // 优先级：手动选择 > 设备语言 > 默认英语
+      if (manualLang && availableLangs.includes(manualLang)) {
+        finalLang = manualLang;
+      } else if (deviceLang) {
+        // 模糊匹配，例如 zh-CN 匹配 zh
+        const matched = availableLangs.find(l => deviceLang.toLowerCase().startsWith(l.toLowerCase()));
+        if (matched) finalLang = matched;
+      }
+      
+      currentLangCode = finalLang;
+
+      // 提取字典
+      const langData = globalData.langs.find(l => l.code === currentLangCode);
+      activeDict = langData ? langData.dict : {};
+
+      applyTranslations();
+      renderFAQ();
+      renderTestimonials();
+      updateLangMenu();
+      hideLoader();
+
+    } catch (e) {
+      console.error(e);
+      hideLoader();
+    }
+  }
+
+  function hideLoader() {
+    const loader = document.getElementById('i18n-loader');
+    if (loader) {
+      loader.style.opacity = '0';
+      setTimeout(() => { loader.style.display = 'none'; }, 300);
+    }
+  }
+
+  // 基础文本翻译
+  function applyTranslations() {
+    if (!activeDict) return;
+    // 1. 根据 data-i18n 属性翻译
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (activeDict[key]) {
+        if (el.children.length > 0) {
+           // 如果包含子元素（比如 <span>），简单替换整个 innerHTML 会丢样式，这里采用替换第一个文本节点的方式
+           if(el.childNodes[0].nodeType === 3) {
+               el.childNodes[0].nodeValue = activeDict[key] + " ";
+           } else {
+               el.innerHTML = activeDict[key];
+           }
+        } else {
+           el.textContent = activeDict[key];
+        }
+      }
+    });
+
+    // 2. 扫描剩余无法用属性标记的文本（为了容错）
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    let node;
+    while (node = walker.nextNode()) {
+      if (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE') continue;
+      const rawTxt = node.nodeValue;
+      const txt = rawTxt.trim();
+      if (txt && activeDict[txt]) {
+        node.nodeValue = rawTxt.replace(txt, activeDict[txt]);
+      }
+    }
+  }
+
+  // 渲染 FAQ
+  function renderFAQ() {
+    const list = document.getElementById('faqList');
+    list.innerHTML = '';
+    if (!globalData.faqs || globalData.faqs.length === 0) {
+        list.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">暂无常见问题</div>';
+        return;
+    }
+
+    globalData.faqs.forEach(faq => {
+      if (!faq.translations) return;
+      // 获取当前语言的翻译，如果没有，回退到中文或英文
+      const trans = faq.translations[currentLangCode] || faq.translations['zh'] || faq.translations['en'];
+      if (!trans) return;
+
+      const item = document.createElement('div');
+      item.className = 'faq-item';
+      item.innerHTML = `
+        <button class="faq-q"><span>${trans.q || 'Question'}</span><span class="plus">+</span></button>
+        <div class="faq-a"><p>${trans.a || 'Answer'}</p></div>
+      `;
+      list.appendChild(item);
+    });
+
+    // 重新绑定折叠事件
+    document.querySelectorAll('.faq-q').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const item = this.parentElement;
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(other => {
+          other.classList.remove('open');
+          other.querySelector('.plus').textContent = '+';
+        });
+        if (!isOpen) {
+          item.classList.add('open');
+          this.querySelector('.plus').textContent = '-';
+        }
+      });
+    });
+  }
+
+  // 渲染评论
+  function renderTestimonials() {
+    const track = document.getElementById('testimonialTrack');
+    track.innerHTML = '';
+    if (!globalData.testimonials || globalData.testimonials.length === 0) return;
+
+    // 渲染两遍以实现无缝滚动
+    const renderList = [...globalData.testimonials, ...globalData.testimonials];
+
+    renderList.forEach((t, i) => {
+      if (!t.translations) return;
+      const trans = t.translations[currentLangCode] || t.translations['zh'] || t.translations['en'];
+      if (!trans) return;
+
+      // 随机颜色
+      const colors = ['linear-gradient(135deg, #00f0ff, #00ffaa)', 'linear-gradient(135deg, #ff3366, #ff9933)', 'linear-gradient(135deg, #9933ff, #33ccff)'];
+      const bg = colors[i % colors.length];
+
+      const card = document.createElement('div');
+      card.className = 'glow-test-card';
+      card.innerHTML = `
+        <p>“${trans.content || 'Content'}”</p>
+        <div class="glow-test-author">
+          <div class="glow-avatar" style="background: ${bg}">${(trans.name || 'U').charAt(0)}</div>
+          <div class="glow-info">${trans.name || 'User'}<span>${trans.tag || 'User'}</span></div>
+        </div>
+      `;
+      track.appendChild(card);
+    });
+  }
+
+  // 语言下拉菜单
+  function updateLangMenu() {
+    const dropdown = document.getElementById('langDropdown');
+    let html = '';
+    
+    // 加入中文
+    html += `<a href="#" onclick="changeLang('zh', event)">简体中文</a>`;
+    
+    globalData.langs.forEach(l => {
+      if (l.code !== 'zh' && l.status !== false) {
+        html += `<a href="#" onclick="changeLang('${l.code}', event)">${l.name}</a>`;
+      }
+    });
+    dropdown.innerHTML = html;
+  }
+
+  window.changeLang = function(code, e) {
+    if (e) e.preventDefault();
+    localStorage.setItem('nexapay_manual_lang', code);
+    window.location.reload(); // 简单粗暴，直接刷新重新渲染
+  };
+
+  window.toggleLangMenu = function(e) {
+    e.stopPropagation();
+    document.getElementById('langDropdown').classList.toggle('show');
+  };
+
+  document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('langDropdown');
+    if (dropdown && dropdown.classList.contains('show')) {
+      if (!e.target.closest('.lang-switch-wrap')) dropdown.classList.remove('show');
+    }
+  });
+
+  // 登录状态与跳转
   window.goAuth = function() {
-    window.location.href = 'login.html';
+    window.location.href = 'login.html'; // 不再判断状态，直接跳 login
   };
 
   function checkLoginState() {
     const isLoggedIn = localStorage.getItem('nexapay_is_login') === 'true';
     const unauthGroup = document.getElementById('unauth-group');
     const authGroup = document.getElementById('auth-group');
-    
     if (isLoggedIn) {
       unauthGroup.style.display = 'none';
       authGroup.style.display = 'block';
@@ -783,120 +785,49 @@
     checkLoginState();
   };
 
-  checkLoginState();
-
-  // =========================================
-  // 语言下拉菜单
-  // =========================================
-  window.toggleLangMenu = function(e) {
-    e.stopPropagation();
-    const dropdown = document.getElementById('langDropdown');
-    dropdown.classList.toggle('show');
-  };
-
-  document.addEventListener('click', (e) => {
-    const dropdown = document.getElementById('langDropdown');
-    if (dropdown && dropdown.classList.contains('show')) {
-      if (!e.target.closest('.lang-switch-wrap')) dropdown.classList.remove('show');
-    }
-  });
-
-  // =========================================
-  // FAQ 折叠
-  // =========================================
-  document.querySelectorAll('.faq-q').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const item = this.parentElement;
-      const isOpen = item.classList.contains('open');
-      
-      document.querySelectorAll('.faq-item').forEach(otherItem => {
-        otherItem.classList.remove('open');
-        const otherPlus = otherItem.querySelector('.plus');
-        if (otherPlus) otherPlus.textContent = '+';
-      });
-      
-      if (!isOpen) {
-        item.classList.add('open');
-        const icon = this.querySelector('.plus');
-        if (icon) icon.textContent = '-';
-      }
-    });
-  });
-
-  // =========================================
-  // 卡片切换与 3D 动效
-  // =========================================
+  // 3D 卡片动效
   const wrapper = document.getElementById('card3dWrapper');
   const card = document.getElementById('mockCard3d');
   let isFlipping = false;
 
-  // 点击切换卡面
   window.switchCard = function(type, btn) {
     if (isFlipping || card.classList.contains(type)) return;
-    
     isFlipping = true;
-    
-    // 更新 Tab 样式
     document.querySelectorAll('.card-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
-
-    // 1. 翻转动画开始 (绕 Y 轴翻转 90 度)
     card.classList.add('flipping');
-
-    // 2. 动画进行到一半（看不见卡片时）切换样式
     setTimeout(() => {
-      // 移除原有的 virtual 或 physical 类
       card.classList.remove('virtual', 'physical');
-      // 添加新的类
       card.classList.add(type);
-      
-      // 3. 移除翻转类，让卡片翻回正面 (过渡效果)
       card.classList.remove('flipping');
-      
       setTimeout(() => { isFlipping = false; }, 300);
-    }, 300); // 对应 CSS 中 transition 的 0.3s
+    }, 300);
   };
 
-  // 鼠标 3D 跟随效果
   if (wrapper && card) {
     wrapper.addEventListener('mousemove', (e) => {
-      if (isFlipping) return; // 翻转过程中不响应 3D
-      
+      if (isFlipping) return;
       const rect = wrapper.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
-      
       const rotateX = ((y - centerY) / centerY) * -15; 
       const rotateY = ((x - centerX) / centerX) * 15;
-      
-      // 动态应用旋转
       card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
     });
-
     wrapper.addEventListener('mouseleave', () => {
       if (isFlipping) return;
-      // 鼠标移出时恢复，并重置过渡效果以确保平滑
       card.style.transition = 'transform 0.5s ease, background 0.3s ease, box-shadow 0.3s ease';
       card.style.transform = `rotateX(0) rotateY(0) scale(1)`;
-      
-      // 移除动态设置的 transition，恢复到 CSS 中的默认状态
       setTimeout(() => { card.style.transition = ''; }, 500);
     });
-    
-    // 鼠标进入时去除默认 transition 以防卡顿
     wrapper.addEventListener('mouseenter', () => {
-      if (!isFlipping) {
-        card.style.transition = 'background 0.3s ease, box-shadow 0.3s ease'; // 只保留颜色过渡
-      }
+      if (!isFlipping) card.style.transition = 'background 0.3s ease, box-shadow 0.3s ease';
     });
   }
 
-  // =========================================
-  // PC 端轮播 (图文区)
-  // =========================================
+  // 轮播控制
   let currentSlide = 0;
   const totalSlides = 4;
   const slideBlocks = document.querySelectorAll('.slide-block');
@@ -921,29 +852,22 @@
   sliderSection.addEventListener('wheel', (e) => {
     if (window.innerWidth > 960) {
       if (isWheeling) return;
-      if (e.deltaY > 0) {
-        if (currentSlide < totalSlides - 1) {
-          goToSlide(currentSlide + 1);
-          isWheeling = true;
-          setTimeout(() => isWheeling = false, 600);
-        }
-      } else {
-        if (currentSlide > 0) {
-          goToSlide(currentSlide - 1);
-          isWheeling = true;
-          setTimeout(() => isWheeling = false, 600);
-        }
+      if (e.deltaY > 0 && currentSlide < totalSlides - 1) {
+        goToSlide(currentSlide + 1);
+        isWheeling = true;
+        setTimeout(() => isWheeling = false, 600);
+      } else if (e.deltaY < 0 && currentSlide > 0) {
+        goToSlide(currentSlide - 1);
+        isWheeling = true;
+        setTimeout(() => isWheeling = false, 600);
       }
     }
   }, { passive: false });
 
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 960) {
-      slideBlocks.forEach((el, i) => {
-        if (i === currentSlide) el.classList.add('active');
-        else el.classList.remove('active');
-      });
-    }
+  // 初始化
+  window.addEventListener('DOMContentLoaded', () => {
+    checkLoginState();
+    initApp();
   });
 </script>
 </body>
