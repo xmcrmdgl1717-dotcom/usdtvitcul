@@ -1,0 +1,180 @@
+<!-- 头部、样式、菜单、FAQ 脚本与之前完全相同 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXAPAY - P2P 市场</title>
+<style>
+  /* 请将 credit.html 里的 <style> 完整复制到这里 */
+  :root { --brand-red: #e60012; --text-dark: #111; --text-gray: #666; --bg-gray: #f8f9fa; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; }
+  body { background: #fff; color: var(--text-dark); line-height: 1.6; }
+  .header { position: fixed; top: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid #eee; }
+  .nav-container { max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+  .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #111; font-weight: 800; font-size: 20px; }
+  .logo-icon { width: 32px; height: 32px; background: #00f0ff; color: #000; border-radius: 8px; display: grid; place-items: center; }
+  .nav-actions { display: flex; align-items: center; gap: 20px; }
+  .lang-btn { font-size: 14px; cursor: pointer; color: #333; display: flex; align-items: center; gap: 4px; }
+  .user-btn { font-size: 14px; cursor: pointer; color: #333; text-decoration: none; }
+  .hamburger { cursor: pointer; display: flex; flex-direction: column; gap: 5px; z-index: 1001; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: #111; transition: 0.3s; }
+  .mobile-menu { position: fixed; top: 0; right: -300px; width: 300px; height: 100vh; background: #fff; box-shadow: -10px 0 30px rgba(0,0,0,0.1); z-index: 999; padding: 80px 24px 24px; transition: right 0.3s ease; display: flex; flex-direction: column; gap: 16px; }
+  .mobile-menu.active { right: 0; }
+  .mobile-menu a { text-decoration: none; color: #333; font-size: 16px; font-weight: 600; padding: 12px 0; border-bottom: 1px solid #eee; cursor: pointer; }
+  .mobile-menu a:hover { color: var(--brand-red); }
+  .menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 998; display: none; }
+  .menu-overlay.active { display: block; }
+
+  .hero { padding: 120px 24px 60px; max-width: 800px; margin: 0 auto; text-align: center; }
+  .hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; margin-bottom: 16px; letter-spacing: -1px; line-height: 1.2; }
+  .hero p { font-size: 16px; color: var(--text-gray); margin-bottom: 32px; }
+  .btn-primary { display: inline-block; padding: 14px 32px; background: var(--brand-red); color: #fff; text-decoration: none; border-radius: 30px; font-weight: 700; font-size: 16px; transition: 0.3s; }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
+  .hero-image { width: 100%; height: 400px; background: linear-gradient(135deg, #f5f5f5, #e0e0e0); border-radius: 24px; margin-top: 40px; display: grid; place-items: center; font-weight: 600; color: #aaa; }
+  
+  .alert-text { font-size: 12px; color: #888; text-align: center; margin-top: 20px; padding: 0 24px; }
+
+  .dark-section { background: #0f0f0f; color: #fff; padding: 80px 24px; text-align: center; border-radius: 32px; margin: 40px 24px; }
+  .dark-section h2 { font-size: 32px; margin-bottom: 16px; font-weight: 800; }
+  .dark-section p { color: #aaa; margin-bottom: 40px; }
+  .phone-mockup { width: 280px; height: 560px; background: #222; border-radius: 40px; border: 8px solid #333; margin: 0 auto; position: relative; overflow: hidden; display: flex; flex-direction: column; padding: 20px; }
+  
+  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+  .feature-card { background: var(--bg-gray); border-radius: 24px; overflow: hidden; display: flex; flex-direction: column; }
+  .card-img { height: 220px; background: #ddd; }
+  .card-content { padding: 24px; }
+  .card-content h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+  .card-content p { font-size: 14px; color: var(--text-gray); }
+
+  .faq-section { max-width: 800px; margin: 80px auto; padding: 0 24px; }
+  .faq-section h2 { text-align: center; font-size: 32px; margin-bottom: 40px; font-weight: 800; }
+  .faq-item { border-bottom: 1px solid #eee; }
+  .faq-q { width: 100%; text-align: left; background: none; border: none; padding: 24px 0; font-size: 16px; font-weight: 600; display: flex; justify-content: space-between; cursor: pointer; color: var(--text-dark); }
+  .faq-q .icon { font-weight: 300; font-size: 24px; }
+  .faq-a { display: none; padding-bottom: 24px; color: var(--text-gray); font-size: 14px; line-height: 1.8; }
+  .faq-item.open .faq-a { display: block; }
+
+  .cta-bottom { text-align: center; padding: 80px 24px; background: #f8f9fa; }
+  .cta-bottom h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; margin-bottom: 16px; line-height: 1.2; }
+  .cta-bottom p { color: var(--text-gray); margin-bottom: 32px; }
+
+  @media (max-width: 768px) {
+    .feature-grid { grid-template-columns: 1fr; }
+    .nav-container { padding: 12px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="nav-container">
+    <a href="index.html" class="logo"><span class="logo-icon">N</span> NEXAPAY</a>
+    <div class="nav-actions">
+      <div class="lang-btn">🌐 简中</div>
+      <a href="login.html" class="user-btn" id="navUser">您的账户</a>
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <a onclick="navTo('scan.html')">扫码支付</a>
+  <a onclick="navTo('credit.html')">信用额度</a>
+  <a onclick="navTo('remittance.html')">即时汇款</a>
+  <a onclick="navTo('p2p.html')">P2P 市场</a>
+  <a href="index.html" style="margin-top: auto; border: none; color: #999;">返回首页</a>
+</div>
+
+<section class="hero">
+  <h1>按您的方式交易加密资产</h1>
+  <p>安全交易加密资产，即时结算、零手续费。可选择 50 多种当地货币和 200 多种付款方式。</p>
+  <a href="#" class="btn-primary">开始 P2P 交易</a>
+  <div class="alert-text">P2P 交易涉及对手方风险和市场风险，交易风险自负，且 P2P 仅在部分国家/地区可用。</div>
+  <div class="hero-image">[错落排列的 3D 方块]</div>
+</section>
+
+<section class="dark-section">
+  <h2>点对点交易，由您驱动</h2>
+  <p>与其他用户联系，轻松买卖加密资产，享受顺畅、无忧的交易。</p>
+  <div class="phone-mockup">
+    <div style="display:flex; justify-content:space-between; color:#fff; font-size:12px; margin-bottom:20px;">
+      <span>&larr;</span><span>Express Marketplace</span><span>HKD ⌄</span>
+    </div>
+    <div style="width:100%; height:40px; background:#333; border-radius:20px; margin-bottom:20px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px;">Buy | Sell</div>
+    <div style="width:100%; height:100px; background:#333; border-radius:16px; margin-bottom:12px;"></div>
+    <div style="width:100%; height:100px; background:#333; border-radius:16px; margin-bottom:12px;"></div>
+    <div style="width:100%; height:100px; background:#333; border-radius:16px;"></div>
+  </div>
+</section>
+
+<section class="feature-grid">
+  <div class="feature-card">
+    <div class="card-img" style="background: #e0e0e0;"></div>
+    <div class="card-content">
+      <h3>简单、灵活的交易</h3>
+      <p>发布、浏览并接受您喜爱的加密资产的报价，与真实的人按您的条件交易。</p>
+    </div>
+  </div>
+  <div class="feature-card">
+    <div class="card-img" style="background: #d5d5d5;"></div>
+    <div class="card-content">
+      <h3>多种付款方式</h3>
+      <p>从多种付款方式中选择，完成交易，让交易更轻松、更便捷。</p>
+    </div>
+  </div>
+  <div class="feature-card">
+    <div class="card-img" style="background: #c5c5c5;"></div>
+    <div class="card-content">
+      <h3>安全、内置保护</h3>
+      <p>每笔交易都通过加密资产托管保障，让您安心。</p>
+    </div>
+  </div>
+</section>
+
+<section class="faq-section">
+  <h2>常见问题</h2>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">我的资金如何受到保护？<span class="icon">+</span></button>
+    <div class="faq-a">NEXAPAY 采用内置的加密资产托管系统。在交易双方完成确认前，资产会被锁定在安全的智能合约中，防止任何一方欺诈。</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">如何成为 P2P 广告方？<span class="icon">+</span></button>
+    <div class="faq-a">您只需完成高级身份验证（KYC），并质押一定数量的平台代币或加密资产作为保证金，即可发布自己的买单或卖单广告。</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">谁可以在 NEXAPAY 的 P2P 市场交易？<span class="icon">+</span></button>
+    <div class="faq-a">任何通过 NEXAPAY 身份验证，且所在地区支持 P2P 服务的用户均可参与交易。</div>
+  </div>
+</section>
+
+<section class="cta-bottom">
+  <h2>让加密货币融入日常生活</h2>
+  <p>探索应用、了解卡片，开启下一步。</p>
+  <a href="login.html" class="btn-primary">获取应用</a>
+</section>
+
+<script>
+  function navTo(url) {
+    if (localStorage.getItem('nexapay_is_login') === 'true') window.location.href = url;
+    else window.location.href = 'login.html';
+  }
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('active');
+    document.getElementById('menuOverlay').classList.toggle('active');
+  }
+  function toggleFaq(btn) {
+    const item = btn.parentElement;
+    item.classList.toggle('open');
+    btn.querySelector('.icon').textContent = item.classList.contains('open') ? '×' : '+';
+  }
+  if (localStorage.getItem('nexapay_is_login') === 'true') {
+    document.getElementById('navUser').textContent = '我的账户';
+    document.getElementById('navUser').href = '#';
+  }
+</script>
+</body>
+</html>
