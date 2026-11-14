@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>NEXAPAY — 让加密货币融入真实生活</title>
-<link rel="stylesheet" href="style.css">
+<!-- 注意：这里移除了全局的 style.css，防止旧的悬浮样式干扰 -->
 <style>
   :root {
     --brand-red: #ff3333;
@@ -45,16 +45,19 @@
   .logo-mark { width: 32px; height: 32px; background: var(--cyan); color: #000; border-radius: 8px; display: grid; place-items: center; font-size: 16px; }
 
   .nav-links { display: flex; gap: 32px; }
-  .nav-links a { font-size: 14px; font-weight: 500; color: #555; text-decoration: none; transition: color 0.2s; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: #555; text-decoration: none; transition: color 0.2s; cursor: pointer; }
   .nav-links a:hover { color: #111; }
 
   /* 右侧操作区 */
-  .header-actions { display: flex; align-items: center; gap: 12px; position: relative; }
+  .header-actions { display: flex; align-items: center; gap: 12px; }
   
-  /* 语言切换 (紧贴登录按钮) */
+  /* 语言切换 (极其严格的样式重置，彻底防止悬浮) */
   .lang-switch-wrap {
-    position: relative;
+    position: static !important;
+    left: auto !important; right: auto !important; top: auto !important;
+    transform: none !important;
     display: inline-flex; align-items: center;
+    margin-right: 4px;
   }
   .lang-switch-btn {
     width: 32px; height: 32px;
@@ -64,13 +67,13 @@
   }
   .lang-switch-btn:hover { background: #e0e0e0; }
   .lang-dropdown {
-    position: absolute; top: 40px; right: 0; /* 改为靠右对齐 */
+    position: absolute; top: 50px; right: 100px; /* 靠右定位 */
     background: #fff; border: 1px solid #ddd; border-radius: 8px;
     padding: 8px 0; display: none; flex-direction: column; min-width: 120px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 1001;
   }
   .lang-dropdown.show { display: flex; }
-  .lang-dropdown a { padding: 8px 16px; font-size: 13px; color: #333; text-decoration: none; white-space: nowrap; }
+  .lang-dropdown a { padding: 8px 16px; font-size: 13px; color: #333; text-decoration: none; white-space: nowrap; cursor: pointer; }
   .lang-dropdown a:hover { background: #f5f5f5; }
 
   /* 登录/注册/头像 */
@@ -94,10 +97,10 @@
   /* ================= Hero (全屏视频) ================= */
   .hero-greotpay {
     position: relative; 
-    height: 100vh; height: 100dvh; /* 满屏高度 */
+    height: 100vh; height: 100dvh;
     display: flex; align-items: center; justify-content: flex-start;
     text-align: left; overflow: hidden; background: #000; 
-    padding: 80px 8vw 0; /* 留出顶部导航空间 */
+    padding: 80px 8vw 0;
   }
   .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
   .hero-content-greotpay { position: relative; z-index: 2; max-width: 800px; }
@@ -105,7 +108,7 @@
   .hero-sub-greotpay { font-size: clamp(16px, 2vw, 22px); color: rgba(255,255,255,0.8); margin-bottom: 40px; }
   .btn-start {
     display: inline-block; padding: 16px 32px; font-size: 16px; font-weight: 700;
-    background: var(--brand-red); color: #fff; border-radius: 30px; text-decoration: none;
+    background: var(--brand-red); color: #fff; border-radius: 30px; text-decoration: none; cursor: pointer;
     transition: all 0.3s;
   }
   .btn-start:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,51,51,0.3); }
@@ -117,7 +120,7 @@
 
   /* 卡片区 */
   .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-  .feature-card { border-radius: 16px; overflow: hidden; background: #f0f0f0; display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; min-height: 320px; position: relative; }
+  .feature-card { border-radius: 16px; overflow: hidden; background: #f0f0f0; display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; min-height: 320px; position: relative; cursor: pointer; }
   .feature-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.8)); z-index: 1; }
   .feature-card h3 { position: relative; z-index: 2; color: #fff; font-size: 18px; font-weight: 700; margin-bottom: 8px; }
   .feature-card p { position: relative; z-index: 2; color: rgba(255,255,255,0.7); font-size: 13px; line-height: 1.5; }
@@ -141,7 +144,7 @@
   .slider-tag { color: var(--brand-red); font-size: 15px; font-weight: 700; margin-bottom: 12px; display: block; }
   .slide-title { font-size: clamp(32px, 4vw, 44px); font-weight: 800; color: #111; margin-bottom: 16px; line-height: 1.2; }
   .slide-desc { font-size: 16px; color: var(--text-gray); margin-bottom: 24px; line-height: 1.6; }
-  .btn-more { display: inline-flex; align-items: center; gap: 8px; background: #111; color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 600; text-decoration: none; font-size: 14px; transition: background 0.3s; }
+  .btn-more { display: inline-flex; align-items: center; gap: 8px; background: #111; color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 600; text-decoration: none; font-size: 14px; transition: background 0.3s; cursor: pointer; }
   .btn-more:hover { background: #333; }
   .btn-more svg { width: 14px; height: 14px; }
   .slide-phone { width: 50%; display: flex; justify-content: center; }
@@ -183,35 +186,31 @@
   .faq-item.open .faq-a { display: block; }
   .faq-q .plus { font-size: 22px; font-weight: 300; }
 
-  /* ================= 全新折叠式 Footer ================= */
+  /* 折叠式 Footer */
   .footer-greotpay { background: #0f0f0f; color: #fff; padding: 60px 20px 30px; margin-top: 60px; }
   .footer-inner-greotpay { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 40px; }
   .footer-brand h2 { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
   .footer-brand p { color: rgba(255,255,255,0.5); font-size: 13px; margin-bottom: 24px; }
   
-  /* PC端 Footer 列样式 */
   .footer-col h4 { font-size: 14px; font-weight: 700; margin-bottom: 16px; color: #fff; }
-  .footer-col a { display: block; color: rgba(255,255,255,0.5); font-size: 13px; margin-bottom: 10px; text-decoration: none; transition: color 0.2s; }
+  .footer-col a { display: block; color: rgba(255,255,255,0.5); font-size: 13px; margin-bottom: 10px; text-decoration: none; transition: color 0.2s; cursor: pointer; }
   .footer-col a:hover { color: #fff; }
   
-  /* 折叠按钮箭头 (默认隐藏，移动端显示) */
   .footer-collapse-btn { display: none; }
   
   .footer-bottom { max-width: 1200px; margin: 40px auto 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; color: rgba(255,255,255,0.4); font-size: 12px; }
 
-  /* ================= 移动端全覆盖 ================= */
+  /* ================= 移动端 ================= */
   @media (max-width: 960px) {
     .nav-links { display: none; }
     .topbar-inner { padding: 0 16px; }
     .logo span:last-child { font-size: 18px; }
     
-    /* Hero 满屏 */
     .hero-greotpay { height: 100vh; height: 100dvh; padding: 100px 24px 0; justify-content: center; text-align: center; }
     
     .features-grid { display: flex; flex-direction: column; gap: 16px; }
     .feature-card { min-height: 240px; }
     
-    /* 轮播平铺 */
     .slider-container { min-height: auto; }
     .slider-dots { display: none; }
     .slide-block { position: relative !important; opacity: 1 !important; visibility: visible !important; transform: none !important; pointer-events: auto !important; flex-direction: column; text-align: center; padding: 40px 0; border-bottom: 1px solid #eee; gap: 32px; }
@@ -224,66 +223,21 @@
     .dark-showcase { padding: 40px 16px; margin: 0 16px; }
     .mock-card { width: 100%; max-width: 300px; height: 180px; }
     
-    /* 移动端 Footer 折叠改造 */
-    .footer-inner-greotpay { 
-      grid-template-columns: 1fr; 
-      gap: 0; 
-      text-align: left;
-    }
+    .footer-inner-greotpay { grid-template-columns: 1fr; gap: 0; text-align: left; }
     .footer-brand { text-align: center; margin-bottom: 40px; }
-    
-    .footer-col { 
-      border-bottom: 1px solid rgba(255,255,255,0.1); 
-      padding: 16px 0; 
-    }
-    
-    /* 显示折叠按钮 */
-    .footer-collapse-btn {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      padding: 8px 0;
-    }
-    
-    .footer-collapse-btn .icon {
-      font-size: 20px;
-      transition: transform 0.3s;
-      color: rgba(255,255,255,0.5);
-    }
-    
-    .footer-col.active .footer-collapse-btn .icon {
-      transform: rotate(180deg); /* 展开时箭头向上 */
-    }
-    
-    /* 折叠内容区 */
-    .footer-collapse-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-    }
-    
-    .footer-col.active .footer-collapse-content {
-      max-height: 300px; /* 展开高度 */
-      padding-top: 12px;
-    }
-    
-    /* PC端的 h4 隐藏，改用按钮 */
+    .footer-col { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 16px 0; }
+    .footer-collapse-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; background: none; border: none; color: #fff; font-size: 16px; font-weight: 700; cursor: pointer; padding: 8px 0; }
+    .footer-collapse-btn .icon { font-size: 20px; transition: transform 0.3s; color: rgba(255,255,255,0.5); }
+    .footer-col.active .footer-collapse-btn .icon { transform: rotate(180deg); }
+    .footer-collapse-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .footer-col.active .footer-collapse-content { max-height: 300px; padding-top: 12px; }
     .footer-col h4 { display: none; }
-    
     .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
   }
 </style>
 </head>
 <body>
 
-<!-- 语言防闪烁 -->
 <div id="i18n-loader" style="display: none; position: fixed; inset: 0; z-index: 99999; background: #fff; place-items: center;">
   <div style="width: 30px; height: 30px; border: 3px solid #eee; border-top-color: #00f0ff; border-radius: 50%; animation: i18n-spin 1s linear infinite;"></div>
 </div>
@@ -295,38 +249,36 @@
   })();
 </script>
 
-<!-- 顶部导航 -->
 <header class="topbar">
   <div class="topbar-inner">
-    <a class="logo" href="#">
+    <a href="#" class="logo">
       <span class="logo-mark">N</span>
       <span>NEXAPAY</span>
     </a>
     
     <div class="nav-links">
-      <a href="#">个人</a>
-      <a href="#">企业</a>
-      <a href="#">公司</a>
-      <a href="#">赚币</a>
-      <a href="#">探索</a>
+      <a onclick="goAuth()">个人</a>
+      <a onclick="goAuth()">企业</a>
+      <a onclick="goAuth()">公司</a>
+      <a onclick="goAuth()">赚币</a>
+      <a onclick="goAuth()">探索</a>
     </div>
 
-    <!-- 右侧操作区：语言 + 登录/注册 -->
     <div class="header-actions">
       
-      <!-- 语言切换 (紧贴登录) -->
-      <div class="lang-switch-wrap">
+      <!-- 语言切换 (强力固定) -->
+      <div class="lang-switch-wrap" style="position:static !important;">
         <div class="lang-switch-btn" onclick="toggleLangMenu(event)">🌏</div>
         <div class="lang-dropdown" id="langDropdown"></div>
       </div>
 
       <!-- 未登录状态 -->
       <div class="auth-group" id="unauth-group">
-        <span class="btn-auth" onclick="doLogin()">登录</span>
-        <span class="btn-auth btn-register" onclick="doLogin()">注册</span>
+        <span class="btn-auth" onclick="goAuth()">登录</span>
+        <span class="btn-auth btn-register" onclick="goAuth()">注册</span>
       </div>
 
-      <!-- 已登录状态 (头像) -->
+      <!-- 已登录状态 -->
       <div class="user-avatar-wrap" id="auth-group">
         <div class="user-avatar">N</div>
         <div class="user-dropdown">
@@ -338,7 +290,7 @@
   </div>
 </header>
 
-<!-- Hero (全屏视频) -->
+<!-- Hero -->
 <section class="hero-greotpay">
   <video class="hero-video" autoplay muted loop playsinline preload="auto">
     <source src="homeBg.3__npe53rz97a.webm" type="video/webm" />
@@ -346,28 +298,28 @@
   <div class="hero-content-greotpay">
     <h1 class="hero-title-greotpay">让加密货币<br>融入真实生活</h1>
     <p class="hero-sub-greotpay">向稳定币支付敞开大门</p>
-    <a href="#" class="btn-start">立即开始支付</a>
+    <a onclick="goAuth()" class="btn-start">立即开始支付</a>
   </div>
 </section>
 
-<!-- 卡片区 -->
+<!-- 卡片区 (全部指向登录) -->
 <section class="section-greotpay">
   <div class="container-greotpay">
     <h2 class="section-title">享受日常权益</h2>
     <div class="features-grid">
-      <div class="feature-card">
+      <div class="feature-card" onclick="goAuth()">
         <h3>轻松获取稳定币</h3>
         <p>通过 P2P 兑换和法币入金。</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card" onclick="goAuth()">
         <h3>随时使用稳定币支付</h3>
         <p>绑定卡片，随心支付。</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card" onclick="goAuth()">
         <h3>快速安全地转移加密货币</h3>
         <p>支持 100+ 国家/地区。</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card" onclick="goAuth()">
         <h3>多种货币，一个应用</h3>
         <p>一站式管理加密资产。</p>
       </div>
@@ -379,7 +331,7 @@
 <section class="dark-showcase">
   <h2>数字支付，简单随行</h2>
   <p>轻松、安全地支付加密货币，随时随地。</p>
-  <div class="mock-card">
+  <div class="mock-card" onclick="goAuth()" style="cursor:pointer;">
     <div style="display:flex; justify-content:space-between; align-items:flex-start; color:#fff;">
       <div style="font-weight:800; font-size:20px;">NEXAPAY</div>
       <div style="font-size:12px; opacity:0.6;">Debit</div>
@@ -392,7 +344,7 @@
   </div>
 </section>
 
-<!-- 图文滑动区 (PC轮播，移动平铺) -->
+<!-- 图文滑动区 -->
 <section class="feature-slider-section">
   <div class="slider-container">
 
@@ -401,7 +353,7 @@
         <span class="slider-tag">全球转账</span>
         <h3 class="slide-title">发送加密货币，收取本地货币</h3>
         <p class="slide-desc">轻松转账，每笔交易都有保障，让收款人更快收到资金。</p>
-        <a href="#" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -430,7 +382,7 @@
         <span class="slider-tag">应用内转账</span>
         <h3 class="slide-title">向任何 NEXAPAY 用户发送加密货币</h3>
         <p class="slide-desc">无论何时何地，只需对方 NEXAPAY ID、手机号，即发即达。</p>
-        <a href="#" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -458,7 +410,7 @@
         <span class="slider-tag">多币种钱包</span>
         <h3 class="slide-title">连接加密货币与日常生活</h3>
         <p class="slide-desc">集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。</p>
-        <a href="#" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -481,7 +433,7 @@
         <span class="slider-tag">信用额度</span>
         <h3 class="slide-title">持有加密货币，使用信用额度</h3>
         <p class="slide-desc">使用加密货币作为抵押获取资金，并灵活选择还款方式。</p>
-        <a href="#" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -507,7 +459,7 @@
         <span class="slider-tag">赚币</span>
         <h3 class="slide-title">轻松增值您的加密资产</h3>
         <p class="slide-desc">让加密货币为您工作，获得每日奖励。</p>
-        <a href="#" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -534,7 +486,7 @@
         <span class="slider-tag">兑换</span>
         <h3 class="slide-title">轻松兑换加密资产</h3>
         <p class="slide-desc">提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。</p>
-        <a href="#" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -564,7 +516,7 @@
         <span class="slider-tag">P2P 市场</span>
         <h3 class="slide-title">点对点交易，由您驱动</h3>
         <p class="slide-desc">可通过多种法币和支付方式买卖加密货币，直接与交易对手进行，安全高效。</p>
-        <a href="#" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -675,7 +627,7 @@
   </div>
 </section>
 
-<!-- ================= 折叠式 Footer ================= -->
+<!-- 折叠式 Footer -->
 <footer class="footer-greotpay">
   <div class="footer-inner-greotpay">
     <div class="footer-brand">
@@ -691,7 +643,7 @@
       <button class="footer-collapse-btn">个人 <span class="icon">⌄</span></button>
       <h4>个人</h4>
       <div class="footer-collapse-content">
-        <a href="#">卡片</a><a href="#">扫码支付</a><a href="#">全球转账</a><a href="#">多币种钱包</a><a href="#">赚币</a>
+        <a onclick="goAuth()">卡片</a><a onclick="goAuth()">扫码支付</a><a onclick="goAuth()">全球转账</a><a onclick="goAuth()">多币种钱包</a><a onclick="goAuth()">赚币</a>
       </div>
     </div>
     
@@ -700,7 +652,7 @@
       <button class="footer-collapse-btn">商业 <span class="icon">⌄</span></button>
       <h4>商业</h4>
       <div class="footer-collapse-content">
-        <a href="#">关于我们</a><a href="#">联系我们</a><a href="#">加入我们</a><a href="#">新闻中心</a>
+        <a onclick="goAuth()">关于我们</a><a onclick="goAuth()">联系我们</a><a onclick="goAuth()">加入我们</a><a onclick="goAuth()">新闻中心</a>
       </div>
     </div>
     
@@ -709,7 +661,7 @@
       <button class="footer-collapse-btn">资源 <span class="icon">⌄</span></button>
       <h4>资源</h4>
       <div class="footer-collapse-content">
-        <a href="#">帮助中心</a><a href="#">API 文档</a><a href="#">博客</a><a href="#">费率标准</a>
+        <a onclick="goAuth()">帮助中心</a><a onclick="goAuth()">API 文档</a><a onclick="goAuth()">博客</a><a onclick="goAuth()">费率标准</a>
       </div>
     </div>
     
@@ -718,7 +670,7 @@
       <button class="footer-collapse-btn">帮助与支持 <span class="icon">⌄</span></button>
       <h4>帮助与支持</h4>
       <div class="footer-collapse-content">
-        <a href="#">服务条款</a><a href="#">隐私政策</a><a href="#">风险披露</a><a href="#">牌照信息</a>
+        <a onclick="goAuth()">服务条款</a><a onclick="goAuth()">隐私政策</a><a onclick="goAuth()">风险披露</a><a onclick="goAuth()">牌照信息</a>
       </div>
     </div>
   </div>
@@ -732,8 +684,18 @@
 <script src="script.js"></script>
 <script>
   // =========================================
-  // 1. 登录/退出 模拟逻辑
+  // 跳转与登录状态判断
   // =========================================
+  window.goAuth = function() {
+    // 如果已登录，去apply（或者保持首页）；如果未登录，去login
+    if (localStorage.getItem('nexapay_is_login') === 'true') {
+      // 此处根据业务决定，如果是已经登录的用户点击这些，可以去申请页或停留
+      window.location.href = 'login.html'; // 按照用户说的“全部跳转这个”，即使登录了去login会自动重定向回首页
+    } else {
+      window.location.href = 'login.html';
+    }
+  };
+
   function checkLoginState() {
     const isLoggedIn = localStorage.getItem('nexapay_is_login') === 'true';
     const unauthGroup = document.getElementById('unauth-group');
@@ -748,11 +710,6 @@
     }
   }
 
-  window.doLogin = function() {
-    localStorage.setItem('nexapay_is_login', 'true');
-    checkLoginState();
-  };
-
   window.doLogout = function() {
     localStorage.removeItem('nexapay_is_login');
     checkLoginState();
@@ -761,7 +718,7 @@
   checkLoginState();
 
   // =========================================
-  // 2. 语言下拉菜单
+  // 语言下拉菜单 (静态定位)
   // =========================================
   window.toggleLangMenu = function(e) {
     e.stopPropagation();
@@ -777,7 +734,7 @@
   });
 
   // =========================================
-  // 3. FAQ 折叠
+  // FAQ 折叠
   // =========================================
   document.querySelectorAll('.faq-q').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -789,26 +746,20 @@
   });
 
   // =========================================
-  // 4. 底部 Footer 折叠 (移动端)
+  // 底部 Footer 折叠 (移动端)
   // =========================================
   document.querySelectorAll('.footer-collapse-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      // 如果是PC端则不需要响应折叠事件
       if (window.innerWidth > 960) return;
-      
       const parent = btn.parentElement;
       const isActive = parent.classList.contains('active');
-      
-      // 关闭其他
       document.querySelectorAll('.footer-col').forEach(col => col.classList.remove('active'));
-      
-      // 切换当前
       if (!isActive) parent.classList.add('active');
     });
   });
 
   // =========================================
-  // 5. PC 端轮播
+  // PC 端轮播
   // =========================================
   let currentSlide = 0;
   const totalSlides = 7;
@@ -856,7 +807,6 @@
         if (i === currentSlide) el.classList.add('active');
         else el.classList.remove('active');
       });
-      // PC端恢复Footer全部展开
       document.querySelectorAll('.footer-col').forEach(col => col.classList.remove('active'));
     }
   });
