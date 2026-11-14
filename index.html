@@ -168,13 +168,30 @@
   .test-card p { font-size: 14px; color: #333; line-height: 1.6; margin-bottom: 16px; }
   .test-card .author { font-size: 12px; font-weight: 700; color: #888; }
 
-  /* FAQ */
+  /* ================= FAQ (修复版) ================= */
   .faq-list { max-width: 800px; margin: 0 auto; }
   .faq-item { border-bottom: 1px solid #eee; }
-  .faq-q { width: 100%; text-align: left; background: none; border: none; padding: 24px 0; font-size: 16px; font-weight: 600; color: #111; display: flex; justify-content: space-between; cursor: pointer; }
-  .faq-q .plus { font-size: 22px; font-weight: 300; }
-  .faq-a { display: none; padding-bottom: 24px; font-size: 14px; color: var(--text-gray); line-height: 1.8; }
-  .faq-item.open .faq-a { display: block; }
+  .faq-q { 
+    width: 100%; text-align: left; background: none; border: none; 
+    outline: none; /* 去除聚焦黑框 */
+    -webkit-tap-highlight-color: transparent; /* 去除移动端点击高亮 */
+    padding: 24px 0; font-size: 16px; font-weight: 600; color: #111; 
+    display: flex; justify-content: space-between; align-items: center; 
+    cursor: pointer; 
+  }
+  .faq-q .plus { font-size: 22px; font-weight: 300; transition: transform 0.3s; }
+  
+  /* 展开内容使用 max-height 动画，比 display 更平滑 */
+  .faq-a { 
+    max-height: 0; 
+    overflow: hidden; 
+    transition: max-height 0.4s ease, padding-bottom 0.4s ease; 
+    font-size: 14px; color: var(--text-gray); line-height: 1.8; 
+  }
+  .faq-item.open .faq-a { 
+    max-height: 300px; /* 给足够大的高度 */
+    padding-bottom: 24px; 
+  }
 
   /* 极简 Footer */
   .footer-greotpay { background: #0f0f0f; color: #fff; padding: 40px 20px; text-align: center; }
@@ -559,28 +576,28 @@
   </div>
 </section>
 
-<!-- FAQ (更新为要求内容) -->
+<!-- FAQ (确保可以直接打开) -->
 <section class="section-greotpay">
   <div class="container-greotpay">
     <h2 class="section-title">常见问题</h2>
     <div class="faq-list">
       <div class="faq-item">
-        <button class="faq-q"><span>为什么我的身份验证未通过？</span><span class="plus">+</span></button>
+        <button class="faq-q" type="button"><span>为什么我的身份验证未通过？</span><span class="plus">+</span></button>
         <div class="faq-a"><p>常见原因包括照片模糊、证件过期或个人信息不一致。请在光线充足处重新拍摄，确保完整显示证件四角，且姓名与账户完全一致。</p></div>
       </div>
       <div class="faq-item">
-        <button class="faq-q"><span>可以使用 NEXAPAY 支付订阅或服务费用吗？</span><span class="plus">+</span></button>
+        <button class="faq-q" type="button"><span>可以使用 NEXAPAY 支付订阅或服务费用吗？</span><span class="plus">+</span></button>
         <div class="faq-a"><p>可以。虚拟卡可用于在线订阅、旅行预订和日常结账，也可以添加到 Apple Pay 或 Google Pay 进行线下感应支付。</p></div>
       </div>
       <div class="faq-item">
-        <button class="faq-q"><span>NEXAPAY 安全吗？</span><span class="plus">+</span></button>
+        <button class="faq-q" type="button"><span>NEXAPAY 安全吗？</span><span class="plus">+</span></button>
         <div class="faq-a"><p>资金通过经过审计的稳定币通道流转，支持即时冻结、单笔交易限额以及每笔支付的推送提醒。（请务必在官方渠道核实安全声明。）</p></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 极简 Footer (去掉图1的折叠列表) -->
+<!-- 极简 Footer -->
 <footer class="footer-greotpay">
   <div class="footer-brand">
     <div class="logo-box">
@@ -602,7 +619,6 @@
   // 登录与跳转逻辑
   // =========================================
   window.goAuth = function() {
-    // 无论是否登录，点击这些业务按钮都进入 login.html（或者根据您的需求改）
     window.location.href = 'login.html';
   };
 
@@ -644,19 +660,24 @@
   });
 
   // =========================================
-  // FAQ 折叠
+  // FAQ 折叠 (使用更稳定的 DOM 操作)
   // =========================================
   document.querySelectorAll('.faq-q').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const item = btn.parentElement;
+    btn.addEventListener('click', function() {
+      const item = this.parentElement;
       const isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
       
-      const icon = btn.querySelector('.plus');
-      document.querySelectorAll('.faq-q .plus').forEach(i => i.textContent = '+');
-
+      // 1. 先关闭所有
+      document.querySelectorAll('.faq-item').forEach(otherItem => {
+        otherItem.classList.remove('open');
+        const otherPlus = otherItem.querySelector('.plus');
+        if (otherPlus) otherPlus.textContent = '+';
+      });
+      
+      // 2. 如果之前是关闭的，则打开当前
       if (!isOpen) {
         item.classList.add('open');
+        const icon = this.querySelector('.plus');
         if (icon) icon.textContent = '-';
       }
     });
