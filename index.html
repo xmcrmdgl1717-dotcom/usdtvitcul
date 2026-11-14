@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NEXA — 你的 USDC，不卖也能花</title>
+<title>NEXAPAY — 你的 USDC，不卖也能花</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
 </style>
 <script>
   (function() {
-    var lang = localStorage.getItem('nexa_manual_lang');
+    var lang = localStorage.getItem('nexapay_manual_lang');
     if (lang && lang !== 'zh') {
       var loader = document.getElementById('i18n-loader');
       if (loader) loader.style.display = 'grid';
@@ -33,7 +33,6 @@
 </div>
 <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
-<!-- 悬浮球移到顶层，不再受 header 限制 -->
 <div class="lang-switch-wrap">
   <div class="lang-switch-btn" onclick="toggleLangMenu(event)">🌏</div>
   <div class="lang-dropdown" id="langDropdown"></div>
@@ -43,7 +42,7 @@
   <div class="topbar-inner">
     <a class="logo" href="#">
       <span class="logo-mark">N</span>
-      <span>NEXA</span>
+      <span>NEXAPAY</span>
     </a>
     
     <div class="topbar-note">
@@ -119,7 +118,7 @@
 
       <div class="credit-card">
         <div class="cc-top">
-          <span class="cc-brand">NEXA</span>
+          <span class="cc-brand">NEXAPAY</span>
           <span class="cc-chip" aria-hidden="true"></span>
         </div>
 
@@ -463,7 +462,7 @@
     <div class="section-head reveal">
       <span class="eyebrow">100M+ 用户的选择</span>
       <h2>来自新加坡、曼谷、吉隆坡、圣保罗的声音。</h2>
-      <p>自由职业者、远程工作者、跨境卖家、长期持有者——他们选择 NEXA 的理由，都不太一样。</p>
+      <p>自由职业者、远程工作者、跨境卖家、长期持有者——他们选择 NEXAPAY 的理由，都不太一样。</p>
     </div>
   </div>
 
@@ -480,17 +479,17 @@
 
     <div class="quotes">
       <article class="quote reveal">
-        <p>“以前每刷一次卡，都要先在交易所卖一次币。现在余额放着不动，刷卡时它自己处理掉了。”</p>
+        <p>“以前扫码付款要等半天确认，现在不到 3 秒就提示支付成功，体验太顺滑了。”</p>
         <div class="quote-foot"><span class="avatar">L</span><span>自由职业者 · 新加坡</span></div>
       </article>
 
       <article class="quote reveal d1">
-        <p>“最有用的是那笔待清算的授权。以前不知道钱为什么少了，现在能看到它什么时候回来。”</p>
+        <p>“最有用的是实时清算进度，扫完码马上能看到钱扣了没有，不用提心吊胆。”</p>
         <div class="quote-foot"><span class="avatar">M</span><span>远程工作者 · 曼谷</span></div>
       </article>
 
       <article class="quote reveal d2">
-        <p>“入金没绕路，汇率也不是卡商说了算。这两件事加起来，才让我愿意换掉原来那张。”</p>
+        <p>“汇率透明，扫码秒付，加上零年费，这三件事加起来让我直接换掉了原来的卡。”</p>
         <div class="quote-foot"><span class="avatar">K</span><span>跨境卖家 · 吉隆坡</span></div>
       </article>
     </div>
@@ -507,15 +506,15 @@
     <div class="faq-list">
       <div class="faq-item">
         <button class="faq-q" type="button">
-          <span>NEXA 和普通的加密卡有什么区别？</span>
+          <span>NEXAPAY 和普通的加密卡有什么区别？</span>
           <span class="plus">+</span>
         </button>
-        <div class="faq-a"><p>普通加密卡要求你先卖出资产才能消费，NEXA 让你直接扫码支付。刷卡瞬间才从账户清算所需金额。其余部分继续保留，清算后差额自动回到账户。</p></div>
+        <div class="faq-a"><p>普通加密卡要求你先卖出资产才能消费，NEXAPAY 让你直接扫码支付。刷卡瞬间才从账户清算所需金额。其余部分继续保留，清算后差额自动回到账户。</p></div>
       </div>
 
       <div class="faq-item">
         <button class="faq-q" type="button">
-          <span>我的 USDC 放在 NEXA，安全吗？</span>
+          <span>我的 USDC 放在 NEXAPAY，安全吗？</span>
           <span class="plus">+</span>
         </button>
         <div class="faq-a"><p>资金由持牌金融机构托管，支付清算账户与资金严格隔离。支付服务由持牌第三方提供，平台只做展示与路由，不触碰你的资产所有权。同时共享 $7 亿用户保护基金。</p></div>
@@ -534,7 +533,7 @@
           <span>虚拟卡可以在哪些地方使用？</span>
           <span class="plus">+</span>
         </button>
-        <div class="faq-a"><p>NEXA 虚拟卡由 Visa 网络签发，全球 1.5 亿+ 受理商户可用。支持线上订阅、线下感应支付、Apple Pay、Google Pay，以及绑定支付宝、微信支付。</p></div>
+        <div class="faq-a"><p>NEXAPAY 虚拟卡由 Visa 网络签发，全球 1.5 亿+ 受理商户可用。支持线上订阅、线下感应支付、Apple Pay、Google Pay，以及绑定支付宝、微信支付。</p></div>
       </div>
 
       <div class="faq-item">
@@ -571,7 +570,7 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
-      <span>© 2026 NEXA. All rights reserved.</span>
+      <span>© 2026 NEXAPAY. All rights reserved.</span>
       <div class="footer-links">
         <a href="#">服务条款</a>
         <a href="#">隐私政策</a>
@@ -580,7 +579,7 @@
       </div>
     </div>
     <p class="footer-disclaimer">
-      风险提示：加密资产价格波动剧烈，本产品提供的支付服务不构成任何形式的投资回报承诺。本服务仅在支持该服务的司法管辖区提供，具体可用性以申请时的地区判定为准。支付卡由合作持牌机构发行，NEXA 提供前端技术服务。请在充分了解相关风险后使用。
+      风险提示：加密资产价格波动剧烈，本产品提供的支付服务不构成任何形式的投资回报承诺。本服务仅在支持该服务的司法管辖区提供，具体可用性以申请时的地区判定为准。支付卡由合作持牌机构发行，NEXAPAY 提供前端技术服务。请在充分了解相关风险后使用。
     </p>
   </div>
 </footer>
