@@ -31,6 +31,7 @@
     padding: 40px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.05);
     position: relative;
+    overflow: hidden;
   }
 
   /* Logo */
@@ -57,7 +58,8 @@
   .text-desc { font-size: 14px; color: var(--text-gray); margin-bottom: 30px; }
 
   /* 表单 */
-  .form-group { margin-bottom: 20px; position: relative; }
+  .form-group { margin-bottom: 20px; position: relative; display: none; /* 默认隐藏用户名 */ }
+  .form-group.show { display: block; }
   .form-group label { display: block; font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; }
   .form-group input {
     width: 100%;
@@ -81,7 +83,7 @@
     font-weight: 600;
   }
 
-  /* 登录按钮 */
+  /* 提交按钮 */
   .btn-submit {
     width: 100%;
     padding: 16px;
@@ -153,10 +155,15 @@
   .sec-steps span::before { content: '○ '; }
   .sec-steps span.active::before { content: '⟳ '; }
   .sec-steps span.done::before { content: '✓ '; }
-
 </style>
 </head>
 <body>
+
+<!-- 多语言防闪烁遮罩层 -->
+<div id="i18n-loader" style="display: none; position: fixed; inset: 0; z-index: 99999; background: #fff; place-items: center;">
+  <div style="width: 30px; height: 30px; border: 3px solid #eee; border-top-color: #00f0ff; border-radius: 50%; animation: i18n-spin 1s linear infinite;"></div>
+</div>
+<style>@keyframes i18n-spin { to { transform: rotate(360deg); } }</style>
 
   <div class="login-container">
     <a href="index.html" class="logo-wrap">
@@ -164,26 +171,34 @@
       <div class="logo-text">NEXAPAY</div>
     </a>
 
-    <div class="text-small">您的账户</div>
-    <div class="text-title">欢迎回来</div>
-    <div class="text-desc">登录以管理您的个人资料。</div>
+    <div class="text-small" id="pageTag">您的账户</div>
+    <div class="text-title" id="pageTitle">欢迎回来</div>
+    <div class="text-desc" id="pageDesc">登录以管理您的个人资料。</div>
 
-    <form id="loginForm" onsubmit="handleLogin(event)">
-      <div class="form-group">
+    <form id="authForm" onsubmit="handleSubmit(event)">
+      
+      <!-- 用户名 (仅注册显示) -->
+      <div class="form-group" id="usernameGroup">
+        <label>用户名</label>
+        <input type="text" id="usernameInput" placeholder="请输入用户名" />
+      </div>
+
+      <div class="form-group show">
         <label>电子邮箱</label>
         <input type="email" id="emailInput" required placeholder="请输入邮箱" />
       </div>
-      <div class="form-group">
+      
+      <div class="form-group show">
         <label>密码</label>
         <input type="password" id="pwdInput" required placeholder="请输入密码" />
         <span class="toggle-pwd" onclick="togglePassword()">显示</span>
       </div>
       
-      <button type="submit" class="btn-submit">登录</button>
+      <button type="submit" class="btn-submit" id="submitBtn">登录</button>
     </form>
 
-    <div class="bottom-links">
-      初次使用 NEXAPAY? <a onclick="document.getElementById('loginForm').requestSubmit()">创建账户</a>
+    <div class="bottom-links" id="bottomLinkWrap">
+      初次使用 NEXAPAY? <a id="toggleLink" onclick="toggleMode()">创建账户</a>
     </div>
 
     <a href="index.html" class="back-home">← 返回首页</a>
@@ -204,10 +219,50 @@
     </div>
   </div>
 
+<!-- 引入多语言脚本 -->
+<script src="script.js"></script>
 <script>
   // 如果已登录，直接跳回首页
   if (localStorage.getItem('nexapay_is_login') === 'true') {
     window.location.replace('index.html');
+  }
+
+  let isRegisterMode = false;
+
+  // 切换登录/注册模式
+  function toggleMode() {
+    isRegisterMode = !isRegisterMode;
+    
+    const tag = document.getElementById('pageTag');
+    const title = document.getElementById('pageTitle');
+    const desc = document.getElementById('pageDesc');
+    const userGroup = document.getElementById('usernameGroup');
+    const userInput = document.getElementById('usernameInput');
+    const submitBtn = document.getElementById('submitBtn');
+    const bottomLinkWrap = document.getElementById('bottomLinkWrap');
+
+    if (isRegisterMode) {
+      // 切换为注册
+      tag.textContent = window.t ? window.t("新用户注册") : "新用户注册";
+      title.textContent = window.t ? window.t("创建您的账户") : "创建您的账户";
+      desc.textContent = window.t ? window.t("注册以开始使用 NEXAPAY 服务。") : "注册以开始使用 NEXAPAY 服务。";
+      userGroup.classList.add('show');
+      userInput.setAttribute('required', 'required');
+      submitBtn.textContent = window.t ? window.t("注册") : "注册";
+      bottomLinkWrap.innerHTML = `${window.t ? window.t("已有账户？") : "已有账户？"} <a onclick="toggleMode()">${window.t ? window.t("去登录") : "去登录"}</a>`;
+    } else {
+      // 切换为登录
+      tag.textContent = window.t ? window.t("您的账户") : "您的账户";
+      title.textContent = window.t ? window.t("欢迎回来") : "欢迎回来";
+      desc.textContent = window.t ? window.t("登录以管理您的个人资料。") : "登录以管理您的个人资料。";
+      userGroup.classList.remove('show');
+      userInput.removeAttribute('required');
+      submitBtn.textContent = window.t ? window.t("登录") : "登录";
+      bottomLinkWrap.innerHTML = `${window.t ? window.t("初次使用 NEXAPAY?") : "初次使用 NEXAPAY?"} <a onclick="toggleMode()">${window.t ? window.t("创建账户") : "创建账户"}</a>`;
+    }
+
+    // 触发一次重翻译，防止切换后文字未翻译
+    if (window.triggerRetranslate) window.triggerRetranslate();
   }
 
   // 密码显示/隐藏
@@ -216,15 +271,15 @@
     const btn = document.querySelector('.toggle-pwd');
     if (pwd.type === 'password') {
       pwd.type = 'text';
-      btn.textContent = '隐藏';
+      btn.textContent = window.t ? window.t("隐藏") : "隐藏";
     } else {
       pwd.type = 'password';
-      btn.textContent = '显示';
+      btn.textContent = window.t ? window.t("显示") : "显示";
     }
   }
 
-  // 处理登录逻辑
-  function handleLogin(e) {
+  // 处理表单提交 (登录或注册)
+  function handleSubmit(e) {
     e.preventDefault();
     
     // 显示安全检测遮罩
@@ -240,14 +295,12 @@
       document.getElementById('step4')
     ];
     
-    // 默认第一步激活
     steps[0].classList.add('active');
 
     const timer = setInterval(() => {
       timeLeft--;
       countdownEl.textContent = timeLeft + 's';
       
-      // 根据倒计时更新步骤状态
       if (timeLeft <= 15 && timeLeft > 10) {
         steps[0].classList.replace('active', 'done');
         steps[1].classList.add('active');
