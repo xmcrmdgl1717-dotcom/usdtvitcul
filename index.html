@@ -4,7 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>NEXAPAY — 让加密货币融入真实生活</title>
-<!-- 注意：这里移除了全局的 style.css，防止旧的悬浮样式干扰 -->
 <style>
   :root {
     --brand-red: #ff3333;
@@ -44,18 +43,12 @@
   .logo { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 800; color: #111; text-decoration: none; }
   .logo-mark { width: 32px; height: 32px; background: var(--cyan); color: #000; border-radius: 8px; display: grid; place-items: center; font-size: 16px; }
 
-  .nav-links { display: flex; gap: 32px; }
-  .nav-links a { font-size: 14px; font-weight: 500; color: #555; text-decoration: none; transition: color 0.2s; cursor: pointer; }
-  .nav-links a:hover { color: #111; }
-
-  /* 右侧操作区 */
-  .header-actions { display: flex; align-items: center; gap: 12px; }
+  /* 右侧操作区 - 去除多余链接，只保留必要元素 */
+  .header-actions { display: flex; align-items: center; gap: 12px; margin-left: auto; }
   
-  /* 语言切换 (极其严格的样式重置，彻底防止悬浮) */
+  /* 语言切换 */
   .lang-switch-wrap {
     position: static !important;
-    left: auto !important; right: auto !important; top: auto !important;
-    transform: none !important;
     display: inline-flex; align-items: center;
     margin-right: 4px;
   }
@@ -67,7 +60,7 @@
   }
   .lang-switch-btn:hover { background: #e0e0e0; }
   .lang-dropdown {
-    position: absolute; top: 50px; right: 100px; /* 靠右定位 */
+    position: absolute; top: 50px; right: 100px;
     background: #fff; border: 1px solid #ddd; border-radius: 8px;
     padding: 8px 0; display: none; flex-direction: column; min-width: 120px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 1001;
@@ -93,6 +86,38 @@
   .user-avatar-wrap:hover .user-dropdown { display: flex; }
   .user-dropdown a { padding: 8px 16px; font-size: 13px; color: #333; text-decoration: none; cursor: pointer; white-space: nowrap; }
   .user-dropdown a:hover { background: #f5f5f5; color: var(--brand-red); }
+
+  /* ================= 汉堡菜单与侧边栏 ================= */
+  .hamburger { 
+    cursor: pointer; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 5px; 
+    z-index: 1001; 
+    padding-left: 8px; 
+    margin-left: 4px;
+  }
+  .hamburger span { display: block; width: 24px; height: 2px; background: #111; transition: 0.3s; }
+
+  .mobile-menu { 
+    position: fixed; top: 0; right: -320px; width: 300px; height: 100vh; 
+    background: #fff; box-shadow: -10px 0 30px rgba(0,0,0,0.1); 
+    z-index: 999; padding: 80px 24px 24px; transition: right 0.3s ease; 
+    display: flex; flex-direction: column; gap: 16px; 
+  }
+  .mobile-menu.active { right: 0; }
+  .mobile-menu a { 
+    text-decoration: none; color: #333; font-size: 16px; 
+    font-weight: 600; padding: 12px 0; border-bottom: 1px solid #eee; 
+    cursor: pointer; transition: color 0.2s;
+  }
+  .mobile-menu a:hover { color: var(--brand-red); }
+  
+  .menu-overlay { 
+    position: fixed; inset: 0; background: rgba(0,0,0,0.4); 
+    z-index: 998; display: none; backdrop-filter: blur(2px);
+  }
+  .menu-overlay.active { display: block; }
 
   /* ================= Hero (全屏视频) ================= */
   .hero-greotpay {
@@ -202,7 +227,6 @@
 
   /* ================= 移动端 ================= */
   @media (max-width: 960px) {
-    .nav-links { display: none; }
     .topbar-inner { padding: 0 16px; }
     .logo span:last-child { font-size: 18px; }
     
@@ -256,49 +280,11 @@
       <span>NEXAPAY</span>
     </a>
     
-    <div class="nav-links">
-<!-- 替换 index.html 里的对应按钮和卡片 -->
-
-<!-- 原来的卡片区，添加 onclick 事件 -->
-<div class="feature-card" onclick="navTo('scan.html')">
-  <h3>轻松获取稳定币</h3>
-  ...
-</div>
-<div class="feature-card" onclick="navTo('scan.html')">
-  <h3>随时使用稳定币支付</h3>
-  ...
-</div>
-<div class="feature-card" onclick="navTo('remittance.html')">
-  <h3>快速安全地转移加密货币</h3>
-  ...
-</div>
-<div class="feature-card" onclick="navTo('credit.html')">
-  <h3>多种货币，一个应用</h3>
-  ...
-</div>
-
-<!-- 底部 Footer 里面的链接也可以指向这几个页面 -->
-<a onclick="navTo('scan.html')">扫码支付</a>
-<a onclick="navTo('credit.html')">信用额度</a>
-<a onclick="navTo('remittance.html')">即时汇款</a>
-<a onclick="navTo('p2p.html')">P2P 市场</a>
-
-<!-- 在 index.html 底部加上同样的拦截逻辑 -->
-<script>
-  function navTo(url) {
-    if (localStorage.getItem('nexapay_is_login') === 'true') {
-      window.location.href = url;
-    } else {
-      window.location.href = 'login.html';
-    }
-  }
-</script>
-    </div>
-
+    <!-- 右侧操作区 -->
     <div class="header-actions">
       
-      <!-- 语言切换 (强力固定) -->
-      <div class="lang-switch-wrap" style="position:static !important;">
+      <!-- 语言切换 -->
+      <div class="lang-switch-wrap">
         <div class="lang-switch-btn" onclick="toggleLangMenu(event)">🌏</div>
         <div class="lang-dropdown" id="langDropdown"></div>
       </div>
@@ -317,9 +303,24 @@
         </div>
       </div>
 
+      <!-- 汉堡菜单 -->
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+
     </div>
   </div>
 </header>
+
+<!-- 侧边栏菜单 -->
+<div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <a onclick="navTo('scan.html')">扫码支付</a>
+  <a onclick="navTo('credit.html')">信用额度</a>
+  <a onclick="navTo('remittance.html')">即时汇款</a>
+  <a onclick="navTo('p2p.html')">P2P 市场</a>
+  <a href="index.html" style="margin-top: auto; border: none; color: #999;">返回首页</a>
+</div>
 
 <!-- Hero -->
 <section class="hero-greotpay">
@@ -333,24 +334,24 @@
   </div>
 </section>
 
-<!-- 卡片区 (全部指向登录) -->
+<!-- 卡片区 -->
 <section class="section-greotpay">
   <div class="container-greotpay">
     <h2 class="section-title">享受日常权益</h2>
     <div class="features-grid">
-      <div class="feature-card" onclick="goAuth()">
+      <div class="feature-card" onclick="navTo('scan.html')">
         <h3>轻松获取稳定币</h3>
         <p>通过 P2P 兑换和法币入金。</p>
       </div>
-      <div class="feature-card" onclick="goAuth()">
+      <div class="feature-card" onclick="navTo('scan.html')">
         <h3>随时使用稳定币支付</h3>
         <p>绑定卡片，随心支付。</p>
       </div>
-      <div class="feature-card" onclick="goAuth()">
+      <div class="feature-card" onclick="navTo('remittance.html')">
         <h3>快速安全地转移加密货币</h3>
         <p>支持 100+ 国家/地区。</p>
       </div>
-      <div class="feature-card" onclick="goAuth()">
+      <div class="feature-card" onclick="navTo('credit.html')">
         <h3>多种货币，一个应用</h3>
         <p>一站式管理加密资产。</p>
       </div>
@@ -384,7 +385,7 @@
         <span class="slider-tag">全球转账</span>
         <h3 class="slide-title">发送加密货币，收取本地货币</h3>
         <p class="slide-desc">轻松转账，每笔交易都有保障，让收款人更快收到资金。</p>
-        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="navTo('remittance.html')" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -413,7 +414,7 @@
         <span class="slider-tag">应用内转账</span>
         <h3 class="slide-title">向任何 NEXAPAY 用户发送加密货币</h3>
         <p class="slide-desc">无论何时何地，只需对方 NEXAPAY ID、手机号，即发即达。</p>
-        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="navTo('remittance.html')" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -441,7 +442,7 @@
         <span class="slider-tag">多币种钱包</span>
         <h3 class="slide-title">连接加密货币与日常生活</h3>
         <p class="slide-desc">集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。</p>
-        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="navTo('scan.html')" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -464,7 +465,7 @@
         <span class="slider-tag">信用额度</span>
         <h3 class="slide-title">持有加密货币，使用信用额度</h3>
         <p class="slide-desc">使用加密货币作为抵押获取资金，并灵活选择还款方式。</p>
-        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="navTo('credit.html')" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -490,7 +491,7 @@
         <span class="slider-tag">赚币</span>
         <h3 class="slide-title">轻松增值您的加密资产</h3>
         <p class="slide-desc">让加密货币为您工作，获得每日奖励。</p>
-        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="navTo('scan.html')" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -517,7 +518,7 @@
         <span class="slider-tag">兑换</span>
         <h3 class="slide-title">轻松兑换加密资产</h3>
         <p class="slide-desc">提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。</p>
-        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="navTo('scan.html')" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -547,7 +548,7 @@
         <span class="slider-tag">P2P 市场</span>
         <h3 class="slide-title">点对点交易，由您驱动</h3>
         <p class="slide-desc">可通过多种法币和支付方式买卖加密货币，直接与交易对手进行，安全高效。</p>
-        <a onclick="goAuth()" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <a onclick="navTo('p2p.html')" class="btn-more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -674,7 +675,11 @@
       <button class="footer-collapse-btn">个人 <span class="icon">⌄</span></button>
       <h4>个人</h4>
       <div class="footer-collapse-content">
-        <a onclick="goAuth()">卡片</a><a onclick="goAuth()">扫码支付</a><a onclick="goAuth()">全球转账</a><a onclick="goAuth()">多币种钱包</a><a onclick="goAuth()">赚币</a>
+        <a onclick="navTo('scan.html')">卡片</a>
+        <a onclick="navTo('scan.html')">扫码支付</a>
+        <a onclick="navTo('remittance.html')">全球转账</a>
+        <a onclick="navTo('credit.html')">多币种钱包</a>
+        <a onclick="navTo('scan.html')">赚币</a>
       </div>
     </div>
     
@@ -715,13 +720,19 @@
 <script src="script.js"></script>
 <script>
   // =========================================
-  // 跳转与登录状态判断
+  // 登录、跳转与菜单逻辑
   // =========================================
   window.goAuth = function() {
-    // 如果已登录，去apply（或者保持首页）；如果未登录，去login
     if (localStorage.getItem('nexapay_is_login') === 'true') {
-      // 此处根据业务决定，如果是已经登录的用户点击这些，可以去申请页或停留
-      window.location.href = 'login.html'; // 按照用户说的“全部跳转这个”，即使登录了去login会自动重定向回首页
+      window.location.href = 'login.html';
+    } else {
+      window.location.href = 'login.html';
+    }
+  };
+
+  window.navTo = function(url) {
+    if (localStorage.getItem('nexapay_is_login') === 'true') {
+      window.location.href = url;
     } else {
       window.location.href = 'login.html';
     }
@@ -749,7 +760,7 @@
   checkLoginState();
 
   // =========================================
-  // 语言下拉菜单 (静态定位)
+  // 语言下拉菜单
   // =========================================
   window.toggleLangMenu = function(e) {
     e.stopPropagation();
@@ -763,6 +774,14 @@
       if (!e.target.closest('.lang-switch-wrap')) dropdown.classList.remove('show');
     }
   });
+
+  // =========================================
+  // 汉堡菜单逻辑
+  // =========================================
+  window.toggleMenu = function() {
+    document.getElementById('mobileMenu').classList.toggle('active');
+    document.getElementById('menuOverlay').classList.toggle('active');
+  };
 
   // =========================================
   // FAQ 折叠
