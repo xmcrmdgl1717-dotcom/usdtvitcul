@@ -87,9 +87,9 @@
   
   .mock-card-3d.virtual { background: linear-gradient(135deg, #d90012, #7a000a); box-shadow: 0 30px 60px rgba(217,0,18,0.3), inset 0 1px 0 rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.1); }
   .mock-card-3d.physical { background: linear-gradient(135deg, #1a1a1a, #050505); box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(212,175,55,0.3); border: 1px solid rgba(212,175,55,0.2); }
-  .mock-card-3d.physical .mc-logo { color: var(--gold); }
-  .mock-card-3d.physical .mc-num { color: var(--gold); text-shadow: 0 0 10px rgba(212,175,55,0.3); }
-  .mock-card-3d.physical .mc-net { color: var(--gold); }
+  .mock-card-3d.physical .mc-logo { color: #d4af37; }
+  .mock-card-3d.physical .mc-num { color: #d4af37; text-shadow: 0 0 10px rgba(212,175,55,0.3); }
+  .mock-card-3d.physical .mc-net { color: #d4af37; }
   .mock-card-3d.physical .mc-info span { color: #eee; }
 
   .mock-card-3d::before { content: ''; position: absolute; inset: 0; border-radius: 20px; pointer-events: none; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s; mix-blend-mode: overlay; z-index: 1; }
@@ -249,14 +249,14 @@
       </div>
 
       <div class="auth-group" id="unauth-group">
-        <span class="btn-auth" onclick="goAuth()" data-i18n="nav_login">登录</span>
-        <span class="btn-auth btn-register" onclick="goAuth()" data-i18n="nav_register">注册</span>
+        <span class="btn-auth" onclick="goAuth()" data-i18n="登录">登录</span>
+        <span class="btn-auth btn-register" onclick="goAuth()" data-i18n="注册">注册</span>
       </div>
 
       <div class="user-avatar-wrap" id="auth-group">
         <div class="user-avatar">N</div>
         <div class="user-dropdown">
-          <a onclick="doLogout()" data-i18n="nav_logout">退出账号</a>
+          <a onclick="doLogout()" data-i18n="退出账号">退出账号</a>
         </div>
       </div>
     </div>
@@ -268,44 +268,44 @@
     <source src="homeBg.3__npe53rz97a.webm" type="video/webm" />
   </video>
   <div class="hero-content-greotpay">
-    <h1 class="hero-title-greotpay" data-i18n="hero_title">让加密货币<br>融入真实生活</h1>
-    <p class="hero-sub-greotpay" data-i18n="hero_sub">向稳定币支付敞开大门</p>
-    <a onclick="goAuth()" class="btn-start" data-i18n="hero_btn">立即开始支付</a>
+    <h1 class="hero-title-greotpay" data-i18n="让加密货币融入真实生活">让加密货币<br>融入真实生活</h1>
+    <p class="hero-sub-greotpay" data-i18n="向稳定币支付敞开大门">向稳定币支付敞开大门</p>
+    <a onclick="goAuth()" class="btn-start" data-i18n="立即开始支付">立即开始支付</a>
   </div>
 </section>
 
 <section class="section-greotpay" style="padding-bottom: 40px;">
   <div class="container-greotpay">
-    <h2 class="section-title" data-i18n="feature_title">享受日常权益</h2>
+    <h2 class="section-title" data-i18n="享受日常权益">享受日常权益</h2>
   </div>
   <div class="horizontal-scroll-wrap">
     <div class="scroll-track">
       <div class="glass-card" onclick="goAuth()">
         <img src="swiper-1.webp" alt="Easy Crypto" onerror="this.style.display='none'">
         <div class="card-content">
-          <h3 data-i18n="f1_t">轻松获取稳定币</h3>
-          <p data-i18n="f1_d">通过 P2P 兑换和法币入金。</p>
+          <h3 data-i18n="轻松获取稳定币">轻松获取稳定币</h3>
+          <p data-i18n="通过 P2P 兑换和法币入金。">通过 P2P 兑换和法币入金。</p>
         </div>
       </div>
       <div class="glass-card" onclick="goAuth()">
         <img src="swiper-2.webp" alt="Pay with Crypto" onerror="this.style.display='none'">
         <div class="card-content">
-          <h3 data-i18n="f2_t">随时使用稳定币支付</h3>
-          <p data-i18n="f2_d">绑定卡片，随心支付。</p>
+          <h3 data-i18n="随时使用稳定币支付">随时使用稳定币支付</h3>
+          <p data-i18n="绑定卡片，随心支付。">绑定卡片，随心支付。</p>
         </div>
       </div>
       <div class="glass-card" onclick="goAuth()">
         <img src="swiper-3.webp" alt="Transfer" onerror="this.style.display='none'">
         <div class="card-content">
-          <h3 data-i18n="f3_t">快速安全地转移加密货币</h3>
-          <p data-i18n="f3_d">支持 100+ 国家/地区。</p>
+          <h3 data-i18n="快速安全地转移加密货币">快速安全地转移加密货币</h3>
+          <p data-i18n="支持 100+ 国家/地区。">支持 100+ 国家/地区。</p>
         </div>
       </div>
       <div class="glass-card" onclick="goAuth()">
         <img src="swiper-4.webp" alt="Multi Wallet" onerror="this.style.display='none'">
         <div class="card-content">
-          <h3 data-i18n="f4_t">多种货币，一个应用</h3>
-          <p data-i18n="f4_d">一站式管理加密资产。</p>
+          <h3 data-i18n="多种货币，一个应用">多种货币，一个应用</h3>
+          <p data-i18n="一站式管理加密资产。">一站式管理加密资产。</p>
         </div>
       </div>
     </div>
@@ -313,9 +313,9 @@
 </section>
 
 <section class="dark-showcase">
-  <h2 data-i18n="showcase_t">数字支付，简单随行</h2>
-  <p data-i18n="showcase_d">轻松、安全地支付订阅、旅行和日常消费。</p>
-  <button class="btn-learn-more" onclick="goAuth()" data-i18n="showcase_btn">了解更多</button>
+  <h2 data-i18n="数字支付，简单随行">数字支付，简单随行</h2>
+  <p data-i18n="轻松、安全地支付订阅、旅行和日常消费。">轻松、安全地支付订阅、旅行和日常消费。</p>
+  <button class="btn-learn-more" onclick="goAuth()" data-i18n="了解更多">了解更多</button>
   
   <div class="card-3d-wrapper" id="card3dWrapper">
     <div class="mock-card-3d virtual" id="mockCard3d">
@@ -325,51 +325,45 @@
       </div>
       <div class="mc-num">5312 •••• •••• 8042</div>
       <div class="mc-bottom">
-        <div class="mc-info" data-i18n="card_holder">持卡人 <span>AVA CHEN</span></div>
-        <div class="mc-info" data-i18n="card_exp">有效期 <span>09/29</span></div>
+        <div class="mc-info"><span data-i18n="持卡人">持卡人</span> <span>AVA CHEN</span></div>
+        <div class="mc-info"><span data-i18n="有效期">有效期</span> <span>09/29</span></div>
       </div>
     </div>
   </div>
 
   <div class="card-tabs">
-    <div class="card-tab active" onclick="switchCard('virtual', this)" data-i18n="tab_virtual">虚拟卡</div>
-    <div class="card-tab" onclick="switchCard('physical', this)" data-i18n="tab_physical">实体卡</div>
+    <div class="card-tab active" onclick="switchCard('virtual', this)" data-i18n="虚拟卡">虚拟卡</div>
+    <div class="card-tab" onclick="switchCard('physical', this)" data-i18n="实体卡">实体卡</div>
   </div>
 </section>
 
 <section class="feature-slider-section">
   <div class="slider-container">
-    
-    <!-- Slide 1: 扫码支付 (已修改素材) -->
+    <!-- Slide 1: 扫码支付 -->
     <div class="slide-block active" data-index="0">
       <div class="slide-text">
-        <span class="slider-tag" data-i18n="s1_tag">扫码支付</span>
-        <h3 class="slide-title" data-i18n="s1_title">随时随地，扫一扫秒级支付</h3>
-        <p class="slide-desc" data-i18n="s1_desc">无需繁琐兑换，直接使用加密资产扫码消费，资金秒级清算。</p>
-        <a onclick="goAuth()" class="btn-more" data-i18n="btn_more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <span class="slider-tag" data-i18n="扫码支付">扫码支付</span>
+        <h3 class="slide-title" data-i18n="随时随地，扫一扫秒级支付">随时随地，扫一扫秒级支付</h3>
+        <p class="slide-desc" data-i18n="无需繁琐兑换，直接使用加密资产扫码消费，资金秒级清算。">无需繁琐兑换，直接使用加密资产扫码消费，资金秒级清算。</p>
+        <a onclick="goAuth()" class="btn-more" data-i18n="了解更多">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
           <div class="phone-notch"></div>
           <div class="phone-screen" style="background:#1a1a1a; position:relative; overflow:hidden;">
-            <!-- 模拟摄像头背景 -->
             <div style="position:absolute; inset:0; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, #000 100%);"></div>
-            <!-- 扫码框 -->
             <div style="position:absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; border: 2px solid #00f0ff; border-radius: 20px; box-shadow: 0 0 20px rgba(0,240,255,0.3);">
                <div style="position:absolute; top:-1px; left:-1px; width:30px; height:30px; border-top:4px solid #00f0ff; border-left:4px solid #00f0ff; border-top-left-radius: 20px;"></div>
                <div style="position:absolute; top:-1px; right:-1px; width:30px; height:30px; border-top:4px solid #00f0ff; border-right:4px solid #00f0ff; border-top-right-radius: 20px;"></div>
                <div style="position:absolute; bottom:-1px; left:-1px; width:30px; height:30px; border-bottom:4px solid #00f0ff; border-left:4px solid #00f0ff; border-bottom-left-radius: 20px;"></div>
                <div style="position:absolute; bottom:-1px; right:-1px; width:30px; height:30px; border-bottom:4px solid #00f0ff; border-right:4px solid #00f0ff; border-bottom-right-radius: 20px;"></div>
-               <!-- 扫描线动画 -->
                <div style="position:absolute; left:0; right:0; height:2px; background:#00f0ff; box-shadow:0 0 10px #00f0ff; animation: scanMove 2s linear infinite;"></div>
             </div>
-            <!-- 底部 UI -->
             <div style="position:absolute; bottom: 20px; left: 20px; right: 20px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 16px; padding: 16px; text-align: center; color: #fff; border: 1px solid rgba(255,255,255,0.2);">
-              <div style="font-size: 14px; margin-bottom: 8px;">发现 NEXAPAY 收款码</div>
-              <div style="background:#00f0ff; color:#000; padding: 10px; border-radius: 10px; font-weight: bold;">立即支付</div>
+              <div style="font-size: 14px; margin-bottom: 8px;" data-i18n="发现 NEXAPAY 收款码">发现 NEXAPAY 收款码</div>
+              <div style="background:#00f0ff; color:#000; padding: 10px; border-radius: 10px; font-weight: bold;" data-i18n="立即支付">立即支付</div>
             </div>
-            <!-- 顶部标题 -->
-            <div style="position:absolute; top: 30px; left: 0; right: 0; text-align: center; color: #fff; font-weight: 600; font-size: 16px;">扫一扫</div>
+            <div style="position:absolute; top: 30px; left: 0; right: 0; text-align: center; color: #fff; font-weight: 600; font-size: 16px;" data-i18n="扫一扫">扫一扫</div>
           </div>
         </div>
       </div>
@@ -378,10 +372,10 @@
     <!-- Slide 2: 全球转账 -->
     <div class="slide-block" data-index="1">
       <div class="slide-text">
-        <span class="slider-tag" data-i18n="s2_tag">全球转账</span>
-        <h3 class="slide-title" data-i18n="s2_title">发送加密货币，收取本地货币</h3>
-        <p class="slide-desc" data-i18n="s2_desc">轻松转账，每笔交易都有保障，让收款人更快收到资金。</p>
-        <a onclick="goAuth()" class="btn-more" data-i18n="btn_more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <span class="slider-tag" data-i18n="全球转账">全球转账</span>
+        <h3 class="slide-title" data-i18n="发送加密货币，收取本地货币">发送加密货币，收取本地货币</h3>
+        <p class="slide-desc" data-i18n="轻松转账，每笔交易都有保障，让收款人更快收到资金。">轻松转账，每笔交易都有保障，让收款人更快收到资金。</p>
+        <a onclick="goAuth()" class="btn-more" data-i18n="了解更多">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -389,10 +383,10 @@
           <div class="phone-screen">
             <div class="app-ui">
               <div class="app-header"><span>&larr;</span><span>&#9635;</span></div>
-              <div class="app-box"><div class="app-label">You send</div><div class="app-val"><span style="display:flex; align-items:center; gap:6px;"><span style="width:20px;height:20px;background:#26a17b;border-radius:50%;display:inline-block;"></span> USDT</span> 1,000</div></div>
+              <div class="app-box"><div class="app-label" data-i18n="You send">You send</div><div class="app-val"><span style="display:flex; align-items:center; gap:6px;"><span style="width:20px;height:20px;background:#26a17b;border-radius:50%;display:inline-block;"></span> USDT</span> 1,000</div></div>
               <div style="text-align:center; color:#888; font-size:12px; margin-bottom:12px;">&darr; 1 USDT = 0.87707 EUR</div>
-              <div class="app-box"><div class="app-label">Recipient gets</div><div class="app-val"><span style="display:flex; align-items:center; gap:6px;"><span style="width:20px;height:20px;background:#003399;border-radius:50%;display:inline-block;color:#fff;font-size:10px;text-align:center;line-height:20px;">€</span> EUR</span> 877.07</div></div>
-              <div class="app-btn">Add recipient</div>
+              <div class="app-box"><div class="app-label" data-i18n="Recipient gets">Recipient gets</div><div class="app-val"><span style="display:flex; align-items:center; gap:6px;"><span style="width:20px;height:20px;background:#003399;border-radius:50%;display:inline-block;color:#fff;font-size:10px;text-align:center;line-height:20px;">€</span> EUR</span> 877.07</div></div>
+              <div class="app-btn" data-i18n="Add recipient">Add recipient</div>
             </div>
           </div>
         </div>
@@ -402,17 +396,17 @@
     <!-- Slide 3: 多币种钱包 -->
     <div class="slide-block" data-index="2">
       <div class="slide-text">
-        <span class="slider-tag" data-i18n="s3_tag">多币种钱包</span>
-        <h3 class="slide-title" data-i18n="s3_title">连接加密货币与日常生活</h3>
-        <p class="slide-desc" data-i18n="s3_desc">集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。</p>
-        <a onclick="goAuth()" class="btn-more" data-i18n="btn_more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <span class="slider-tag" data-i18n="多币种钱包">多币种钱包</span>
+        <h3 class="slide-title" data-i18n="连接加密货币与日常生活">连接加密货币与日常生活</h3>
+        <p class="slide-desc" data-i18n="集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。">集中管理多种货币，轻松入金，随时兑换与支付，无缝连接日常生活。</p>
+        <a onclick="goAuth()" class="btn-more" data-i18n="了解更多">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
           <div class="phone-notch"></div>
           <div class="phone-screen">
             <div class="app-ui">
-              <div class="app-header"><span>Select Currency</span></div>
+              <div class="app-header"><span data-i18n="Select Currency">Select Currency</span></div>
               <div class="app-box" style="display:flex; justify-content:space-between; align-items:center;"><span style="font-weight:700;">🇺🇸 USD</span> <span style="color:#888; font-size:12px;">$1,000.00</span></div>
               <div class="app-box" style="display:flex; justify-content:space-between; align-items:center;"><span style="font-weight:700;">🇪🇺 EUR</span> <span style="color:#888; font-size:12px;">€877.07</span></div>
               <div class="app-box" style="display:flex; justify-content:space-between; align-items:center; border:1px solid #00f0ff; background:#f0fdff;"><span style="font-weight:700;">🪙 USDC</span> <span style="color:#888; font-size:12px;">50.00</span></div>
@@ -426,28 +420,28 @@
     <!-- Slide 4: 兑换 -->
     <div class="slide-block" data-index="3">
       <div class="slide-text">
-        <span class="slider-tag" data-i18n="s4_tag">兑换</span>
-        <h3 class="slide-title" data-i18n="s4_title">轻松兑换加密资产</h3>
-        <p class="slide-desc" data-i18n="s4_desc">提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。</p>
-        <a onclick="goAuth()" class="btn-more" data-i18n="btn_more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+        <span class="slider-tag" data-i18n="兑换">兑换</span>
+        <h3 class="slide-title" data-i18n="轻松兑换加密资产">轻松兑换加密资产</h3>
+        <p class="slide-desc" data-i18n="提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。">提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。</p>
+        <a onclick="goAuth()" class="btn-more" data-i18n="了解更多">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M7 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
           <div class="phone-notch"></div>
           <div class="phone-screen">
             <div class="app-ui">
-              <div class="app-header"><span>Swap</span></div>
+              <div class="app-header"><span data-i18n="Swap">Swap</span></div>
               <div class="app-box">
-                <div class="app-label" style="display:flex; justify-content:space-between;"><span>From</span><span>Balance: 1,000</span></div>
+                <div class="app-label" style="display:flex; justify-content:space-between;"><span data-i18n="From">From</span><span data-i18n="Balance">Balance</span>: 1,000</div>
                 <div class="app-val"><span>🇺🇸 USDC</span> 100</div>
               </div>
               <div style="text-align:center; margin:-10px 0 10px; position:relative; z-index:2;"><span style="background:#fff; border:1px solid #eee; border-radius:50%; padding:4px 8px; font-size:12px;">&darr;</span></div>
               <div class="app-box">
-                <div class="app-label" style="display:flex; justify-content:space-between;"><span>To</span><span>Balance: 0.5</span></div>
+                <div class="app-label" style="display:flex; justify-content:space-between;"><span data-i18n="To">To</span><span data-i18n="Balance">Balance</span>: 0.5</div>
                 <div class="app-val"><span>🪙 BTC</span> 0.0012</div>
               </div>
               <div style="font-size:11px; color:#888; text-align:center; margin-top:10px;">1 USDC = 0.000012 BTC</div>
-              <div class="app-btn">Confirm Swap</div>
+              <div class="app-btn" data-i18n="Confirm Swap">Confirm Swap</div>
             </div>
           </div>
         </div>
@@ -465,17 +459,17 @@
 </section>
 
 <section class="stats-dark">
-  <h2 data-i18n="stats_title">备受全球信赖</h2>
+  <h2 data-i18n="备受全球信赖">备受全球信赖</h2>
   <div class="stats-grid">
-    <div class="stat-item"><div class="num">3M+</div><div class="lbl" data-i18n="stats_1">全球用户</div></div>
-    <div class="stat-item"><div class="num">100+</div><div class="lbl" data-i18n="stats_2">国家</div></div>
-    <div class="stat-item"><div class="num">$12B</div><div class="lbl" data-i18n="stats_3">年度支付交易额</div></div>
+    <div class="stat-item"><div class="num">3M+</div><div class="lbl" data-i18n="全球用户">全球用户</div></div>
+    <div class="stat-item"><div class="num">100+</div><div class="lbl" data-i18n="国家">国家</div></div>
+    <div class="stat-item"><div class="num">$12B</div><div class="lbl" data-i18n="年度支付交易额">年度支付交易额</div></div>
   </div>
 </section>
 
 <section class="testimonial-section">
   <div class="container-greotpay">
-    <h2 class="section-title" data-i18n="testi_title">聆听社区心声</h2>
+    <h2 class="section-title" data-i18n="聆听社区心声">聆听社区心声</h2>
   </div>
   <div class="testimonial-track" id="testimonialTrack">
     <!-- 由 JS 填充 -->
@@ -484,7 +478,7 @@
 
 <section class="section-greotpay">
   <div class="container-greotpay">
-    <h2 class="section-title" data-i18n="faq_title">常见问题</h2>
+    <h2 class="section-title" data-i18n="常见问题">常见问题</h2>
     <div class="faq-list" id="faqList">
       <!-- 由 JS 填充 -->
     </div>
@@ -494,11 +488,11 @@
 <footer class="footer-greotpay">
   <div class="footer-brand">
     <div class="logo-box"><span>N</span><span>NEXAPAY</span></div>
-    <p><span data-i18n="footer_desc">与 NEXAPAY 开启稳定币支付之旅</span><br><span class="slogan" data-i18n="footer_slogan">快速。流畅。安全。</span></p>
+    <p><span data-i18n="与 NEXAPAY 开启稳定币支付之旅">与 NEXAPAY 开启稳定币支付之旅</span><br><span class="slogan" data-i18n="快速。流畅。安全。">快速。流畅。安全。</span></p>
   </div>
   <div class="footer-bottom">
-    <span data-i18n="footer_copy">© 2026 NEXAPAY. All rights reserved.</span>
-    <span data-i18n="footer_lang">简体中文</span>
+    <span data-i18n="© 2026 NEXAPAY. All rights reserved.">© 2026 NEXAPAY. All rights reserved.</span>
+    <span data-i18n="简体中文">简体中文</span>
   </div>
 </footer>
 
@@ -507,19 +501,17 @@
   <div class="safari-box">
     <span class="safari-close" onclick="closeSafariModal()">×</span>
     <div class="safari-icon">🧭</div>
-    <div class="safari-title" id="safariTitle" data-i18n="safari_title">请使用 Safari 浏览器打开</div>
-    <div class="safari-desc" id="safariDesc" data-i18n="safari_desc">系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。</div>
+    <div class="safari-title" id="safariTitle" data-i18n="请使用 Safari 浏览器打开">请使用 Safari 浏览器打开</div>
+    <div class="safari-desc" id="safariDesc" data-i18n="系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。">系统检测到您正在使用非苹果官方 Safari 访问，为了您的安全请您使用苹果官方 Safari 打开访问。</div>
     <div class="safari-link-box">
       <input type="text" id="currentUrlInput" readonly>
     </div>
-    <button class="btn-safari-copy" onclick="copyCurrentUrl()" id="copyBtn" data-i18n="safari_copy">复制当前链接</button>
+    <button class="btn-safari-copy" onclick="copyCurrentUrl()" id="copyBtn" data-i18n="复制当前链接">复制当前链接</button>
   </div>
 </div>
 
 <script>
-  // =========================================
-  // 1. Safari 检测与拦截
-  // =========================================
+  // Safari 检测
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   if (!isSafari) {
     document.addEventListener('click', function(e) {
@@ -546,9 +538,7 @@
     setTimeout(() => { btn.textContent = orig; }, 2000);
   };
 
-  // =========================================
-  // 2. 语言与数据初始化
-  // =========================================
+  // 语言与数据初始化
   let globalData = { langs: [], globalDict: {}, faqs: [], testimonials: [], sysConfig: {} };
   let currentLangCode = 'zh';
   let activeDict = null;
@@ -560,22 +550,21 @@
       if (!globalData.faqs) globalData.faqs = [];
       if (!globalData.testimonials) globalData.testimonials = [];
 
-      // IP 获取
       let ipCountry = '';
       try {
         const ipRes = await fetch('https://ipapi.co/json/');
         const ipData = await ipRes.json();
         ipCountry = ipData.country_code ? ipData.country_code.toLowerCase() : '';
-      } catch (e) { console.warn('IP 获取失败，跳过 IP 判断'); }
+      } catch (e) { console.warn('IP 获取失败'); }
 
       let manualLang = localStorage.getItem('nexapay_manual_lang');
       let deviceLang = navigator.language || navigator.userLanguage;
       
-      let finalLang = 'en'; // 兜底英文
+      let finalLang = 'en';
       const availableLangs = globalData.langs.filter(l => l.status !== false).map(l => l.code);
       if (!availableLangs.includes('en')) availableLangs.push('en');
+      if (!availableLangs.includes('zh')) availableLangs.push('zh');
 
-      // 优先级：手动 > IP > 设备 > 英语
       if (manualLang && availableLangs.includes(manualLang)) {
         finalLang = manualLang;
       } else if (ipCountry) {
@@ -612,8 +601,11 @@
     }
   }
 
+  // 核心翻译器
   function applyTranslations() {
     if (!activeDict) return;
+    
+    // 1. 翻译 data-i18n
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if (activeDict[key]) {
@@ -626,22 +618,26 @@
       }
     });
 
+    // 2. 兜底：遍历文本节点（处理没有 data-i18n 的情况）
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     let node;
     while (node = walker.nextNode()) {
       if (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE') continue;
       const rawTxt = node.nodeValue;
-      const txt = rawTxt.trim();
-      if (txt && activeDict[txt]) node.nodeValue = rawTxt.replace(txt, activeDict[txt]);
+      const txt = rawTxt.trim().replace(/\s+/g, ' ');
+      if (txt && activeDict[txt]) {
+        node.nodeValue = rawTxt.replace(txt, activeDict[txt]);
+      }
     }
   }
 
+  // 渲染 FAQ
   function renderFAQ() {
     const list = document.getElementById('faqList');
     list.innerHTML = '';
     if (!globalData.faqs || globalData.faqs.length === 0) {
-        const msg = (activeDict && activeDict['no_faq']) ? activeDict['no_faq'] : '暂无常见问题';
-        list.innerHTML = `<div class="empty-state">${msg}</div>`;
+        const noFaqText = (activeDict && activeDict['暂无常见问题']) ? activeDict['暂无常见问题'] : '暂无常见问题';
+        list.innerHTML = `<div class="empty-state">${noFaqText}</div>`;
         return;
     }
 
@@ -675,12 +671,13 @@
     });
   }
 
+  // 渲染评论
   function renderTestimonials() {
     const track = document.getElementById('testimonialTrack');
     track.innerHTML = '';
     if (!globalData.testimonials || globalData.testimonials.length === 0) {
-        const msg = (activeDict && activeDict['no_review']) ? activeDict['no_review'] : '暂无评论';
-        track.innerHTML = `<div class="empty-state" style="width:100%;">${msg}</div>`;
+        const noReviewText = (activeDict && activeDict['暂无评论']) ? activeDict['暂无评论'] : '暂无评论';
+        track.innerHTML = `<div class="empty-state" style="width:100%;">${noReviewText}</div>`;
         return;
     }
 
@@ -728,9 +725,7 @@
     if (dropdown && dropdown.classList.contains('show') && !e.target.closest('.lang-switch-wrap')) dropdown.classList.remove('show');
   });
 
-  // =========================================
-  // 3. 其他交互
-  // =========================================
+  // 交互
   window.goAuth = function() { window.location.href = 'login.html'; };
   
   function checkLoginState() {
@@ -741,7 +736,7 @@
   window.doLogout = function() { localStorage.removeItem('nexapay_is_login'); checkLoginState(); };
   checkLoginState();
 
-  // 3D 卡片动效
+  // 3D 卡片
   const wrapper = document.getElementById('card3dWrapper');
   const card = document.getElementById('mockCard3d');
   let isFlipping = false;
