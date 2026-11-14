@@ -257,11 +257,42 @@
     </a>
     
     <div class="nav-links">
-      <a onclick="goAuth()">个人</a>
-      <a onclick="goAuth()">企业</a>
-      <a onclick="goAuth()">公司</a>
-      <a onclick="goAuth()">赚币</a>
-      <a onclick="goAuth()">探索</a>
+<!-- 替换 index.html 里的对应按钮和卡片 -->
+
+<!-- 原来的卡片区，添加 onclick 事件 -->
+<div class="feature-card" onclick="navTo('scan.html')">
+  <h3>轻松获取稳定币</h3>
+  ...
+</div>
+<div class="feature-card" onclick="navTo('scan.html')">
+  <h3>随时使用稳定币支付</h3>
+  ...
+</div>
+<div class="feature-card" onclick="navTo('remittance.html')">
+  <h3>快速安全地转移加密货币</h3>
+  ...
+</div>
+<div class="feature-card" onclick="navTo('credit.html')">
+  <h3>多种货币，一个应用</h3>
+  ...
+</div>
+
+<!-- 底部 Footer 里面的链接也可以指向这几个页面 -->
+<a onclick="navTo('scan.html')">扫码支付</a>
+<a onclick="navTo('credit.html')">信用额度</a>
+<a onclick="navTo('remittance.html')">即时汇款</a>
+<a onclick="navTo('p2p.html')">P2P 市场</a>
+
+<!-- 在 index.html 底部加上同样的拦截逻辑 -->
+<script>
+  function navTo(url) {
+    if (localStorage.getItem('nexapay_is_login') === 'true') {
+      window.location.href = url;
+    } else {
+      window.location.href = 'login.html';
+    }
+  }
+</script>
     </div>
 
     <div class="header-actions">
