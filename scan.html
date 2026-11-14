@@ -9,20 +9,22 @@
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; }
   body { background: #fff; color: var(--text-dark); line-height: 1.6; }
   
-  /* 顶部导航 */
+  /* 顶部导航 - 修复对齐 */
   .header { position: fixed; top: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid #eee; }
-  .nav-container { max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+  .nav-container { max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; width: 100%; }
   .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #111; font-weight: 800; font-size: 20px; }
   .logo-icon { width: 32px; height: 32px; background: #00f0ff; color: #000; border-radius: 8px; display: grid; place-items: center; }
   
-  .nav-actions { display: flex; align-items: center; gap: 20px; }
+  /* 确保右侧操作区靠右 */
+  .nav-actions { display: flex; align-items: center; gap: 16px; margin-left: auto; }
   .lang-btn { font-size: 14px; cursor: pointer; color: #333; display: flex; align-items: center; gap: 4px; }
-  .user-btn { font-size: 14px; cursor: pointer; color: #333; text-decoration: none; }
+  .user-btn { font-size: 14px; cursor: pointer; color: #333; text-decoration: none; white-space: nowrap; }
   
   /* 汉堡菜单 */
-  .hamburger { cursor: pointer; display: flex; flex-direction: column; gap: 5px; z-index: 1001; }
+  .hamburger { cursor: pointer; display: flex; flex-direction: column; gap: 5px; z-index: 1001; padding-left: 8px; }
   .hamburger span { display: block; width: 24px; height: 2px; background: #111; transition: 0.3s; }
   
+  /* 侧边栏 */
   .mobile-menu { position: fixed; top: 0; right: -300px; width: 300px; height: 100vh; background: #fff; box-shadow: -10px 0 30px rgba(0,0,0,0.1); z-index: 999; padding: 80px 24px 24px; transition: right 0.3s ease; display: flex; flex-direction: column; gap: 16px; }
   .mobile-menu.active { right: 0; }
   .mobile-menu a { text-decoration: none; color: #333; font-size: 16px; font-weight: 600; padding: 12px 0; border-bottom: 1px solid #eee; cursor: pointer; }
@@ -30,22 +32,19 @@
   .menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 998; display: none; }
   .menu-overlay.active { display: block; }
 
-  /* 主体内容 */
+  /* 主体 */
   .hero { padding: 120px 24px 60px; max-width: 800px; margin: 0 auto; text-align: center; }
   .hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; margin-bottom: 16px; letter-spacing: -1px; line-height: 1.2; }
   .hero p { font-size: 16px; color: var(--text-gray); margin-bottom: 32px; }
-  .btn-primary { display: inline-block; padding: 14px 32px; background: var(--brand-red); color: #fff; text-decoration: none; border-radius: 30px; font-weight: 700; font-size: 16px; transition: 0.3s; }
+  .btn-primary { display: inline-block; padding: 14px 32px; background: var(--brand-red); color: #fff; text-decoration: none; border-radius: 30px; font-weight: 700; font-size: 16px; transition: 0.3s; cursor: pointer; }
   .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
-  
   .hero-image { width: 100%; height: 400px; background: linear-gradient(135deg, #f0f0f0, #e0e0e0); border-radius: 24px; margin-top: 40px; display: grid; place-items: center; font-weight: 600; color: #aaa; }
 
-  /* 黑底区块 */
   .dark-section { background: #0f0f0f; color: #fff; padding: 80px 24px; text-align: center; border-radius: 32px; margin: 40px 24px; }
   .dark-section h2 { font-size: 32px; margin-bottom: 16px; font-weight: 800; }
   .dark-section p { color: #aaa; margin-bottom: 40px; }
   .phone-mockup { width: 280px; height: 560px; background: #222; border-radius: 40px; border: 8px solid #333; margin: 0 auto; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   
-  /* 卡片网格 */
   .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
   .feature-card { background: var(--bg-gray); border-radius: 24px; overflow: hidden; display: flex; flex-direction: column; }
   .card-img { height: 220px; background: #ddd; }
@@ -53,7 +52,6 @@
   .card-content h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
   .card-content p { font-size: 14px; color: var(--text-gray); }
 
-  /* FAQ */
   .faq-section { max-width: 800px; margin: 80px auto; padding: 0 24px; }
   .faq-section h2 { text-align: center; font-size: 32px; margin-bottom: 40px; font-weight: 800; }
   .faq-item { border-bottom: 1px solid #eee; }
@@ -62,7 +60,6 @@
   .faq-a { display: none; padding-bottom: 24px; color: var(--text-gray); font-size: 14px; line-height: 1.8; }
   .faq-item.open .faq-a { display: block; }
 
-  /* 底部 */
   .cta-bottom { text-align: center; padding: 80px 24px; background: #f8f9fa; }
   .cta-bottom h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; margin-bottom: 16px; line-height: 1.2; }
   .cta-bottom p { color: var(--text-gray); margin-bottom: 32px; }
@@ -75,13 +72,13 @@
 </head>
 <body>
 
-<!-- 全局顶部导航 -->
 <header class="header">
   <div class="nav-container">
     <a href="index.html" class="logo"><span class="logo-icon">N</span> NEXAPAY</a>
     <div class="nav-actions">
       <div class="lang-btn">🌐 简中</div>
       <a href="login.html" class="user-btn" id="navUser">您的账户</a>
+      <!-- 汉堡菜单永远在最右侧 -->
       <div class="hamburger" onclick="toggleMenu()">
         <span></span><span></span><span></span>
       </div>
@@ -89,7 +86,6 @@
   </div>
 </header>
 
-<!-- 侧边折叠菜单 -->
 <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
 <div class="mobile-menu" id="mobileMenu">
   <a onclick="navTo('scan.html')">扫码支付</a>
@@ -99,7 +95,6 @@
   <a href="index.html" style="margin-top: auto; border: none; color: #999;">返回首页</a>
 </div>
 
-<!-- 页面主体 -->
 <section class="hero">
   <h1>使用加密资产，即刻扫码付款</h1>
   <p>扫码购买咖啡、打车、采购日用品，满足各种日常所需。</p>
@@ -164,29 +159,19 @@
 </section>
 
 <script>
-  // 登录验证逻辑
   function navTo(url) {
-    if (localStorage.getItem('nexapay_is_login') === 'true') {
-      window.location.href = url;
-    } else {
-      window.location.href = 'login.html';
-    }
+    if (localStorage.getItem('nexapay_is_login') === 'true') window.location.href = url;
+    else window.location.href = 'login.html';
   }
-
-  // 菜单折叠
   function toggleMenu() {
     document.getElementById('mobileMenu').classList.toggle('active');
     document.getElementById('menuOverlay').classList.toggle('active');
   }
-
-  // FAQ 折叠
   function toggleFaq(btn) {
     const item = btn.parentElement;
     item.classList.toggle('open');
     btn.querySelector('.icon').textContent = item.classList.contains('open') ? '×' : '+';
   }
-
-  // 检查登录状态并更新导航
   if (localStorage.getItem('nexapay_is_login') === 'true') {
     document.getElementById('navUser').textContent = '我的账户';
     document.getElementById('navUser').href = '#';
