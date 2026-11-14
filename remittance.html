@@ -1,0 +1,179 @@
+<!-- 头部、样式、菜单、FAQ 脚本与之前完全相同，请直接复制 credit.html 的头部和尾部 -->
+<!-- 这里仅展示主体内容区块的差异 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXAPAY - 即时汇款</title>
+<style>
+  /* 请将 credit.html 里的 <style> 完整复制到这里 */
+  :root { --brand-red: #e60012; --text-dark: #111; --text-gray: #666; --bg-gray: #f8f9fa; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; }
+  body { background: #fff; color: var(--text-dark); line-height: 1.6; }
+  .header { position: fixed; top: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid #eee; }
+  .nav-container { max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+  .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #111; font-weight: 800; font-size: 20px; }
+  .logo-icon { width: 32px; height: 32px; background: #00f0ff; color: #000; border-radius: 8px; display: grid; place-items: center; }
+  .nav-actions { display: flex; align-items: center; gap: 20px; }
+  .lang-btn { font-size: 14px; cursor: pointer; color: #333; display: flex; align-items: center; gap: 4px; }
+  .user-btn { font-size: 14px; cursor: pointer; color: #333; text-decoration: none; }
+  .hamburger { cursor: pointer; display: flex; flex-direction: column; gap: 5px; z-index: 1001; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: #111; transition: 0.3s; }
+  .mobile-menu { position: fixed; top: 0; right: -300px; width: 300px; height: 100vh; background: #fff; box-shadow: -10px 0 30px rgba(0,0,0,0.1); z-index: 999; padding: 80px 24px 24px; transition: right 0.3s ease; display: flex; flex-direction: column; gap: 16px; }
+  .mobile-menu.active { right: 0; }
+  .mobile-menu a { text-decoration: none; color: #333; font-size: 16px; font-weight: 600; padding: 12px 0; border-bottom: 1px solid #eee; cursor: pointer; }
+  .mobile-menu a:hover { color: var(--brand-red); }
+  .menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 998; display: none; }
+  .menu-overlay.active { display: block; }
+
+  .hero { padding: 120px 24px 60px; max-width: 800px; margin: 0 auto; text-align: center; }
+  .hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; margin-bottom: 16px; letter-spacing: -1px; line-height: 1.2; }
+  .hero p { font-size: 16px; color: var(--text-gray); margin-bottom: 32px; }
+  .btn-primary { display: inline-block; padding: 14px 32px; background: var(--brand-red); color: #fff; text-decoration: none; border-radius: 30px; font-weight: 700; font-size: 16px; transition: 0.3s; }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
+  .hero-image { width: 100%; height: 400px; background: linear-gradient(135deg, #d0d0d0, #a0a0a0); border-radius: 24px; margin-top: 40px; display: grid; place-items: center; font-weight: 600; color: #fff; }
+  
+  .blue-section { background: #e3f2fd; padding: 80px 24px; border-radius: 32px; margin: 40px 24px; text-align: center; }
+  .blue-section h2 { font-size: 32px; margin-bottom: 16px; font-weight: 800; color: #0d47a1; }
+  .blue-section p { color: #1565c0; margin-bottom: 40px; }
+  .phone-mockup { width: 280px; height: 560px; background: #fff; border-radius: 40px; border: 8px solid #90caf9; margin: 0 auto; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+
+  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+  .feature-card { background: var(--bg-gray); border-radius: 24px; overflow: hidden; display: flex; flex-direction: column; }
+  .card-img { height: 220px; background: #ddd; }
+  .card-content { padding: 24px; }
+  .card-content h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+  .card-content p { font-size: 14px; color: var(--text-gray); }
+
+  .faq-section { max-width: 800px; margin: 80px auto; padding: 0 24px; }
+  .faq-section h2 { text-align: center; font-size: 32px; margin-bottom: 40px; font-weight: 800; }
+  .faq-item { border-bottom: 1px solid #eee; }
+  .faq-q { width: 100%; text-align: left; background: none; border: none; padding: 24px 0; font-size: 16px; font-weight: 600; display: flex; justify-content: space-between; cursor: pointer; color: var(--text-dark); }
+  .faq-q .icon { font-weight: 300; font-size: 24px; }
+  .faq-a { display: none; padding-bottom: 24px; color: var(--text-gray); font-size: 14px; line-height: 1.8; }
+  .faq-item.open .faq-a { display: block; }
+
+  .cta-bottom { text-align: center; padding: 80px 24px; background: #f8f9fa; }
+  .cta-bottom h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; margin-bottom: 16px; line-height: 1.2; }
+  .cta-bottom p { color: var(--text-gray); margin-bottom: 32px; }
+
+  @media (max-width: 768px) {
+    .feature-grid { grid-template-columns: 1fr; }
+    .nav-container { padding: 12px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="nav-container">
+    <a href="index.html" class="logo"><span class="logo-icon">N</span> NEXAPAY</a>
+    <div class="nav-actions">
+      <div class="lang-btn">🌐 简中</div>
+      <a href="login.html" class="user-btn" id="navUser">您的账户</a>
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <a onclick="navTo('scan.html')">扫码支付</a>
+  <a onclick="navTo('credit.html')">信用额度</a>
+  <a onclick="navTo('remittance.html')">即时汇款</a>
+  <a onclick="navTo('p2p.html')">P2P 市场</a>
+  <a href="index.html" style="margin-top: auto; border: none; color: #999;">返回首页</a>
+</div>
+
+<section class="hero">
+  <h1>即时汇款，无缝连接</h1>
+  <p>快速、实惠地汇款。无论是帮助家人，还是支付重要开销，我们都为您保驾护航。</p>
+  <a href="#" class="btn-primary">立即汇款</a>
+  <div class="hero-image">[金属硬币 3D 渲染图]</div>
+</section>
+
+<section class="blue-section">
+  <h2>转账至银行或电子钱包</h2>
+  <p>体验便捷转账。每笔转账安全且高效，让收款人轻松将加密资产转换为当地货币。</p>
+  <div class="phone-mockup">
+    <div style="width: 100%; height: 120px; background: #e3f2fd; border-radius: 16px; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center; padding: 20px;">
+       <div style="color: #1565c0; font-size: 12px;">You send</div>
+       <div style="color: #0d47a1; font-size: 24px; font-weight: 800;">1,000 USDT</div>
+    </div>
+    <div style="width: 100%; height: 120px; background: #e3f2fd; border-radius: 16px; display: flex; flex-direction: column; justify-content: center; padding: 20px;">
+       <div style="color: #1565c0; font-size: 12px;">Recipient gets</div>
+       <div style="color: #0d47a1; font-size: 24px; font-weight: 800;">877.07 EUR</div>
+    </div>
+  </div>
+</section>
+
+<section class="feature-grid">
+  <div class="feature-card">
+    <div class="card-img" style="background: #e0e0e0;"></div>
+    <div class="card-content">
+      <h3>覆盖全球本地货币</h3>
+      <p>将加密资产转给自己或他人，资金以当地货币到账。</p>
+    </div>
+  </div>
+  <div class="feature-card">
+    <div class="card-img" style="background: #d5d5d5;"></div>
+    <div class="card-content">
+      <h3>高性价比转账</h3>
+      <p>享受极低的转账费率，资金快速到账，无任何隐藏费。</p>
+    </div>
+  </div>
+  <div class="feature-card">
+    <div class="card-img" style="background: #c5c5c5;"></div>
+    <div class="card-content">
+      <h3>安全可靠的转账</h3>
+      <p>我们与合规支付伙伴合作，全程保障您的资金安全。</p>
+    </div>
+  </div>
+</section>
+
+<section class="faq-section">
+  <h2>常见问题</h2>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">国际转账如何运作？<span class="icon">+</span></button>
+    <div class="faq-a">您只需输入收款人的银行信息或电子钱包地址，选择发送的加密资产即可。系统会自动完成汇率转换并在本地法币网络中完成转账。</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">费用是多少？<span class="icon">+</span></button>
+    <div class="faq-a">我们收取极低的服务费，具体金额会在您确认转账前清晰展示，确保无任何隐藏费用。</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">转账需要多久？<span class="icon">+</span></button>
+    <div class="faq-a">大多数本地转账可在几分钟内完成。具体的到账时间取决于收款银行或电子钱包的处理速度。</div>
+  </div>
+</section>
+
+<section class="cta-bottom">
+  <h2>加入 800 多万用户，体验无忧汇款</h2>
+  <p>轻松实现国际资金流转——快速、简单、高性价比。</p>
+  <a href="login.html" class="btn-primary">立即下载应用</a>
+</section>
+
+<script>
+  function navTo(url) {
+    if (localStorage.getItem('nexapay_is_login') === 'true') window.location.href = url;
+    else window.location.href = 'login.html';
+  }
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('active');
+    document.getElementById('menuOverlay').classList.toggle('active');
+  }
+  function toggleFaq(btn) {
+    const item = btn.parentElement;
+    item.classList.toggle('open');
+    btn.querySelector('.icon').textContent = item.classList.contains('open') ? '×' : '+';
+  }
+  if (localStorage.getItem('nexapay_is_login') === 'true') {
+    document.getElementById('navUser').textContent = '我的账户';
+    document.getElementById('navUser').href = '#';
+  }
+</script>
+</body>
+</html>
