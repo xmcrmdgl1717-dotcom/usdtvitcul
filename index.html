@@ -139,6 +139,14 @@
   .dot { width: 10px; height: 10px; border-radius: 50%; background: #ddd; cursor: pointer; transition: all 0.4s; }
   .dot.active { background: var(--brand-red); transform: scale(1.5); box-shadow: 0 0 10px rgba(255,51,51,0.5); }
 
+  /* 扫码专属样式 */
+  @keyframes scanMove {
+    0% { top: 10%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { top: 90%; opacity: 0; }
+  }
+
   /* 数据区 */
   .stats-dark { background: linear-gradient(135deg, #111, #222); border-radius: 40px; padding: 80px 20px; margin: 0 20px; color: #fff; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
   .stats-dark h2 { font-size: 28px; font-weight: 800; margin-bottom: 48px; }
@@ -331,26 +339,37 @@
 
 <section class="feature-slider-section">
   <div class="slider-container">
-    <!-- Slide 1: 赚币 -->
+    
+    <!-- Slide 1: 扫码支付 (已修改素材) -->
     <div class="slide-block active" data-index="0">
       <div class="slide-text">
-        <span class="slider-tag" data-i18n="s1_tag">赚币</span>
-        <h3 class="slide-title" data-i18n="s1_title">轻松增值您的加密资产</h3>
-        <p class="slide-desc" data-i18n="s1_desc">让加密货币为您工作，获得每日奖励。</p>
+        <span class="slider-tag" data-i18n="s1_tag">扫码支付</span>
+        <h3 class="slide-title" data-i18n="s1_title">随时随地，扫一扫秒级支付</h3>
+        <p class="slide-desc" data-i18n="s1_desc">无需繁琐兑换，直接使用加密资产扫码消费，资金秒级清算。</p>
         <a onclick="goAuth()" class="btn-more" data-i18n="btn_more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
           <div class="phone-notch"></div>
-          <div class="phone-screen">
-            <div class="app-ui">
-              <div class="app-header"><span>Earn</span></div>
-              <div class="app-box"><div class="app-label">Total Balance</div><div class="app-val">276.82 <span style="font-size:12px; color:#888;">USDT</span></div></div>
-              <div class="app-label" style="margin:10px 0;">Savings</div>
-              <div class="app-box" style="display:flex; justify-content:space-between; padding:12px; margin-bottom:8px; font-size:13px;"><span>USDT Savings</span><span style="color:#ff3333;">4.2%</span></div>
-              <div class="app-box" style="display:flex; justify-content:space-between; padding:12px; margin-bottom:8px; font-size:13px;"><span>BTC Savings</span><span style="color:#ff3333;">1.5%</span></div>
-              <div class="app-btn">Deposit & Earn</div>
+          <div class="phone-screen" style="background:#1a1a1a; position:relative; overflow:hidden;">
+            <!-- 模拟摄像头背景 -->
+            <div style="position:absolute; inset:0; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, #000 100%);"></div>
+            <!-- 扫码框 -->
+            <div style="position:absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; border: 2px solid #00f0ff; border-radius: 20px; box-shadow: 0 0 20px rgba(0,240,255,0.3);">
+               <div style="position:absolute; top:-1px; left:-1px; width:30px; height:30px; border-top:4px solid #00f0ff; border-left:4px solid #00f0ff; border-top-left-radius: 20px;"></div>
+               <div style="position:absolute; top:-1px; right:-1px; width:30px; height:30px; border-top:4px solid #00f0ff; border-right:4px solid #00f0ff; border-top-right-radius: 20px;"></div>
+               <div style="position:absolute; bottom:-1px; left:-1px; width:30px; height:30px; border-bottom:4px solid #00f0ff; border-left:4px solid #00f0ff; border-bottom-left-radius: 20px;"></div>
+               <div style="position:absolute; bottom:-1px; right:-1px; width:30px; height:30px; border-bottom:4px solid #00f0ff; border-right:4px solid #00f0ff; border-bottom-right-radius: 20px;"></div>
+               <!-- 扫描线动画 -->
+               <div style="position:absolute; left:0; right:0; height:2px; background:#00f0ff; box-shadow:0 0 10px #00f0ff; animation: scanMove 2s linear infinite;"></div>
             </div>
+            <!-- 底部 UI -->
+            <div style="position:absolute; bottom: 20px; left: 20px; right: 20px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 16px; padding: 16px; text-align: center; color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+              <div style="font-size: 14px; margin-bottom: 8px;">发现 NEXAPAY 收款码</div>
+              <div style="background:#00f0ff; color:#000; padding: 10px; border-radius: 10px; font-weight: bold;">立即支付</div>
+            </div>
+            <!-- 顶部标题 -->
+            <div style="position:absolute; top: 30px; left: 0; right: 0; text-align: center; color: #fff; font-weight: 600; font-size: 16px;">扫一扫</div>
           </div>
         </div>
       </div>
@@ -410,7 +429,7 @@
         <span class="slider-tag" data-i18n="s4_tag">兑换</span>
         <h3 class="slide-title" data-i18n="s4_title">轻松兑换加密资产</h3>
         <p class="slide-desc" data-i18n="s4_desc">提供极具竞争力的汇率，无需繁琐步骤即可轻松兑换。</p>
-        <a onclick="goAuth()" class="btn-more" data-i18n="btn_more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M7 7H7M17 7V17"/></svg></a>
+        <a onclick="goAuth()" class="btn-more" data-i18n="btn_more">了解更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
       </div>
       <div class="slide-phone">
         <div class="phone-mockup">
@@ -541,7 +560,7 @@
       if (!globalData.faqs) globalData.faqs = [];
       if (!globalData.testimonials) globalData.testimonials = [];
 
-      // 获取用户的 IP 所在国家代码
+      // IP 获取
       let ipCountry = '';
       try {
         const ipRes = await fetch('https://ipapi.co/json/');
@@ -560,7 +579,6 @@
       if (manualLang && availableLangs.includes(manualLang)) {
         finalLang = manualLang;
       } else if (ipCountry) {
-        // IP 匹配（如 ipCountry 为 cn, 匹配 zh）
         const ipMatch = availableLangs.find(l => ipCountry.startsWith(l.toLowerCase()) || (ipCountry === 'cn' && l === 'zh'));
         if (ipMatch) finalLang = ipMatch;
       } else if (deviceLang) {
@@ -569,7 +587,6 @@
       }
       
       currentLangCode = finalLang;
-      // 存入 localStorage 供 login.html 等页面使用，保证一致性
       localStorage.setItem('nexapay_final_lang', currentLangCode);
 
       const langData = globalData.langs.find(l => l.code === currentLangCode);
