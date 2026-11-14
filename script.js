@@ -94,7 +94,6 @@
     const el = document.createElement("div");
     el.className = "ucard";
     el.style.setProperty("--accent", item.accent);
-    // 去掉硬编码的引号，交给 CSS 伪元素处理
     el.innerHTML = '<div class="ucard-quote">' + item.q + '</div><div class="ucard-foot"><div class="ucard-avatar">' + item.name.charAt(0) + '</div><div class="ucard-meta"><strong>' + item.name + '</strong>' + item.tag + '</div></div>';
     return el;
   }
@@ -106,7 +105,6 @@
     communityCards.slice(0, half).concat(communityCards.slice(0, half)).forEach((item) => cRow1.appendChild(makeUCard(item)));
     communityCards.slice(half).concat(communityCards.slice(half)).forEach((item) => cRow2.appendChild(makeUCard(item)));
     
-    // 动态渲染后触发二次翻译
     if (window.activeDict) {
       setTimeout(() => window.applyTranslation(window.activeDict), 50);
     }
@@ -140,7 +138,7 @@
   }
 
   /* =========================================
-     2. 国际化 (i18n)
+     2. 国际化 (i18n) - 全面增强版
      ========================================= */
   let currentLangs = [];
   window.activeDict = null;
@@ -169,6 +167,7 @@
     dropdown.innerHTML = html;
   }
 
+  // 核心翻译执行器（修复了换行和空格导致匹配失败的问题）
   window.applyTranslation = function(dict) {
     if (!dict) {
       hideLoader();
@@ -176,32 +175,56 @@
     }
     window.activeDict = dict;
 
+    // 1. 构建“规范化字典”：把字典 Key 里的换行、多余空格全部压缩
+    const normalizedDict = {};
+    for (const key in dict) {
+      if (!dict[key] || !dict[key].trim()) continue;
+      const cleanKey = key.replace(/\s+/g, ' ').trim();
+      if (cleanKey) {
+        normalizedDict[cleanKey] = dict[key];
+      }
+    }
+
+    // 2. 遍历 DOM 文本节点
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     let node;
     while (node = walker.nextNode()) {
       if (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE') continue;
+      
       const rawTxt = node.nodeValue;
-      const txt = rawTxt.trim();
-      if (txt && dict[txt]) {
-        node.nodeValue = rawTxt.replace(txt, dict[txt]);
+      // 关键修复：把 HTML 文本里的换行符和大量缩进空格，压缩成单空格，再进行比对
+      const cleanTxt = rawTxt.replace(/\s+/g, ' ').trim();
+      
+      if (cleanTxt && normalizedDict[cleanTxt]) {
+        // 保留原有的首尾空白（防止排版错乱），只替换内容
+        const leadingSpace = rawTxt.match(/^\s*/)[0];
+        const trailingSpace = rawTxt.match(/\s*$/)[0];
+        node.nodeValue = leadingSpace + normalizedDict[cleanTxt] + trailingSpace;
       }
     }
 
+    // 3. 翻译 Placeholder
     document.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(el => {
       const t = el.getAttribute('placeholder');
-      if (t && dict[t]) el.setAttribute('placeholder', dict[t]);
+      const cleanT = t ? t.replace(/\s+/g, ' ').trim() : '';
+      if (cleanT && normalizedDict[cleanT]) el.setAttribute('placeholder', normalizedDict[cleanT]);
     });
 
+    // 4. 翻译 Select 选项
     document.querySelectorAll('option').forEach(el => {
-      const t = el.textContent.trim();
-      if (t && dict[t]) el.textContent = dict[t];
+      const t = el.textContent;
+      const cleanT = t ? t.replace(/\s+/g, ' ').trim() : '';
+      if (cleanT && normalizedDict[cleanT]) el.textContent = normalizedDict[cleanT];
     });
 
+    // 5. 翻译 Title 属性
     document.querySelectorAll('[title]').forEach(el => {
       const t = el.getAttribute('title');
-      if (t && dict[t]) el.setAttribute('title', dict[t]);
+      const cleanT = t ? t.replace(/\s+/g, ' ').trim() : '';
+      if (cleanT && normalizedDict[cleanT]) el.setAttribute('title', normalizedDict[cleanT]);
     });
 
+    // 6. 翻译网页 Title
     if (dict['领取虚拟卡'] && document.title.includes('领取虚拟卡')) {
       document.title = document.title.replace('领取虚拟卡', dict['领取虚拟卡']);
     } else if (dict['你的 USDC，不卖也能花'] && document.title.includes('你的 USDC')) {
